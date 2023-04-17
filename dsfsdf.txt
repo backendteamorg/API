@@ -1,0 +1,74 @@
+microservices:
+    build:
+      context: ./
+      dockerfile: ./apps/microservices/Dockerfile
+    env_file:
+      - apps/microservices/.development.env
+    depends_on:
+      - rabbitmq
+    ports:
+      - 5125:5125
+    volumes:
+      - .:/usr/src/app # any change to base folder should be reflected
+      - /usr/src/app/node_modules
+    command: npm run start:dev microservices # overrides CMD from dockerfile
+  auth:
+    build:
+      context: ./
+      dockerfile: ./apps/auth/Dockerfile
+    env_file:
+      - apps/auth/.development.env
+    depends_on:
+      - rabbitmq
+      - postgres_users
+    ports:
+      - 5126:5126
+    volumes:
+      - .:/usr/src/app # any change to base folder should be reflected
+      - /usr/src/app/node_modules
+    command: npm run start:dev auth # overrides CMD from dockerfile
+    container_name: auth
+  profile:
+    build:
+      context: ./
+      dockerfile: ./apps/profile/Dockerfile
+    env_file:
+      - apps/profile/.development.env
+    depends_on:
+      - rabbitmq
+      - postgres_profiles
+    ports:
+      - 5127:5127
+    volumes:
+      - .:/usr/src/app # any change to base folder should be reflected
+      - /usr/src/app/node_modules
+    command: npm run start:dev profile # overrides CMD from dockerfile
+    container_name: profile
+  postgres_users:
+    container_name: postgres_users
+    image: postgres:12
+    env_file:
+      - apps/auth/.development.env
+    environment:
+      PG_DATA: /var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: always
+  postgres_profiles:
+    container_name: postgres_profiles
+    image: postgres:12
+    env_file:
+      - apps/profile/.development.env
+    environment:
+      PG_DATA: /var/lib/postgresql/data
+    ports:
+      - 5433:5432
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: always
+
+volumes:
+  pgdata:
+  
