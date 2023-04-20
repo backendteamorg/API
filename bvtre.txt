@@ -1,0 +1,50 @@
+microservices:
+    build:
+      context: ./
+      dockerfile: ./apps/microservices/Dockerfile
+    env_file:
+      - apps/microservices/.development.env
+    depends_on:
+      - rabbitmq
+    ports:
+      - 5125:5125
+    volumes:
+      - .:/usr/src/app 
+      - /usr/src/app/node_modules
+    restart: always
+    command: npm run start:dev microservices 
+    container_name: microservices
+
+  films:
+    build:
+      context: ./
+      dockerfile: ./apps/films/Dockerfile
+    env_file:
+      - apps/films/.development.env
+    depends_on:
+      - rabbitmq
+      - films_postgres
+    ports:
+      - 5126:5126
+    volumes:
+      - .:/usr/src/app 
+      - /usr/src/app/node_modules
+    command: npm run start:dev films 
+    restart: always
+    container_name: films
+  films_postgres:
+    image: postgres:12
+    env_file:
+      -  apps/films/.development.env
+    environment:
+      PG_DATA: /var/lib/postgresql/data
+      POSTGRES_DB: films_rabbit
+    ports:
+      - '5432:5432'
+    volumes:
+      - ./db/data:/var/lib/postgresql/data
+    restart: always
+    container_name: films_postgres
+
+volumes:
+  pgdata:

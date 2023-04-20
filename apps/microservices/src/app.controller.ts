@@ -5,8 +5,9 @@ import { JwtAuthGuard } from './jwt-auth.guard';
 @Controller()
 export class AppController {
   constructor(@Inject('AUTH_SERVICE') private rabbitAuthService: ClientProxy,
-  @Inject('PROFILE_SERVICE') private rabbitProfileService: ClientProxy) {}
-  @Get('/title_users')
+  @Inject('PROFILE_SERVICE') private rabbitProfileService: ClientProxy,
+  @Inject('FILM_SERVICE') private rabbitFilmsService: ClientProxy) {}
+  @Get('title_users')
   async getUser() {
       return await this.rabbitAuthService.send({
         cmd: 'get-title',
@@ -40,7 +41,7 @@ export class AppController {
       );
 
     }
-  @Get('/title_profile')
+  @Get('title_profile')
     async getPorifle() {
        return this.rabbitProfileService.send({
         cmd: 'get-title',
@@ -48,7 +49,7 @@ export class AppController {
       {});
 
     }
-    @Post('auth/registration')
+  @Post('registration')
   async register(
     @Body('email') email: string,
     @Body('password') password: string,
@@ -63,7 +64,7 @@ export class AppController {
       },
     );
   }
-  @Post('auth/login')
+  @Post('login')
   async login(
     @Body('email') email: string,
     @Body('password') password: string,
@@ -79,7 +80,7 @@ export class AppController {
     );
   }
   @UseGuards(JwtAuthGuard)
-  @Post('/profile')
+  @Post('profile')
   async createProfile(
     @Body('userId') userId: number,
     @Body('fisrt_name') fisrt_name: string,
@@ -99,7 +100,7 @@ export class AppController {
     );
   }
   @UseGuards(JwtAuthGuard)
-  @Put('/profile')
+  @Put('profile')
   async updateProfile(
     @Body('userId') userId: number,
     @Body('fisrt_name') fisrt_name: string,
@@ -126,6 +127,28 @@ export class AppController {
       );
 
     }
+  @Get('films/parsing')
+  async parsing() {
+    return await this.rabbitFilmsService.send({
+      cmd: 'get-films',
+    },
+    {});
 
-    
+  }
+  @Get('films-title')
+  async getFilmsTitle() {
+    return await this.rabbitFilmsService.send({
+      cmd: 'get-films-title',
+    },
+    {});
+
+  }
+  @Get('films')
+  async getAllFilms() {
+    return await this.rabbitFilmsService.send({
+      cmd: 'get-all-films',
+    },
+    {});
+
+  }
 }
