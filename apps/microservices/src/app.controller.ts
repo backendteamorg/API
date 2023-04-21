@@ -6,7 +6,8 @@ import { JwtAuthGuard } from './jwt-auth.guard';
 export class AppController {
   constructor(@Inject('AUTH_SERVICE') private rabbitAuthService: ClientProxy,
   @Inject('PROFILE_SERVICE') private rabbitProfileService: ClientProxy,
-  @Inject('FILM_SERVICE') private rabbitFilmsService: ClientProxy) {}
+  @Inject('FILM_SERVICE') private rabbitFilmsService: ClientProxy,
+  @Inject('PERSONS_SERVICE') private rabbitPersonsFilmsService: ClientProxy) {}
   @Get('title_users')
   async getUser() {
       return await this.rabbitAuthService.send({
@@ -128,9 +129,9 @@ export class AppController {
 
     }
   @Get('films/parsing')
-  async parsing() {
+  async parsingFilms() {
     return await this.rabbitFilmsService.send({
-      cmd: 'get-films',
+      cmd: 'parser-films',
     },
     {});
 
@@ -151,4 +152,13 @@ export class AppController {
     {});
 
   }
+  @Get('persons/parsing')
+  async parsingPersons() {
+    return await this.rabbitPersonsFilmsService.send({
+      cmd: 'parser-persons',
+    },
+    {});
+
+  }
+
 }

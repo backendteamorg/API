@@ -21,7 +21,9 @@ interface FilmsCreationAttr {
     backdropurl:string;
     backdroppreviewUrl:string;
     movieLength:number;
-    movieid:number;
+    imagespostersCount:string;
+    imagesbackdropsCount:string;
+    imagesframesCount:string;
     type:string;
     name:string;
     description:string;
@@ -83,8 +85,12 @@ export class Films extends Model<Films, FilmsCreationAttr> {
     backdroppreviewUrl:string;
     @Column({type: DataType.INTEGER})
     movieLength:number;
-    @Column({type: DataType.INTEGER, unique:true})
-    movieid:number;
+    @Column({type: DataType.STRING})
+    imagespostersCount:string;
+    @Column({type: DataType.STRING})
+    imagesbackdropsCount:string;
+    @Column({type: DataType.STRING})
+    imagesframesCount:string;
     @Column({type: DataType.STRING})
     type:string;
     @Column({type: DataType.STRING})

@@ -55,6 +55,7 @@ import { ClientProxyFactory, Transport } from '@nestjs/microservices';
           })
         },
         inject:[ConfigService]
-    }],
+    },
+  ],
 })
 export class FilmsModule {}

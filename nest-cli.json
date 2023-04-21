@@ -90,6 +90,15 @@
       "compilerOptions": {
         "tsConfigPath": "apps/countries/tsconfig.app.json"
       }
+    },
+    "production-companies": {
+      "type": "application",
+      "root": "apps/production-companies",
+      "entryFile": "main",
+      "sourceRoot": "apps/production-companies/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/production-companies/tsconfig.app.json"
+      }
     }
   }
 }
