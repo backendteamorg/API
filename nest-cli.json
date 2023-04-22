@@ -37,24 +37,6 @@
         "tsConfigPath": "apps/profile/tsconfig.app.json"
       }
     },
-    "users": {
-      "type": "application",
-      "root": "apps/users",
-      "entryFile": "main",
-      "sourceRoot": "apps/users/src",
-      "compilerOptions": {
-        "tsConfigPath": "apps/users/tsconfig.app.json"
-      }
-    },
-    "film": {
-      "type": "application",
-      "root": "apps/film",
-      "entryFile": "main",
-      "sourceRoot": "apps/film/src",
-      "compilerOptions": {
-        "tsConfigPath": "apps/film/tsconfig.app.json"
-      }
-    },
     "films": {
       "type": "application",
       "root": "apps/films",
@@ -89,15 +71,6 @@
       "sourceRoot": "apps/countries/src",
       "compilerOptions": {
         "tsConfigPath": "apps/countries/tsconfig.app.json"
-      }
-    },
-    "production-companies": {
-      "type": "application",
-      "root": "apps/production-companies",
-      "entryFile": "main",
-      "sourceRoot": "apps/production-companies/src",
-      "compilerOptions": {
-        "tsConfigPath": "apps/production-companies/tsconfig.app.json"
       }
     }
   }

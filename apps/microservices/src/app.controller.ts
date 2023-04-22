@@ -7,7 +7,9 @@ export class AppController {
   constructor(@Inject('AUTH_SERVICE') private rabbitAuthService: ClientProxy,
   @Inject('PROFILE_SERVICE') private rabbitProfileService: ClientProxy,
   @Inject('FILM_SERVICE') private rabbitFilmsService: ClientProxy,
-  @Inject('PERSONS_SERVICE') private rabbitPersonsFilmsService: ClientProxy) {}
+  @Inject('PERSONS_SERVICE') private rabbitPersonsFilmsService: ClientProxy,
+  @Inject('GENRES_SERVICE') private rabbitGenresFilmsService: ClientProxy,
+  @Inject('COUNTRIES_SERVICE') private rabbitCountriesFilmsService: ClientProxy) {}
   @Get('title_users')
   async getUser() {
       return await this.rabbitAuthService.send({
@@ -156,6 +158,22 @@ export class AppController {
   async parsingPersons() {
     return await this.rabbitPersonsFilmsService.send({
       cmd: 'parser-persons',
+    },
+    {});
+
+  }
+  @Get('genres/parsing')
+  async genresgParser() {
+    return await this.rabbitGenresFilmsService.send({
+      cmd: 'parser-genres',
+    },
+    {});
+
+  }
+  @Get('countries/parsing')
+  async countriesParser() {
+    return await this.rabbitCountriesFilmsService.send({
+      cmd: 'parser-countries',
     },
     {});
 

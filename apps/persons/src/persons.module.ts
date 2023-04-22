@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { PersonsController } from './persons.controller';
 import { PersonsService } from './persons.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { JwtModule } from '@nestjs/jwt';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { Persons } from './person.model';
 import { ClientProxyFactory, Transport } from '@nestjs/microservices';
@@ -12,12 +11,6 @@ import { ClientProxyFactory, Transport } from '@nestjs/microservices';
     ConfigModule.forRoot({
       envFilePath: `./apps/persons/.${process.env.NODE_ENV}.env`,
       isGlobal:true
-    }),
-    JwtModule.register({
-      secret: process.env.JWT_SECRET || 'SECRET',
-      signOptions: {
-        expiresIn: '24h'
-      }
     }),
     SequelizeModule.forRoot({
       dialect: 'postgres',
