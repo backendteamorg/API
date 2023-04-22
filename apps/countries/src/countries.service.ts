@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { CountriesOfFilms } from './counties.model';
 import { ClientProxy } from '@nestjs/microservices';
-import { firstValueFrom } from 'rxjs';
+import { asyncScheduler, firstValueFrom } from 'rxjs';
 @Injectable()
 export class CountriesService {
     constructor(@InjectModel(CountriesOfFilms) private genresRepository: typeof CountriesOfFilms,
@@ -47,5 +47,8 @@ export class CountriesService {
       }
     async createCountriesOfMovies(json,movieID){
         await this.genresRepository.create({...json,movieid:movieID.id,country:json.name})
+    }
+    async getAllCountries(){
+      await this.genresRepository.findAll()
     }
 }

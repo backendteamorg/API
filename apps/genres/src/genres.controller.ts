@@ -14,6 +14,15 @@ export class GenresController {
 
     return this.genresService.formDatabase()
   }
+  @Get()
+  @MessagePattern({ cmd: 'get-all-genres'})
+  async getAllCountries(@Ctx() context: RmqContext){
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return this.genresService.formDatabase()
+  }
 
   
 }

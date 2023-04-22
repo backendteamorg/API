@@ -52,4 +52,7 @@ export class GenresService {
      await this.genresRepository.create({...json,movieid:movieID.id,genre:json.name})
     
   }
+  async getAllGenres(){
+    await this.genresRepository.findAll()
+  }
 }

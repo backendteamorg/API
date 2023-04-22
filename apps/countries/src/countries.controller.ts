@@ -7,7 +7,16 @@ export class CountriesController {
   constructor(private readonly countriesService: CountriesService) {}
   @Get()
   @MessagePattern({ cmd: 'parser-countries'})
-  async getPersons(@Ctx() context: RmqContext){
+  async getCountries(@Ctx() context: RmqContext){
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return this.countriesService.formDatabase()
+  }
+  @Get()
+  @MessagePattern({ cmd: 'get-all-countries'})
+  async getAllCountries(@Ctx() context: RmqContext){
     const channel = context.getChannelRef();
     const message = context.getMessage();
     channel.ack(message);

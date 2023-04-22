@@ -1,3 +1,4 @@
+import { ApiProperty } from "@nestjs/swagger";
 import { Table, Model, Column, DataType } from "sequelize-typescript";
 
 
@@ -53,6 +54,7 @@ interface FilmsCreationAttr {
 
 @Table({tableName: "films", createdAt: false, updatedAt: false})
 export class Films extends Model<Films, FilmsCreationAttr> {
+    @ApiProperty({example: '1', description: 'Уникальный идентификатор'})
     @Column({type: DataType.INTEGER, unique: true, primaryKey: true})
     id: number;
     @Column({type: DataType.STRING})
