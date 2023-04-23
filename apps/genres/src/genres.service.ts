@@ -33,13 +33,18 @@ export class GenresService {
     })
     if(genresREQ.ok){
       let json = await genresREQ.json();
-      for(let n =0; n < json.docs.length;n++){
-        for(let m=0; m < json.docs[n].genres.length;m++){
-          await this.createGenreOfMovies( json.docs[n].genres[m],json.docs[n] )
+      let arrGenres=[]
+      for(let i =0; i< json.docs.length;i++){
+        for(let j =0; j<json.docs[i].genres.length;j++){
+          await arrGenres.push(
+          {
+            movieid:json.docs[i].id,
+            genre:json.docs[i].genres[j].name
+          }
+          )
         }
       }
- 
-       
+      return this.genresRepository.bulkCreate(arrGenres)
     }
     else{
       console.log("Ошибка HTTP: " + genresREQ.status);
@@ -48,10 +53,6 @@ export class GenresService {
       }
   }
 
-  async createGenreOfMovies(json,movieID){
-     await this.genresRepository.create({...json,movieid:movieID.id,genre:json.name})
-    
-  }
   async getAllGenres(){
     await this.genresRepository.findAll()
   }

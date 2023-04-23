@@ -5,8 +5,8 @@ import { Table, Model, Column, DataType } from "sequelize-typescript";
 
 interface FilmsCreationAttr {
     id: number;
-    feesworld: number;
-    feesusa:number;
+    feesworld: string;
+    feesusa:string;
     status:string;
     externalIdkpHD:string;
     externalIdimdb:string;
@@ -59,6 +59,10 @@ export class Films extends Model<Films, FilmsCreationAttr> {
     id: number;
     @Column({type: DataType.STRING})
     status:string
+    @Column({type: DataType.STRING})
+    feesworld: string;
+    @Column({type: DataType.STRING})
+    feesusa:string;
     @Column({type: DataType.STRING,unique:true})
     externalIdkpHD:string;
     @Column({type: DataType.STRING,unique:true})

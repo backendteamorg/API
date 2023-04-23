@@ -10,7 +10,10 @@ export class AppController {
   @Inject('FILM_SERVICE') private rabbitFilmsService: ClientProxy,
   @Inject('PERSONS_SERVICE') private rabbitPersonsFilmsService: ClientProxy,
   @Inject('GENRES_SERVICE') private rabbitGenresFilmsService: ClientProxy,
-  @Inject('COUNTRIES_SERVICE') private rabbitCountriesFilmsService: ClientProxy) {}
+  @Inject('COUNTRIES_SERVICE') private rabbitCountriesFilmsService: ClientProxy,
+  @Inject('NAMESOFFILMS_SERVICE') private rabbitNamesOfFilmsService: ClientProxy,
+  @Inject('WHATCHABILITY_SERVICE') private rabbitwatchabilityService: ClientProxy,
+  @Inject('FACTSOFFILMS_SERVICE') private rabbitfactsoffilmsService: ClientProxy) {}
 
   @ApiTags('Регистрация и вход')
   @Post('registration')
@@ -193,6 +196,46 @@ export class AppController {
     {});
 
   }
+  @ApiTags('Данные с сайта kinopoisk')
+  @ApiOperation({summary: 'Сделать запрос на информацию о людях учавствовавших в сьемках фильмов данные о которых были получены ранее'})
+  @Get('namesoffilms/parsing')
+  async parsingnamesOfFilms() {
+    return await this.rabbitNamesOfFilmsService.send({
+      cmd: 'parser-namesoffilms',
+    },
+    {});
+
+  }
+  @ApiTags('Данные с сайта kinopoisk')
+  @ApiOperation({summary: 'Сделать запрос на информацию о том где смотреть фильмы данные о которых были получены ранее'})
+  @Get('watchability/parsing')
+  async parsingwatchability() {
+    return await this.rabbitwatchabilityService.send({
+      cmd: 'parser-watchability',
+    },
+    {});
+
+  }
+  @ApiTags('Данные с сайта kinopoisk')
+  @ApiOperation({summary: 'Сделать запрос на информацию о том где смотреть фильмы данные о которых были получены ранее'})
+  @Get('factsofmovies/parsing')
+  async parsingfactsofmovies() {
+    return await this.rabbitfactsoffilmsService.send({
+      cmd: 'parser-facts',
+    },
+    {});
+
+  }
+  @ApiOperation({summary: 'Получить информацию о жанрах фильмов данные о которых были получены ранее'})
+  @ApiTags('Данные с сайта kinopoisk')
+  @Get('genres/parsing')
+  async genresgParser() {
+    return await this.rabbitGenresFilmsService.send({
+      cmd: 'parser-genres',
+    },
+    {});
+
+}
   @ApiOperation({summary: 'Получить все сохраненные данные о фильмах'})
   @ApiTags('Данные с сайта kinopoisk')
   @Get('films')
@@ -206,7 +249,7 @@ export class AppController {
   @ApiOperation({summary: 'Получить информацию о жанрах фильмов данные о которых были получены ранее'})
   @ApiTags('Данные с сайта kinopoisk')
   @Get('genres')
-  async genresgParser() {
+  async GetGenres() {
     return await this.rabbitGenresFilmsService.send({
       cmd: 'get-all-genres',
     },

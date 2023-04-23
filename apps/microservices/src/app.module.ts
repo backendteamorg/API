@@ -151,6 +151,72 @@ import { JwtModule } from '@nestjs/jwt';
           })
         },
         inject:[ConfigService]
+    },
+    {
+      provide: 'NAMESOFFILMS_SERVICE',
+        useFactory:(configService:ConfigService)=> {
+          const USER = configService.get('RABBITMQ_DEFAULT_USER');
+          const PASSWORD =  configService.get('RABBITMQ_DEFAULT_PASS');
+          const HOST = configService.get('RABBITMQ_HOST');
+          const QUEUE = configService.get('RABBITMQ_NAMESOFFILMS_QUEUE');
+    
+          return ClientProxyFactory.create({
+            transport: Transport.RMQ,
+            options: {
+              urls:[`amqp://${USER}:${PASSWORD}@${HOST}`],
+              noAck:false,
+              queue: QUEUE,
+              queueOptions: {
+                durable: true
+              }
+            }
+          })
+        },
+        inject:[ConfigService]
+    },
+    {
+      provide: 'WHATCHABILITY_SERVICE',
+        useFactory:(configService:ConfigService)=> {
+          const USER = configService.get('RABBITMQ_DEFAULT_USER');
+          const PASSWORD =  configService.get('RABBITMQ_DEFAULT_PASS');
+          const HOST = configService.get('RABBITMQ_HOST');
+          const QUEUE = configService.get('RABBITMQ_WATCHABILITY_QUEUE');
+    
+          return ClientProxyFactory.create({
+            transport: Transport.RMQ,
+            options: {
+              urls:[`amqp://${USER}:${PASSWORD}@${HOST}`],
+              noAck:false,
+              queue: QUEUE,
+              queueOptions: {
+                durable: true
+              }
+            }
+          })
+        },
+        inject:[ConfigService]
+    },
+    {
+      provide: 'FACTSOFFILMS_SERVICE',
+        useFactory:(configService:ConfigService)=> {
+          const USER = configService.get('RABBITMQ_DEFAULT_USER');
+          const PASSWORD =  configService.get('RABBITMQ_DEFAULT_PASS');
+          const HOST = configService.get('RABBITMQ_HOST');
+          const QUEUE = configService.get('RABBITMQ_FACTSFILMS_QUEUE');
+    
+          return ClientProxyFactory.create({
+            transport: Transport.RMQ,
+            options: {
+              urls:[`amqp://${USER}:${PASSWORD}@${HOST}`],
+              noAck:false,
+              queue: QUEUE,
+              queueOptions: {
+                durable: true
+              }
+            }
+          })
+        },
+        inject:[ConfigService]
     }
 
   ],

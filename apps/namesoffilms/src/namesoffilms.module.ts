@@ -1,15 +1,15 @@
 import { Module } from '@nestjs/common';
-import { PersonsController } from './persons.controller';
-import { PersonsService } from './persons.service';
+import { NamesoffilmsController } from './namesoffilms.controller';
+import { NamesoffilmsService } from './namesoffilms.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { SequelizeModule } from '@nestjs/sequelize';
-import { Persons } from './personofmovie.model';
+import { NamesOfMovies } from './namesoffilms.model';
 import { ClientProxyFactory, Transport } from '@nestjs/microservices';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: `./apps/persons/.${process.env.NODE_ENV}.env`,
+      envFilePath: `./apps/namesoffilms/.${process.env.NODE_ENV}.env`,
       isGlobal:true
     }),
     SequelizeModule.forRoot({
@@ -19,13 +19,13 @@ import { ClientProxyFactory, Transport } from '@nestjs/microservices';
       username: process.env.POSTGRES_USER,
       password: process.env.POSTGRES_PASSWORD,
       database: process.env.POSTGRES_DB,
-      models: [Persons],
+      models: [NamesOfMovies],
       autoLoadModels: true
     }),
-    SequelizeModule.forFeature([Persons]),
+    SequelizeModule.forFeature([NamesOfMovies]),
   ],
-  controllers: [PersonsController],
-  providers: [PersonsService,
+  controllers: [NamesoffilmsController],
+  providers: [NamesoffilmsService,
     {
       provide: 'FILM_SERVICE',
         useFactory:(configService:ConfigService)=> {
@@ -50,4 +50,4 @@ import { ClientProxyFactory, Transport } from '@nestjs/microservices';
     }
   ],
 })
-export class PersonsModule {}
+export class NamesoffilmsModule {}

@@ -9,7 +9,7 @@ export class FilmsService {
     
     async formDatabase() {
         let movieId = [300,301,302,303,304,311,306,307,308,309,310]
-        await fetch(`https://api.kinopoisk.dev/v1/movie?id=${movieId.join('&id=')}&limit=1000&selectFields=\
+        const movieREQ =  await fetch(`https://api.kinopoisk.dev/v1/movie?id=${movieId.join('&id=')}&limit=1000&selectFields=\
 fees%20status%20externalId%20rating%20votes%20backdrop%20movieLength%20images%20id%20type%20\
 name%20description%20distributors%20\
 premiere%20slogan%20year%20budget%20poster%20lists%20typeNumber%20alternativeName%20enName%20ageRating%20\
@@ -20,36 +20,73 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
                 'Content-Type': 'application/json',
             },
         })
-        .then(res => res.json())
-        .then(async (json) => {
-            for(let i = 0; i < json.docs.length; i++) {
-               await this.createFilm(json.docs[i]); 
+        if(movieREQ.ok){
+            let json = await movieREQ.json();
+            let arrMovies = []
+            for(let i = 0; i <json.docs.length;i++){
+                await arrMovies.push(
+                    {
+                        feesworld: json.docs[i].fees.world?.value + json.docs[i].fees.world?.currency,
+                        feesusa: json.docs[i].fees.usa?.value + json.docs[i].fees.usa?.currency,
+                        status: json.docs[i].status,
+                        externalIdkpHD: json.docs[i].externalId?.kpHD,
+                        externalIdimdb: json.docs[i].externalId?.imdb,
+                        externalIdtmdb: json.docs[i].externalId?.tmdb,
+                        ratingkp: json.docs[i].rating.kp,
+                        ratingimdb: json.docs[i].rating.imdb,
+                        ratingfilmCritics: json.docs[i].rating.filmCritics,
+                        ratingrussianFilmCritics: json.docs[i].rating.russianFilmCritics,
+                        voteskp: json.docs[i].votes.kp,
+                        votesimdb: json.docs[i].votes.imdb,
+                        votesfilmCritics: json.docs[i].votes.filmCritics,
+                        votesrussianFilmCritics: json.docs[i].votes.russianFilmCritics,
+                        backdropurl: json.docs[i].backdrop.url,
+                        backdroppreviewUrl: json.docs[i].backdrop.previewUrl,
+                        movieLength: json.docs[i].movieLength,
+                        imagespostersCount: json.docs[i].images.postersCount,
+                        imagesbackdropsCount: json.docs[i].images.backdropsCount,
+                        imagesframesCount: json.docs[i].images.framesCount,
+                        id: json.docs[i].id,
+                        type: json.docs[i].type,
+                        name: json.docs[i].name,
+                        description: json.docs[i].description,
+                        distributor: json.docs[i].distributors.distributor,
+                        distributorRelease: json.docs[i].distributors.distributorRelease,
+                        premiereworld: json.docs[i].premiere.world,
+                        premiererussia: json.docs[i].premiere.russia,
+                        premierebluray: json.docs[i].premiere.bluray,
+                        slogan: json.docs[i].slogan,
+                        year: json.docs[i].year,
+                        budget: json.docs[i].budget.value + json.docs[i].budget.currency,
+                        posterurl: json.docs[i].poster.url,
+                        posterpreviewUrl: json.docs[i].poster.previewUrl,
+                        typeNumber: json.docs[i].typeNumber,
+                        alternativeName: json.docs[i].alternativeName,
+                        enName: json.docs[i].enName,
+                        ageRating: json.docs[i].ageRating,
+                        ratingMpaa: json.docs[i].ratingMpaa,
+                        shortDescription: json.docs[i].shortDescription,
+                        hasImax: json.docs[i].technology.hasImax,
+                        has3D: json.docs[i].technology.has3D,
+                        ticketsOnSale: json.docs[i].ticketsOnSale,
+                        updatedAt: json.docs[i].updatedAt,
+                        top10: json.docs[i].top10,
+                        top250: json.docs[i].top250,
+
+                        
+                    }
+                    )
             }
-            
-        })
-        .catch(err => console.log(err))
+            return await this.filmRepository.bulkCreate(arrMovies)
+       
+             
+          }
+          else{
+            console.log("Ошибка HTTP: " + movieREQ.status);
+          }
        
 
         
-    }
-    async createFilm(json) {
-        
-        const film = await this.filmRepository.create({...json, feesworld:json.fees?.world?.value,
-        feesusa:json.fees?.usa?.value, status:json.status, externalIdkpHD:json.externalId?.kpHD, 
-        externalIdimdb:json.externalId?.imdb,externalIdtmdb:json.externalId?.tmdb, 
-        ratingkp:json.rating?.kp, ratingimdb:json.rating?.imdb, ratingfilmCritics: json.rating?.filmCritics, 
-        ratingrussianFilmCritics: json.rating?.russianFilmCritics, voteskp: json.votes?.kp, votesimdb: json.votes?.imdb,
-        votesfilmCritics: json.votes?.filmCritics, votesrussianFilmCritics: json.votes?.russianFilmCritics, backdropurl:json.backdrop?.url,
-        backdroppreviewUrl: json.backdrop?.previewUrl, movieLength: json.movieLength,imagespostersCount: json.images.postersCount,imagesbackdropsCount:json.images.backdropsCount,imagesframesCount:json.images.framesCount,movieid: json.id, type: json.type, 
-        name: json.name, description: json.description, distributor: json.distributors?.distributor,  distributorRelease: json.distributors?.distributorRelease,
-        premiereworld: json.premiere?.world, premiererussia: json.premiere?.russia, premierebluray: json.premiere?.bluray,
-        slogan: json.slogan, year: json.year, budget: (json.budget?.value+json.budget?.currency), posterurl: json.poster?.url, posterpreviewUrl: json.poster?.previewUrl,
-        typeNumber: json.typeNumber, alternativeName: json.alternativeName, enName: json.enName, ageRating: json.ageRating, ratingMpaa: json.ratingMpaa,
-        shortDescription: json.shortDescription, hasImax: json.technology?.hasImax, has3D: json.technology?.has3D,ticketsOnSale: json.ticketsOnSale,
-        updatedAt: json.updatedAt, top10: json.top10, top25: json.top25 });
-
-            
-        return film;
     }
     async getAllFilm(){
         return await this.filmRepository.findAll()

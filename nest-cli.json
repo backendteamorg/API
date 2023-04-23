@@ -72,6 +72,33 @@
       "compilerOptions": {
         "tsConfigPath": "apps/countries/tsconfig.app.json"
       }
+    },
+    "facts": {
+      "type": "application",
+      "root": "apps/facts",
+      "entryFile": "main",
+      "sourceRoot": "apps/facts/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/facts/tsconfig.app.json"
+      }
+    },
+    "watchability": {
+      "type": "application",
+      "root": "apps/watchability",
+      "entryFile": "main",
+      "sourceRoot": "apps/watchability/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/watchability/tsconfig.app.json"
+      }
+    },
+    "namesoffilms": {
+      "type": "application",
+      "root": "apps/namesoffilms",
+      "entryFile": "main",
+      "sourceRoot": "apps/namesoffilms/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/namesoffilms/tsconfig.app.json"
+      }
     }
   }
 }

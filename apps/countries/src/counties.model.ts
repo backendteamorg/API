@@ -4,8 +4,8 @@ import { Table, Model, Column, DataType, BelongsToMany} from "sequelize-typescri
 
 interface CountriesOfFilmsCreationAttr {
     id: number;
-    country:string;
     movieid:number;
+    country:string;
 }
 
 @Table({tableName: "countriesOfFilms", createdAt: false, updatedAt: false})
@@ -13,8 +13,8 @@ export class CountriesOfFilms extends Model<CountriesOfFilms, CountriesOfFilmsCr
     @ApiProperty({example: '1', description: 'Уникальный идентификатор'})
     @Column({type: DataType.INTEGER,autoIncrement: true, unique: true, primaryKey: true})
     id: number;
-    @Column({type: DataType.STRING})
-    country:string;
     @Column({type: DataType.INTEGER})
-    movieid:number;    
+    movieid:number; 
+    @Column({type: DataType.STRING})
+    country:string;   
 }
