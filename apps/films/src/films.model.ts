@@ -35,7 +35,7 @@ interface FilmsCreationAttr {
     premierebluray:string;
     slogan:string;
     year:number;
-    budget:number;
+    budget:string;
     posterurl:string;
     posterpreviewUrl:string;
     typeNumber:number;
@@ -113,8 +113,8 @@ export class Films extends Model<Films, FilmsCreationAttr> {
     slogan:string;
     @Column({type: DataType.INTEGER})
     year:number;
-    @Column({type: DataType.INTEGER})
-    budget:number;
+    @Column({type: DataType.STRING})
+    budget:string;
     @Column({type: DataType.STRING})
     posterurl:string;
     @Column({type: DataType.STRING})
