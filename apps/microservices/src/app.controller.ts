@@ -16,7 +16,9 @@ export class AppController {
   @Inject('FACTSOFFILMS_SERVICE') private rabbitfactsoffilmsService: ClientProxy,
   @Inject('PRODUCRCOMPANIES_SERVICE') private rabbitProductionCompaniesFilmsService: ClientProxy,
   @Inject('SPOKENLANGUAGE_SERVICE') private rabbitSpokenLanguageService: ClientProxy,
-  @Inject('VIDEOS_SERVICE') private rabbitVideosService: ClientProxy) {}
+  @Inject('VIDEOS_SERVICE') private rabbitVideosService: ClientProxy,
+  @Inject('SEQUEILANDPRIQUELS_SERVICE') private rabbitequelsandprequelsService: ClientProxy,
+  @Inject('PERSONQWE_SERVICE') private rabbitePersonService: ClientProxy) {}
 
   @ApiTags('Регистрация и вход')
   @Post('registration')
@@ -265,7 +267,27 @@ export class AppController {
   @Get('videos/parsing')
   async videosParser() {
     return await this.rabbitVideosService.send({
-      cmd: 'videos-parse',
+      cmd: 'videos-parsing',
+    },
+    {});
+
+}
+@ApiOperation({summary: 'Получить информацию о сиквелах и приквелах фильмов данные о которых были получены ранее'})
+  @ApiTags('Данные с сайта kinopoisk')
+  @Get('sequelsandprequels/parsing')
+  async sequelsandprequelsParser() {
+    return await this.rabbitequelsandprequelsService.send({
+      cmd: 'sequelsandprequels-parsing',
+    },
+    {});
+
+}
+@ApiOperation({summary: 'Получить информацию о сиквелах и приквелах фильмов данные о которых были получены ранее'})
+  @ApiTags('Данные с сайта kinopoisk')
+  @Get('person/parsing')
+  async personParser() {
+    return await this.rabbitePersonService.send({
+      cmd: 'parser-person',
     },
     {});
 
@@ -287,6 +309,16 @@ export class AppController {
   async GetGenres() {
     return await this.rabbitGenresFilmsService.send({
       cmd: 'get-all-genres',
+    },
+    {});
+
+  }
+  @ApiOperation({summary: 'Получить информацию о жанрах фильмов данные о которых были получены ранее'})
+  @ApiTags('Данные с сайта kinopoisk')
+  @Get('persnos')
+  async GetAllPerson() {
+    return await this.rabbitPersonsFilmsService.send({
+      cmd: 'get-all-persons',
     },
     {});
 

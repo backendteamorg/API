@@ -1,15 +1,15 @@
 import { Module } from '@nestjs/common';
-import { ProductionCompaniesController } from './production-companies.controller';
-import { ProductionCompaniesService } from './production-companies.service';
+import { SequelsAndPrequelsController } from './sequels-and-prequels.controller';
+import { SequelsAndPrequelsService } from './sequels-and-prequels.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { SequelizeModule } from '@nestjs/sequelize';
-import { ProductionCompanies } from './production-companies.model';
+import { SequelsandPrequeils } from './sequelsAndPrequels.model';
 import { ClientProxyFactory, Transport } from '@nestjs/microservices';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: `./apps/production-companies/.${process.env.NODE_ENV}.env`,
+      envFilePath: `./apps/sequels-and-prequels/.${process.env.NODE_ENV}.env`,
       isGlobal:true
     }),
     SequelizeModule.forRoot({
@@ -19,13 +19,13 @@ import { ClientProxyFactory, Transport } from '@nestjs/microservices';
       username: process.env.POSTGRES_USER,
       password: process.env.POSTGRES_PASSWORD,
       database: process.env.POSTGRES_DB,
-      models: [ProductionCompanies],
+      models: [SequelsandPrequeils],
       autoLoadModels: true
     }),
-    SequelizeModule.forFeature([ProductionCompanies]),
+    SequelizeModule.forFeature([SequelsandPrequeils]),
   ],
-  controllers: [ProductionCompaniesController],
-  providers: [ProductionCompaniesService,
+  controllers: [SequelsAndPrequelsController],
+  providers: [SequelsAndPrequelsService,
     {
       provide: 'FILM_SERVICE',
         useFactory:(configService:ConfigService)=> {
@@ -50,4 +50,4 @@ import { ClientProxyFactory, Transport } from '@nestjs/microservices';
     }
   ],
 })
-export class ProductionCompaniesModule {}
+export class SequelsAndPrequelsModule {}

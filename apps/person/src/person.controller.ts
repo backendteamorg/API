@@ -1,19 +1,18 @@
 import { Controller, Get } from '@nestjs/common';
-import { VideosService } from './videos.service';
+import { PersonService } from './person.service';
 import { Ctx, MessagePattern, RmqContext } from '@nestjs/microservices';
 
 @Controller()
-export class VideosController {
-  constructor(private readonly videosService: VideosService) {}
-  
+export class PersonController {
+  constructor(private readonly personService: PersonService) {}
   @Get()
-  @MessagePattern({ cmd: 'videos-parsing'})
+  @MessagePattern({ cmd: 'parser-person'})
   async getPersons(@Ctx() context: RmqContext){
     const channel = context.getChannelRef();
     const message = context.getMessage();
     channel.ack(message);
 
-    return this.videosService.formDatabase()
+    return this.personService.formDatabase()
   }
  
 }

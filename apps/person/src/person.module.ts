@@ -1,15 +1,15 @@
 import { Module } from '@nestjs/common';
-import { ProductionCompaniesController } from './production-companies.controller';
-import { ProductionCompaniesService } from './production-companies.service';
+import { PersonController } from './person.controller';
+import { PersonService } from './person.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { SequelizeModule } from '@nestjs/sequelize';
-import { ProductionCompanies } from './production-companies.model';
 import { ClientProxyFactory, Transport } from '@nestjs/microservices';
+import { Person } from './person.model';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: `./apps/production-companies/.${process.env.NODE_ENV}.env`,
+      envFilePath: `./apps/person/.${process.env.NODE_ENV}.env`,
       isGlobal:true
     }),
     SequelizeModule.forRoot({
@@ -19,20 +19,20 @@ import { ClientProxyFactory, Transport } from '@nestjs/microservices';
       username: process.env.POSTGRES_USER,
       password: process.env.POSTGRES_PASSWORD,
       database: process.env.POSTGRES_DB,
-      models: [ProductionCompanies],
+      models: [Person],
       autoLoadModels: true
     }),
-    SequelizeModule.forFeature([ProductionCompanies]),
+    SequelizeModule.forFeature([Person]),
   ],
-  controllers: [ProductionCompaniesController],
-  providers: [ProductionCompaniesService,
+  controllers: [PersonController],
+  providers: [PersonService,
     {
-      provide: 'FILM_SERVICE',
+      provide: 'PERSONS_SERVICE',
         useFactory:(configService:ConfigService)=> {
           const USER = configService.get('RABBITMQ_DEFAULT_USER');
           const PASSWORD =  configService.get('RABBITMQ_DEFAULT_PASS');
           const HOST = configService.get('RABBITMQ_HOST');
-          const QUEUE = configService.get('RABBITMQ_FILM_QUEUE');
+          const QUEUE = configService.get('RABBITMQ_PERSONS_QUEUE');
     
           return ClientProxyFactory.create({
             transport: Transport.RMQ,
@@ -47,7 +47,7 @@ import { ClientProxyFactory, Transport } from '@nestjs/microservices';
           })
         },
         inject:[ConfigService]
-    }
+    },
   ],
 })
-export class ProductionCompaniesModule {}
+export class PersonModule {}

@@ -49,7 +49,10 @@ export class SpokenLanguagesService {
         }
       }
       return await this.spokenlanguageRepository.bulkCreate(arrSpokenLanguage)
-}
+    }
+    else{
+      console.log("Ошибка HTTP: " + genresREQ.status);
+    }
 }
   }
 }

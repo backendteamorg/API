@@ -126,6 +126,24 @@
       "compilerOptions": {
         "tsConfigPath": "apps/spoken-languages/tsconfig.app.json"
       }
+    },
+    "sequels-and-prequels": {
+      "type": "application",
+      "root": "apps/sequels-and-prequels",
+      "entryFile": "main",
+      "sourceRoot": "apps/sequels-and-prequels/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/sequels-and-prequels/tsconfig.app.json"
+      }
+    },
+    "person": {
+      "type": "application",
+      "root": "apps/person",
+      "entryFile": "main",
+      "sourceRoot": "apps/person/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/person/tsconfig.app.json"
+      }
     }
   }
 }

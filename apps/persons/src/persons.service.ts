@@ -63,4 +63,7 @@ persons.id%20persons.photo%20persons.name%20persons.enName%20persons.profession%
         
       }
   }
+  async getAllPersons(){
+    return await this.personsRepository.findAll()
+  }
 }

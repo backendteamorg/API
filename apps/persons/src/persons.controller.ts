@@ -14,5 +14,13 @@ export class PersonsController {
 
     return this.personsService.formDatabase()
   }
+  @Get()
+  @MessagePattern({ cmd: 'get-all-persons'})
+  async getAllPersons(@Ctx() context: RmqContext){
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
 
+    return this.personsService.getAllPersons()
+  }
 }
