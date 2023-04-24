@@ -13,11 +13,7 @@ interface PersonCreationAttr {
     age:string;
     birthPlace:string;
     deathPlace:string;
-    spouses_id:string;
-    spouses_name:string;
-    spouses_divorced:string;
-    spouses_divorcedReason:string;
-    spouses_sex:string;
+    countAwards:number;
 }
 
 @Table({tableName: "person", createdAt: false, updatedAt: false})
@@ -44,14 +40,6 @@ export class Person extends Model<Person, PersonCreationAttr> {
     birthPlace:string;
     @Column({type: DataType.STRING})
     deathPlace:string;
-    @Column({type: DataType.STRING})
-    spouses_id:string;
-    @Column({type: DataType.STRING})
-    spouses_name:string;
-    @Column({type: DataType.STRING})
-    spouses_divorced:string;
-    @Column({type: DataType.STRING})
-    spouses_divorcedReason:string;
-    @Column({type: DataType.STRING})
-    spouses_sex:string;
+    @Column({type: DataType.INTEGER})
+    countAwards:number;
 }

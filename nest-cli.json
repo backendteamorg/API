@@ -144,6 +144,33 @@
       "compilerOptions": {
         "tsConfigPath": "apps/person/tsconfig.app.json"
       }
+    },
+    "reviews": {
+      "type": "application",
+      "root": "apps/reviews",
+      "entryFile": "main",
+      "sourceRoot": "apps/reviews/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/reviews/tsconfig.app.json"
+      }
+    },
+    "spousesofpersons": {
+      "type": "application",
+      "root": "apps/spousesofpersons",
+      "entryFile": "main",
+      "sourceRoot": "apps/spousesofpersons/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/spousesofpersons/tsconfig.app.json"
+      }
+    },
+    "roles": {
+      "type": "application",
+      "root": "apps/roles",
+      "entryFile": "main",
+      "sourceRoot": "apps/roles/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/roles/tsconfig.app.json"
+      }
     }
   }
 }

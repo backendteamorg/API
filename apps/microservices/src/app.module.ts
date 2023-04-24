@@ -328,6 +328,50 @@ import { JwtModule } from '@nestjs/jwt';
         },
         inject:[ConfigService]
     },
+    {
+      provide: 'SPOSES_OF_PERSONQWE_SERVICE',
+        useFactory:(configService:ConfigService)=> {
+          const USER = configService.get('RABBITMQ_DEFAULT_USER');
+          const PASSWORD =  configService.get('RABBITMQ_DEFAULT_PASS');
+          const HOST = configService.get('RABBITMQ_HOST');
+          const QUEUE = configService.get('RABBITMQ_SPOSES_OF_PERSONS_QUEUE');
+    
+          return ClientProxyFactory.create({
+            transport: Transport.RMQ,
+            options: {
+              urls:[`amqp://${USER}:${PASSWORD}@${HOST}`],
+              noAck:false,
+              queue: QUEUE,
+              queueOptions: {
+                durable: true
+              }
+            }
+          })
+        },
+        inject:[ConfigService]
+    },
+    {
+      provide: 'ROLES_SERVICE',
+        useFactory:(configService:ConfigService)=> {
+          const USER = configService.get('RABBITMQ_DEFAULT_USER');
+          const PASSWORD =  configService.get('RABBITMQ_DEFAULT_PASS');
+          const HOST = configService.get('RABBITMQ_HOST');
+          const QUEUE = configService.get('RABBITMQ_ROLES_QUEUE');
+    
+          return ClientProxyFactory.create({
+            transport: Transport.RMQ,
+            options: {
+              urls:[`amqp://${USER}:${PASSWORD}@${HOST}`],
+              noAck:false,
+              queue: QUEUE,
+              queueOptions: {
+                durable: true
+              }
+            }
+          })
+        },
+        inject:[ConfigService]
+    },
 
   ],
 })

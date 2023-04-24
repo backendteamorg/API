@@ -17,4 +17,6 @@ export class Auth extends Model<Auth, AuthCreationAttrs> {
     @ApiProperty({example: '12345678', description: 'Пароль'})
     @Column({type: DataType.STRING, allowNull: false})
     password: string;
+    @Column({type: DataType.STRING, allowNull: false})
+    role:string;
 }

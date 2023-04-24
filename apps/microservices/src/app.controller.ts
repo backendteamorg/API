@@ -3,6 +3,8 @@ import { ClientProxy } from '@nestjs/microservices';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { ApiOperation, ApiProperty, ApiTags } from '@nestjs/swagger';
 
+
+
 @Controller()
 export class AppController {
   constructor(@Inject('AUTH_SERVICE') private rabbitAuthService: ClientProxy,
@@ -18,8 +20,38 @@ export class AppController {
   @Inject('SPOKENLANGUAGE_SERVICE') private rabbitSpokenLanguageService: ClientProxy,
   @Inject('VIDEOS_SERVICE') private rabbitVideosService: ClientProxy,
   @Inject('SEQUEILANDPRIQUELS_SERVICE') private rabbitequelsandprequelsService: ClientProxy,
-  @Inject('PERSONQWE_SERVICE') private rabbitePersonService: ClientProxy) {}
+  @Inject('PERSONQWE_SERVICE') private rabbitePersonService: ClientProxy,
+  @Inject('SPOSES_OF_PERSONQWE_SERVICE') private rabbitesSpousesPersonService: ClientProxy,
+  @Inject('ROLES_SERVICE') private rabbitesRoleService: ClientProxy) {}
 
+
+  @ApiTags('Роли')
+  @Post('createrole')
+  async createRole(
+    @Body('value') value: string,
+    @Body('description') description: string,
+    ) {
+      return await this.rabbitesRoleService.send(
+          {
+            cmd: 'create-role',
+          },
+          {
+            value,
+            description,
+          },
+        );
+      }
+@ApiTags('Роли')
+@Get('role/:value')
+async getRole(
+  @Param('value') value: string) {
+    return await this.rabbitesRoleService.send(
+        {
+         cmd: 'get-role',
+        },
+        {value:value},
+        );
+   }
   @ApiTags('Регистрация и вход')
   @Post('registration')
   @ApiProperty({type:String})
@@ -172,7 +204,7 @@ export class AppController {
     {});
 
   }
-  @ApiOperation({summary: 'Сделать запрос на информацию о фильмах с сайта "Кинопоиск"'})
+  @ApiOperation({summary: 'Сделать запрос к api на информацию о фильмах с сайта "Кинопоиск"'})
   @ApiTags('Данные с сайта kinopoisk')
   @Get('films/parsing')
   async parsingFilms() {
@@ -182,7 +214,7 @@ export class AppController {
     {});
 
   }
-  @ApiOperation({summary: 'Сделать запрос на информацию о странах фильмов данные о которых были получены ранее'})
+  @ApiOperation({summary: 'Сделать запрос к api на информацию о странах фильмов данные о которых были получены ранее'})
   @ApiTags('Данные с сайта kinopoisk')
   @Get('countries/parsing')
   async countriesParser() {
@@ -193,7 +225,7 @@ export class AppController {
 
   }
   @ApiTags('Данные с сайта kinopoisk')
-  @ApiOperation({summary: 'Сделать запрос на информацию о людях учавствовавших в сьемках фильмов данные о которых были получены ранее'})
+  @ApiOperation({summary: 'Сделать запрос к api на информацию о людях учавствовавших в сьемках фильмов данные о которых были получены ранее'})
   @Get('persons/parsing')
   async parsingPersons() {
     return await this.rabbitPersonsFilmsService.send({
@@ -203,7 +235,7 @@ export class AppController {
 
   }
   @ApiTags('Данные с сайта kinopoisk')
-  @ApiOperation({summary: 'Сделать запрос на информацию о названиях фильмов данные о которых были получены ранее'})
+  @ApiOperation({summary: 'Сделать запрос к api на информацию о названиях фильмов данные о которых были получены ранее'})
   @Get('namesoffilms/parsing')
   async parsingnamesOfFilms() {
     return await this.rabbitNamesOfFilmsService.send({
@@ -213,7 +245,7 @@ export class AppController {
 
   }
   @ApiTags('Данные с сайта kinopoisk')
-  @ApiOperation({summary: 'Сделать запрос на информацию о том где смотреть фильмы данные о которых были получены ранее'})
+  @ApiOperation({summary: 'Сделать запрос к api на информацию о том где смотреть фильмы данные о которых были получены ранее'})
   @Get('watchability/parsing')
   async parsingwatchability() {
     return await this.rabbitwatchabilityService.send({
@@ -223,7 +255,7 @@ export class AppController {
 
   }
   @ApiTags('Данные с сайта kinopoisk')
-  @ApiOperation({summary: 'Сделать запрос на информацию о фактах фильмов данные о которых были получены ранее'})
+  @ApiOperation({summary: 'Сделать запрос к api на информацию о фактах фильмов данные о которых были получены ранее'})
   @Get('factsofmovies/parsing')
   async parsingfactsofmovies() {
     return await this.rabbitfactsoffilmsService.send({
@@ -232,7 +264,7 @@ export class AppController {
     {});
 
   }
-  @ApiOperation({summary: 'Получить информацию о жанрах фильмов данные о которых были получены ранее'})
+  @ApiOperation({summary: 'Получить информацию с api о жанрах фильмов данные о которых были получены ранее'})
   @ApiTags('Данные с сайта kinopoisk')
   @Get('genres/parsing')
   async genresgParser() {
@@ -282,12 +314,32 @@ export class AppController {
     {});
 
 }
-@ApiOperation({summary: 'Получить информацию о сиквелах и приквелах фильмов данные о которых были получены ранее'})
+@ApiOperation({summary: 'Сделать запрос к api чтобы получить тех кто снимался в фильмах данные о которых были получены ранее'})
   @ApiTags('Данные с сайта kinopoisk')
   @Get('person/parsing')
   async personParser() {
     return await this.rabbitePersonService.send({
       cmd: 'parser-person',
+    },
+    {});
+
+}
+@ApiOperation({summary: 'Получить пролфили тех кто учвтсовал в сьемках фильмов данные о которых были получены ранее'})
+  @ApiTags('Данные с сайта kinopoisk')
+  @Get('get-person-profile')
+  async getpersonProfile() {
+    return await this.rabbitePersonService.send({
+      cmd: 'get-all-person-profile',
+    },
+    {});
+
+}
+@ApiOperation({summary: 'Получить информацию о сиквелах и приквелах фильмов данные о которых были получены ранее'})
+  @ApiTags('Данные с сайта kinopoisk')
+  @Get('spousesperson/parsing')
+  async spousespersonParser() {
+    return await this.rabbitesSpousesPersonService.send({
+      cmd: 'sposes-of-person-parser',
     },
     {});
 
@@ -313,7 +365,7 @@ export class AppController {
     {});
 
   }
-  @ApiOperation({summary: 'Получить информацию о жанрах фильмов данные о которых были получены ранее'})
+  @ApiOperation({summary: 'Получить всех кто учавтсовал в сьемках фильмов данные о которых были получены ранее'})
   @ApiTags('Данные с сайта kinopoisk')
   @Get('persnos')
   async GetAllPerson() {
