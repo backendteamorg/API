@@ -1,13 +1,14 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import { GenresOfFilms } from './genres.model';
+import { SpokenLanguage } from './spoken-language.model';
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
 
 @Injectable()
-export class GenresService {
-  constructor(@InjectModel(GenresOfFilms) private genresRepository: typeof GenresOfFilms,
+export class SpokenLanguagesService {
+  constructor(@InjectModel(SpokenLanguage) private spokenlanguageRepository:typeof SpokenLanguage,
   @Inject('FILM_SERVICE') private rabbitFilmsService: ClientProxy){}
+
 
   async getAllFilms() {
     const ob$ = await this.rabbitFilmsService.send({
@@ -17,14 +18,16 @@ export class GenresService {
     const films = await firstValueFrom(ob$).catch((err) => console.error(err));
     return films;
   }
-  
+
+
   async formDatabase() {
     let filmIdArr = [];
     for(let i = 0; i<(await this.getAllFilms()).length;i++){
       filmIdArr.push((await this.getAllFilms())[i].id);
     }
     if(filmIdArr.length!=0){
-      const genresREQ =  await fetch(`https://api.kinopoisk.dev/v1/movie?id=${filmIdArr.join('&id=')}&selectFields=genres&selectFields=id&limit=1000)`, {
+      const genresREQ =  await fetch(`https://api.kinopoisk.dev/v1/movie?id=${filmIdArr.join('&id=')}&selectFields=id&selectFields=spokenLanguages&\
+&limit=1000)`, {
         method: 'GET',
         headers:{
                   'X-API-KEY': 'QTD9VCR-EW8M0Y4-QR6W0Y1-Y8J1BFT',
@@ -33,27 +36,20 @@ export class GenresService {
     })
     if(genresREQ.ok){
       let json = await genresREQ.json();
-      let arrGenres=[]
-      for(let i =0; i< json.docs.length;i++){
-        for(let j =0; j<json.docs[i].genres.length;j++){
-          await arrGenres.push(
-          {
-            movieid:json.docs[i].id,
-            genre:json.docs[i].genres[j].name
-          }
-          )
+      let arrSpokenLanguage = []
+      for(let i = 0;i<json.docs.length;i++){
+        for(let j = 0;j<json.docs[i].spokenLanguages.length;j++){
+          await arrSpokenLanguage.push(
+            {
+              movieid: json.docs[i].id,
+              name: json.docs[i].spokenLanguages[j].name,
+              nameEn:json.docs[i].spokenLanguages[j].nameEn
+            }
+            )
         }
       }
-      return this.genresRepository.bulkCreate(arrGenres)
-    }
-    else{
-      console.log("Ошибка HTTP: " + genresREQ.status);
-    }
-        
-    }
-  }
-
-  async getAllGenres(){
-    await this.genresRepository.findAll()
+      return await this.spokenlanguageRepository.bulkCreate(arrSpokenLanguage)
+}
+}
   }
 }

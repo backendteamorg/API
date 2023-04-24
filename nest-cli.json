@@ -99,6 +99,33 @@
       "compilerOptions": {
         "tsConfigPath": "apps/namesoffilms/tsconfig.app.json"
       }
+    },
+    "production-companies": {
+      "type": "application",
+      "root": "apps/production-companies",
+      "entryFile": "main",
+      "sourceRoot": "apps/production-companies/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/production-companies/tsconfig.app.json"
+      }
+    },
+    "videos": {
+      "type": "application",
+      "root": "apps/videos",
+      "entryFile": "main",
+      "sourceRoot": "apps/videos/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/videos/tsconfig.app.json"
+      }
+    },
+    "spoken-languages": {
+      "type": "application",
+      "root": "apps/spoken-languages",
+      "entryFile": "main",
+      "sourceRoot": "apps/spoken-languages/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/spoken-languages/tsconfig.app.json"
+      }
     }
   }
 }

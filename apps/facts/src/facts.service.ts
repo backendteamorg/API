@@ -37,11 +37,14 @@ export class FactsService {
     for(let n =0; n < json.docs.length;n++){
       if(json.docs[n].facts){
         for(let m=0; m < json.docs[n].facts.length;m++){
-          await arrFacts.push( {
+          await arrFacts.push( 
+          {
             movieid:json.docs[n].id,
             value:json.docs[n].facts[m].value,
             type:json.docs[n].facts[m].type,
-            spoiler:json.docs[n].facts[m].spoiler} )
+            spoiler:json.docs[n].facts[m].spoiler
+          } 
+          )
         }
 
       }

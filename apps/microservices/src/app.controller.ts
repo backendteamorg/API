@@ -13,7 +13,10 @@ export class AppController {
   @Inject('COUNTRIES_SERVICE') private rabbitCountriesFilmsService: ClientProxy,
   @Inject('NAMESOFFILMS_SERVICE') private rabbitNamesOfFilmsService: ClientProxy,
   @Inject('WHATCHABILITY_SERVICE') private rabbitwatchabilityService: ClientProxy,
-  @Inject('FACTSOFFILMS_SERVICE') private rabbitfactsoffilmsService: ClientProxy) {}
+  @Inject('FACTSOFFILMS_SERVICE') private rabbitfactsoffilmsService: ClientProxy,
+  @Inject('PRODUCRCOMPANIES_SERVICE') private rabbitProductionCompaniesFilmsService: ClientProxy,
+  @Inject('SPOKENLANGUAGE_SERVICE') private rabbitSpokenLanguageService: ClientProxy,
+  @Inject('VIDEOS_SERVICE') private rabbitVideosService: ClientProxy) {}
 
   @ApiTags('Регистрация и вход')
   @Post('registration')
@@ -145,6 +148,7 @@ export class AppController {
       },
     );
   }
+  @UseGuards(JwtAuthGuard)
   @ApiOperation({summary: 'Удалить профиль'})
   @ApiTags('Профиль')
   @Delete('profile/:id')
@@ -197,7 +201,7 @@ export class AppController {
 
   }
   @ApiTags('Данные с сайта kinopoisk')
-  @ApiOperation({summary: 'Сделать запрос на информацию о людях учавствовавших в сьемках фильмов данные о которых были получены ранее'})
+  @ApiOperation({summary: 'Сделать запрос на информацию о названиях фильмов данные о которых были получены ранее'})
   @Get('namesoffilms/parsing')
   async parsingnamesOfFilms() {
     return await this.rabbitNamesOfFilmsService.send({
@@ -217,7 +221,7 @@ export class AppController {
 
   }
   @ApiTags('Данные с сайта kinopoisk')
-  @ApiOperation({summary: 'Сделать запрос на информацию о том где смотреть фильмы данные о которых были получены ранее'})
+  @ApiOperation({summary: 'Сделать запрос на информацию о фактах фильмов данные о которых были получены ранее'})
   @Get('factsofmovies/parsing')
   async parsingfactsofmovies() {
     return await this.rabbitfactsoffilmsService.send({
@@ -236,6 +240,37 @@ export class AppController {
     {});
 
 }
+@ApiTags('Данные с сайта kinopoisk')
+  @ApiOperation({summary: 'Сделать запрос на информацию о компаниях учавстовавших в сьемках фильмов данные о которых были получены ранее'})
+  @Get('productioncompanies/parsing')
+  async parsingproductionCompanies() {
+    return await this.rabbitProductionCompaniesFilmsService.send({
+      cmd: 'parser-productioncompanies',
+    },
+    {});
+
+}
+@ApiOperation({summary: 'Получить информацию о языках на которых фильмы данные о которых были получены ранее'})
+  @ApiTags('Данные с сайта kinopoisk')
+  @Get('spokenlanguage/parsing')
+  async spokenlanguageParser() {
+    return await this.rabbitSpokenLanguageService.send({
+      cmd: 'spoken-langeage-parser',
+    },
+    {});
+
+}
+@ApiOperation({summary: 'Получить информацию о трейлерах фильмов данные о которых были получены ранее'})
+  @ApiTags('Данные с сайта kinopoisk')
+  @Get('videos/parsing')
+  async videosParser() {
+    return await this.rabbitVideosService.send({
+      cmd: 'videos-parse',
+    },
+    {});
+
+}
+
   @ApiOperation({summary: 'Получить все сохраненные данные о фильмах'})
   @ApiTags('Данные с сайта kinopoisk')
   @Get('films')
