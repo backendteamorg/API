@@ -82,11 +82,9 @@ $ npm run start:dev person
 # start service namesoffilms in watch mode 
 $ npm run start:dev namesoffilms
 
-# start service countries in watch mode 
-$ npm run start:dev countries
+# start service reviews in watch mode 
+$ npm run start:dev reviews
 
-# start service countries in watch mode 
-$ npm run start:dev countries
 ```
 
 ## Test

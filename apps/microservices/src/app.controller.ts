@@ -22,7 +22,8 @@ export class AppController {
   @Inject('SEQUEILANDPRIQUELS_SERVICE') private rabbitequelsandprequelsService: ClientProxy,
   @Inject('PERSONQWE_SERVICE') private rabbitePersonService: ClientProxy,
   @Inject('SPOSES_OF_PERSONQWE_SERVICE') private rabbitesSpousesPersonService: ClientProxy,
-  @Inject('ROLES_SERVICE') private rabbitesRoleService: ClientProxy) {}
+  @Inject('ROLES_SERVICE') private rabbitesRoleService: ClientProxy,
+  @Inject('REVIEWS_SERVICE') private rabbitesReviewsOfFilmsService: ClientProxy) {}
 
 
   @ApiTags('Роли')
@@ -320,6 +321,16 @@ async getRole(
   async personParser() {
     return await this.rabbitePersonService.send({
       cmd: 'parser-person',
+    },
+    {});
+
+}
+@ApiOperation({summary: 'Сделать запрос к api чтобы получить тех кто снимался в фильмах данные о которых были получены ранее'})
+  @ApiTags('Данные с сайта kinopoisk')
+  @Get('rewiews/parsing')
+  async rewiewsParser() {
+    return await this.rabbitesReviewsOfFilmsService.send({
+      cmd: 'parser-reviews',
     },
     {});
 

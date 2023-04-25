@@ -5,9 +5,11 @@ interface ReviewsOfMoviesCreationAttr {
     id: number;
     movieid: number;
     title:string;
+    type:string;
     review:string;
+    date:string;
     author:string;
-    authorId:number;
+    
 }
 
 @Table({tableName: "reviews"})
@@ -16,12 +18,14 @@ export class ReviewsOfMovies extends Model<ReviewsOfMovies, ReviewsOfMoviesCreat
     id: number;
     @Column({type: DataType.INTEGER})
     movieid: number;
-    @Column({type: DataType.STRING})
+    @Column({type: DataType.TEXT})
     title:string;
     @Column({type: DataType.STRING})
+    type:string;
+    @Column({type: DataType.TEXT})
     review:string;
+    @Column({type: DataType.DATE})
+    date:string;
     @Column({type: DataType.STRING})
     author:string;
-    @Column({type: DataType.INTEGER})
-    authorId:number;
 }
