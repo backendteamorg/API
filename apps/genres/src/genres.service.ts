@@ -24,7 +24,7 @@ export class GenresService {
       filmIdArr.push((await this.getAllFilms())[i].id);
     }
     if(filmIdArr.length!=0){
-      const genresREQ =  await fetch(`https://api.kinopoisk.dev/v1/movie?id=${filmIdArr.join('&id=')}&selectFields=genres&selectFields=id&limit=1000)`, {
+      const genresREQ =  await fetch(`https://api.kinopoisk.dev/v1/movie?id=${filmIdArr.join('&id=')}&selectFields=genres%20id&limit=1000)`, {
         method: 'GET',
         headers:{
                   'X-API-KEY': 'QTD9VCR-EW8M0Y4-QR6W0Y1-Y8J1BFT',

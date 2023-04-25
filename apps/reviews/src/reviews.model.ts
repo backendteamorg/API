@@ -4,9 +4,10 @@ import { Table, Model, Column, DataType, BelongsToMany} from "sequelize-typescri
 interface ReviewsOfMoviesCreationAttr {
     id: number;
     movieid: number;
-    name:string;
-    logo:string;
-    url:string;
+    title:string;
+    review:string;
+    author:string;
+    authorId:number;
 }
 
 @Table({tableName: "reviews"})
@@ -15,10 +16,12 @@ export class ReviewsOfMovies extends Model<ReviewsOfMovies, ReviewsOfMoviesCreat
     id: number;
     @Column({type: DataType.INTEGER})
     movieid: number;
-    @Column({type: DataType.STRING,allowNull:false})
-    name:string;
-    @Column({type: DataType.STRING,allowNull:true})
-    logo:string;
-    @Column({type: DataType.STRING,allowNull:true})
-    url:string;
+    @Column({type: DataType.STRING})
+    title:string;
+    @Column({type: DataType.STRING})
+    review:string;
+    @Column({type: DataType.STRING})
+    author:string;
+    @Column({type: DataType.INTEGER})
+    authorId:number;
 }

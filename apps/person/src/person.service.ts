@@ -22,17 +22,18 @@ export class PersonService {
     return await this.personsRepository.findAll()
   }
   async formDatabase() {
-    let arrPersons = []
-    for(let i = 0 ; i<(await this.getAllPersons()).length;i++){
-      if(arrPersons.includes((await this.getAllPersons())[i].personid)){
+    let arrPerson = await this.getAllPersons()
+    let arrIDPersons = []
+    for(let i = 0 ; i<arrPerson.length;i++){
+      if(arrIDPersons.includes(arrPerson[i].personid)){
         i++
       }
       else{
-        arrPersons.push((await this.getAllPersons())[i].personid)
+        arrIDPersons.push((await this.getAllPersons())[i].personid)
       }
     }
-    if(arrPersons.length!=0){
-      const personREQ =  await fetch(`https://api.kinopoisk.dev/v1/person?id=${arrPersons.join('&id=')}&selectFields=id%20name%20enName%20photo%20sex%20\
+    if(arrIDPersons.length!=0){
+      const personREQ =  await fetch(`https://api.kinopoisk.dev/v1/person?id=${arrIDPersons.join('&id=')}&selectFields=id%20name%20enName%20photo%20sex%20\
 growth%20birthday%20death%20age%20birthPlace%20deathPlace%20countAwards&limit=1000)`, {
         method: 'GET',
         headers:{

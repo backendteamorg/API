@@ -21,9 +21,10 @@ export class PersonsService {
 
 
   async formDatabase() {
+    let arrfilm = await this.getAllFilms()
     let filmIdArr = [];
-    for(let i = 0; i<(await this.getAllFilms()).length;i++){
-      filmIdArr.push((await this.getAllFilms())[i].id);
+    for(let i = 0; i<arrfilm.length;i++){
+      filmIdArr.push(arrfilm[i].id);
     }
     if(filmIdArr.length!=0){
       const personsREQ =  await fetch(`https://api.kinopoisk.dev/v1/movie?id=${filmIdArr.join('&id=')}&selectFields=\

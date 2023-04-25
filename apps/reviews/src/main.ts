@@ -9,7 +9,7 @@ async function bootstrap() {
   const USER = configService.get('RABBITMQ_DEFAULT_USER');
   const PASSWORD =  configService.get('RABBITMQ_DEFAULT_PASS');
   const HOST = configService.get('RABBITMQ_HOST');
-  const QUEUE = configService.get('RABBITMQ_WATCHABILITY_QUEUE');
+  const QUEUE = configService.get('RABBITMQ_REVIEWS_QUEUE');
 
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.RMQ,

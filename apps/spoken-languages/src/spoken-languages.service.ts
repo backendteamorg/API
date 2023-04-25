@@ -26,7 +26,7 @@ export class SpokenLanguagesService {
       filmIdArr.push((await this.getAllFilms())[i].id);
     }
     if(filmIdArr.length!=0){
-      const genresREQ =  await fetch(`https://api.kinopoisk.dev/v1/movie?id=${filmIdArr.join('&id=')}&selectFields=id&selectFields=spokenLanguages&\
+      const genresREQ =  await fetch(`https://api.kinopoisk.dev/v1/movie?id=${filmIdArr.join('&id=')}&selectFields=id%20spokenLanguages&\
 &limit=1000)`, {
         method: 'GET',
         headers:{

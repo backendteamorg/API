@@ -226,7 +226,7 @@ async getRole(
   }
   @ApiTags('Данные с сайта kinopoisk')
   @ApiOperation({summary: 'Сделать запрос к api на информацию о людях учавствовавших в сьемках фильмов данные о которых были получены ранее'})
-  @Get('persons/parsing')
+  @Get('personsofmovies/parsing')
   async parsingPersons() {
     return await this.rabbitPersonsFilmsService.send({
       cmd: 'parser-persons',
