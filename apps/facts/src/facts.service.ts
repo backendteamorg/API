@@ -19,9 +19,10 @@ export class FactsService {
     return films;
   }
  async formDatabase() {
+  let arrFilm = await this.getAllFilms()
    let filmIdArr = [];
-   for(let i = 0; i<(await this.getAllFilms()).length;i++){
-     filmIdArr.push((await this.getAllFilms())[i].id);
+   for(let i = 0; i<arrFilm.length;i++){
+     filmIdArr.push(arrFilm[i].id);
    }
    if(filmIdArr.length!=0){
     const factsREQ =  await fetch(`https://api.kinopoisk.dev/v1/movie?id=${filmIdArr.join('&id=')}&selectFields=facts%20id&limit=1000)`, {

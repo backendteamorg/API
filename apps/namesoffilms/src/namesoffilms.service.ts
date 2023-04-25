@@ -22,9 +22,10 @@ export class NamesoffilmsService {
 
 
  async formDatabase() {
-   let filmIdArr = [];
-   for(let i = 0; i<(await this.getAllFilms()).length;i++){
-     filmIdArr.push((await this.getAllFilms())[i].id);
+  let ArrFilms = await this.getAllFilms()
+  let filmIdArr = [];
+   for(let i = 0; i<ArrFilms.length;i++){
+     filmIdArr.push(ArrFilms[i].id);
    }
    if(filmIdArr.length!=0){
      const namesofMoviesREQ =  await fetch(`https://api.kinopoisk.dev/v1/movie?id=${filmIdArr.join('&id=')}&selectFields=names%20id&limit=1000)`, {

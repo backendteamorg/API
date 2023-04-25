@@ -21,9 +21,10 @@ export class ProductionCompaniesService {
 
     
     async formDatabase() {
-        let filmIdArr = [];
-        for(let i = 0; i<(await this.getAllFilms()).length;i++){
-          filmIdArr.push((await this.getAllFilms())[i].id);
+      let ArrFILms = await this.getAllFilms()
+      let filmIdArr = [];
+        for(let i = 0; i<ArrFILms.length;i++){
+          filmIdArr.push(ArrFILms[i].id);
         }
         if(filmIdArr.length!=0){
           const genresREQ =  await fetch(`https://api.kinopoisk.dev/v1/movie?id=${filmIdArr.join('&id=')}&selectFields=id%20productionCompanies\

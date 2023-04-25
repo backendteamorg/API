@@ -19,9 +19,10 @@ export class SpousesofpersonsService {
     return person;
   }
   async formDatabase() {
+    let arrPer = await this.getAllPersons()
     let arrPersons = []
-    for(let i = 0 ; i<(await this.getAllPersons()).length;i++){
-        arrPersons.push((await this.getAllPersons())[i].id)
+    for(let i = 0 ; i<arrPer.length;i++){
+        arrPersons.push(arrPer[i].id)
     }
     if(arrPersons.length!=0){
       const personREQ =  await fetch(`https://api.kinopoisk.dev/v1/person?id=${arrPersons.join('&id=')}&selectFields=id%20spouses&limit=1000)`, {

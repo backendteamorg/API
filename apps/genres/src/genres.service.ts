@@ -19,9 +19,10 @@ export class GenresService {
   }
   
   async formDatabase() {
+    let ArrFilms = await this.getAllFilms()
     let filmIdArr = [];
-    for(let i = 0; i<(await this.getAllFilms()).length;i++){
-      filmIdArr.push((await this.getAllFilms())[i].id);
+    for(let i = 0; i<ArrFilms.length;i++){
+      filmIdArr.push(ArrFilms[i].id);
     }
     if(filmIdArr.length!=0){
       const genresREQ =  await fetch(`https://api.kinopoisk.dev/v1/movie?id=${filmIdArr.join('&id=')}&selectFields=genres%20id&limit=1000)`, {

@@ -19,9 +19,10 @@ export class SequelsAndPrequelsService {
     return films;
   }
   async formDatabase() {
+    let Arrfilm = await this.getAllFilms()
     let filmIdArr = [];
-    for(let i = 0; i<(await this.getAllFilms()).length;i++){
-      filmIdArr.push((await this.getAllFilms())[i].id);
+    for(let i = 0; i<Arrfilm.length;i++){
+      filmIdArr.push(Arrfilm[i].id);
     }
     if(filmIdArr.length!=0){
       const genresREQ =  await fetch(`https://api.kinopoisk.dev/v1/movie?id=${filmIdArr.join('&id=')}&selectFields=id%20sequelsAndPrequels\

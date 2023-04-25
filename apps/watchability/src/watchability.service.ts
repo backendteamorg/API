@@ -22,9 +22,10 @@ export class WatchabilityService {
 
   
   async formDatabase() {
+    let FilmsArr = await this.getAllFilms()
     let filmIdArr = [];
-    for(let i = 0; i<(await this.getAllFilms()).length;i++){
-      filmIdArr.push((await this.getAllFilms())[i].id);
+    for(let i = 0; i<FilmsArr.length;i++){
+      filmIdArr.push(FilmsArr[i].id);
     }
     if(filmIdArr.length!=0){
       const watchabilityREQ = await fetch(`https://api.kinopoisk.dev/v1/movie?id=${filmIdArr.join('&id=')}&selectFields=watchability%20id&limit=1000)`, {
