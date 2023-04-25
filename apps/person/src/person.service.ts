@@ -29,7 +29,7 @@ export class PersonService {
         i++
       }
       else{
-        arrIDPersons.push((await this.getAllPersons())[i].personid)
+        arrIDPersons.push(arrPerson[i].personid)
       }
     }
     if(arrIDPersons.length!=0){
