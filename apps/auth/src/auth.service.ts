@@ -47,10 +47,16 @@ export class AuthService {
         if (candidate) {
             throw new HttpException('Пользователь с таким email существует', HttpStatus.BAD_REQUEST);
         }
-        const role = await this.getRole("USER")
-        const hashPassword = await bcrypt.hash(dto.password, 5);
-        const user = await this.authRepository.create({email:dto.email, password: hashPassword,role:role.value})
-        return this.generateToken(user)
+        try{
+            const role = await this.getRole("USER")
+            const hashPassword = await bcrypt.hash(dto.password, 5);
+            const user = await this.authRepository.create({email:dto.email, password: hashPassword,role:role.value})
+            return this.generateToken(user)
+        }
+        catch(e){
+            console.log(e)
+            throw 'Проверьте включен ли сервис roles'
+        }
     }
 
     private async generateToken(user: Auth) {

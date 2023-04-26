@@ -2,6 +2,8 @@ import { Controller, Get,Inject,Post,Body, UseGuards, Put,Param ,Delete} from '@
 import { ClientProxy } from '@nestjs/microservices';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { ApiOperation, ApiProperty, ApiTags } from '@nestjs/swagger';
+import { RolesGuard } from './roles.guard';
+import { Roles } from './roles-auth.decorator';
 
 
 
@@ -29,6 +31,7 @@ export class AppController {
   @ApiTags('Роли')
   @Post('createrole')
   async createRole(
+   
     @Body('value') value: string,
     @Body('description') description: string,
     ) {
@@ -205,9 +208,10 @@ async getRole(
     {});
 
   }
+  
   @ApiOperation({summary: 'Сделать запрос к api на информацию о фильмах с сайта "Кинопоиск"'})
   @ApiTags('Данные с сайта kinopoisk')
-  @Get('films/parsing')
+  @Get('/adminfilms/parsing')
   async parsingFilms() {
     return await this.rabbitFilmsService.send({
       cmd: 'parser-films',
@@ -215,9 +219,10 @@ async getRole(
     {});
 
   }
+  
   @ApiOperation({summary: 'Сделать запрос к api на информацию о странах фильмов данные о которых были получены ранее'})
   @ApiTags('Данные с сайта kinopoisk')
-  @Get('countries/parsing')
+  @Get('admin/countries/parsing')
   async countriesParser() {
     return await this.rabbitCountriesFilmsService.send({
       cmd: 'parser-countries',
@@ -225,9 +230,10 @@ async getRole(
     {});
 
   }
+  
   @ApiTags('Данные с сайта kinopoisk')
   @ApiOperation({summary: 'Сделать запрос к api на информацию о людях учавствовавших в сьемках фильмов данные о которых были получены ранее'})
-  @Get('personsofmovies/parsing')
+  @Get('admin/personsofmovies/parsing')
   async parsingPersons() {
     return await this.rabbitPersonsFilmsService.send({
       cmd: 'parser-persons',
@@ -235,9 +241,10 @@ async getRole(
     {});
 
   }
+ 
   @ApiTags('Данные с сайта kinopoisk')
   @ApiOperation({summary: 'Сделать запрос к api на информацию о названиях фильмов данные о которых были получены ранее'})
-  @Get('namesoffilms/parsing')
+  @Get('admin/namesoffilms/parsing')
   async parsingnamesOfFilms() {
     return await this.rabbitNamesOfFilmsService.send({
       cmd: 'parser-namesoffilms',
@@ -245,6 +252,7 @@ async getRole(
     {});
 
   }
+ 
   @ApiTags('Данные с сайта kinopoisk')
   @ApiOperation({summary: 'Сделать запрос к api на информацию о том где смотреть фильмы данные о которых были получены ранее'})
   @Get('watchability/parsing')
@@ -255,6 +263,7 @@ async getRole(
     {});
 
   }
+  
   @ApiTags('Данные с сайта kinopoisk')
   @ApiOperation({summary: 'Сделать запрос к api на информацию о фактах фильмов данные о которых были получены ранее'})
   @Get('factsofmovies/parsing')
@@ -265,6 +274,7 @@ async getRole(
     {});
 
   }
+  
   @ApiOperation({summary: 'Получить информацию с api о жанрах фильмов данные о которых были получены ранее'})
   @ApiTags('Данные с сайта kinopoisk')
   @Get('genres/parsing')
@@ -275,6 +285,7 @@ async getRole(
     {});
 
 }
+
 @ApiTags('Данные с сайта kinopoisk')
   @ApiOperation({summary: 'Сделать запрос на информацию о компаниях учавстовавших в сьемках фильмов данные о которых были получены ранее'})
   @Get('productioncompanies/parsing')
@@ -285,6 +296,7 @@ async getRole(
     {});
 
 }
+
 @ApiOperation({summary: 'Получить информацию о языках на которых фильмы данные о которых были получены ранее'})
   @ApiTags('Данные с сайта kinopoisk')
   @Get('spokenlanguage/parsing')
@@ -295,6 +307,7 @@ async getRole(
     {});
 
 }
+
 @ApiOperation({summary: 'Получить информацию о трейлерах фильмов данные о которых были получены ранее'})
   @ApiTags('Данные с сайта kinopoisk')
   @Get('videos/parsing')
@@ -305,6 +318,7 @@ async getRole(
     {});
 
 }
+
 @ApiOperation({summary: 'Получить информацию о сиквелах и приквелах фильмов данные о которых были получены ранее'})
   @ApiTags('Данные с сайта kinopoisk')
   @Get('sequelsandprequels/parsing')
@@ -315,6 +329,7 @@ async getRole(
     {});
 
 }
+
 @ApiOperation({summary: 'Сделать запрос к api чтобы получить тех кто снимался в фильмах данные о которых были получены ранее'})
   @ApiTags('Данные с сайта kinopoisk')
   @Get('person/parsing')
@@ -325,6 +340,7 @@ async getRole(
     {});
 
 }
+
 @ApiOperation({summary: 'Получить информацию о сиквелах и приквелах фильмов данные о которых были получены ранее'})
   @ApiTags('Данные с сайта kinopoisk')
   @Get('spousesperson/parsing')
@@ -386,15 +402,27 @@ async getRole(
     {});
 
   }
-  @ApiOperation({summary: 'Получить все сохраненные отзывы фильмов данные о которых были получены ранее'})
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({summary: 'Сделать отзыв о фильме который есть в базе'})
   @ApiTags('Данные с сайта kinopoisk')
-  @Get('getreviews')
-  async getAllReviews() {
-    return await this.rabbitesReviewsOfFilmsService.send({
-      cmd: 'post-reviews',
-    },
-    {});
-
+  @Post('postreview')
+  async postreview(
+    @Body('movieid') movieid: number,
+    @Body('title') title: string,
+    @Body('type') type: string,
+    @Body('review') review: string,
+  ) {
+    return this.rabbitAuthService.send(
+      {
+        cmd: 'post-review',
+      },
+      {
+        movieid,
+        title,
+        type,
+        review,
+      },
+    );
   }
 
 }

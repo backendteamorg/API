@@ -4,5 +4,4 @@ export class ReviewsOfMoviesDto {
     type:string;
     review:string;
     author:string;
-    
 }

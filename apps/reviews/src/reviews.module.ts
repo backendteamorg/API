@@ -5,12 +5,19 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { ReviewsOfMovies } from './reviews.model';
 import { ClientProxyFactory, Transport } from '@nestjs/microservices';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       envFilePath: `./apps/reviews/.${process.env.NODE_ENV}.env`,
       isGlobal:true
+    }),
+    JwtModule.register({
+      secret: process.env.JWT_SECRET || 'SECRET',
+      signOptions: {
+        expiresIn: '24h'
+      }
     }),
     SequelizeModule.forRoot({
       dialect: 'postgres',
