@@ -6,7 +6,7 @@ import { Ctx, MessagePattern, RmqContext } from '@nestjs/microservices';
 export class SpokenLanguagesController {
   constructor(private readonly spokenLanguagesService: SpokenLanguagesService) {}
 
-  @Get()
+  
   @MessagePattern({ cmd: 'spoken-langeage-parser'})
   async getPersons(@Ctx() context: RmqContext){
     const channel = context.getChannelRef();

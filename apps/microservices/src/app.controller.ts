@@ -9,7 +9,8 @@ import { Roles } from './roles-auth.decorator';
 
 @Controller()
 export class AppController {
-  constructor(@Inject('AUTH_SERVICE') private rabbitAuthService: ClientProxy,
+  constructor(
+  @Inject('AUTH_SERVICE') private rabbitAuthService: ClientProxy,
   @Inject('PROFILE_SERVICE') private rabbitProfileService: ClientProxy,
   @Inject('FILM_SERVICE') private rabbitFilmsService: ClientProxy,
   @Inject('PERSONS_SERVICE') private rabbitPersonsFilmsService: ClientProxy,
@@ -403,26 +404,23 @@ async getRole(
 
   }
   @UseGuards(JwtAuthGuard)
-  @ApiOperation({summary: 'Сделать отзыв о фильме который есть в базе'})
+  @ApiOperation({summary: 'Получить все сохраненные данные о странах фильмов данные о которых были получены ранее'})
   @ApiTags('Данные с сайта kinopoisk')
   @Post('postreview')
-  async postreview(
-    @Body('movieid') movieid: number,
-    @Body('title') title: string,
-    @Body('type') type: string,
-    @Body('review') review: string,
+  async getReviews(
+  @Body('movieid') movieid: number,
+  @Body('title') title: string,
+  @Body('review') review: string,
   ) {
-    return this.rabbitAuthService.send(
-      {
-        cmd: 'post-review',
-      },
-      {
-        movieid,
-        title,
-        type,
-        review,
-      },
-    );
-  }
+    
+    return await this.rabbitesReviewsOfFilmsService.send({
+      cmd: 'post-review',
+    },
+    {
+      movieid,
+      title,
+      review
+    });
 
+  }
 }

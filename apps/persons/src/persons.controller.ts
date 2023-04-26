@@ -5,7 +5,7 @@ import { Ctx, MessagePattern, RmqContext } from '@nestjs/microservices';
 @Controller()
 export class PersonsController {
   constructor(private readonly personsService: PersonsService) {}
-  @Get()
+  
   @MessagePattern({ cmd: 'parser-persons'})
   async getPersons(@Ctx() context: RmqContext){
     const channel = context.getChannelRef();
@@ -14,7 +14,7 @@ export class PersonsController {
 
     return this.personsService.formDatabase()
   }
-  @Get()
+  
   @MessagePattern({ cmd: 'get-all-persons'})
   async getAllPersons(@Ctx() context: RmqContext){
     const channel = context.getChannelRef();

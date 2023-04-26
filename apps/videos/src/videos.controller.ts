@@ -6,7 +6,7 @@ import { Ctx, MessagePattern, RmqContext } from '@nestjs/microservices';
 export class VideosController {
   constructor(private readonly videosService: VideosService) {}
   
-  @Get()
+ 
   @MessagePattern({ cmd: 'videos-parsing'})
   async getPersons(@Ctx() context: RmqContext){
     const channel = context.getChannelRef();

@@ -6,7 +6,7 @@ import { AuthDto } from './dto/auth.dto';
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
-  @Get()
+  
   @MessagePattern({ cmd: 'get-title'})
   async getTitle(@Ctx() context: RmqContext){
     const channel = context.getChannelRef();
@@ -16,7 +16,18 @@ export class AuthController {
     return 'AuthService'
   }
 
-  @Get()
+  @MessagePattern({ cmd: 'decode-jwt' })
+  async decodeJwt(
+    @Ctx() context: RmqContext,
+    @Payload() payload: { jwt: string }) {
+      const channel = context.getChannelRef();
+      const message = context.getMessage();
+      channel.ack(message);
+
+    return this.authService.getUserFromHeader(payload.jwt);
+  }
+
+  
   @MessagePattern({ cmd: 'get-users'})
   async getUser(@Ctx() context: RmqContext){
     const channel = context.getChannelRef();

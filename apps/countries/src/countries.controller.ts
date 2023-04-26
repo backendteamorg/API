@@ -5,7 +5,7 @@ import { Ctx, MessagePattern, RmqContext } from '@nestjs/microservices';
 @Controller()
 export class CountriesController {
   constructor(private readonly countriesService: CountriesService) {}
-  @Get()
+  
   @MessagePattern({ cmd: 'parser-countries'})
   async getCountries(@Ctx() context: RmqContext){
     const channel = context.getChannelRef();
@@ -14,7 +14,7 @@ export class CountriesController {
 
     return this.countriesService.formDatabase()
   }
-  @Get()
+  
   @MessagePattern({ cmd: 'get-all-countries'})
   async getAllCountries(@Ctx() context: RmqContext){
     const channel = context.getChannelRef();

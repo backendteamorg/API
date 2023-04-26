@@ -5,11 +5,13 @@ import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
 import { ReviewsOfMoviesDto } from './dto/reviews.dto';
 import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class ReviewsService {
     constructor(@InjectModel(ReviewsOfMovies) private reviewsRepository:typeof ReviewsOfMovies,
     @Inject('FILM_SERVICE') private rabbitFilmsService: ClientProxy,
+    @Inject('AUTH_SERVICE') private rabbitAuthService: ClientProxy,
     private jwtService: JwtService,){}
   
 
@@ -27,10 +29,8 @@ export class ReviewsService {
       return films;
     }
 
-
-
-  async postReviews(dto:ReviewsOfMoviesDto){
-    
-      
+    async postReview(){
+      return this.rabbitAuthService
     }
+
 }

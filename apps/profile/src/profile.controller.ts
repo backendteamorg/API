@@ -8,7 +8,7 @@ export class ProfileController {
   constructor(private readonly profileService: ProfileService,
 ) {}
 
-  @Get()
+  
   @MessagePattern({ cmd: 'get-title'})
   async getTitle(@Ctx() context: RmqContext){
     const channel = context.getChannelRef();
@@ -37,7 +37,7 @@ export class ProfileController {
 
     return this.profileService.updateProfil(existingUser);
   }
-  @Get()
+
   @MessagePattern({ cmd: 'get-profiles'})
   async getProfile(@Ctx() context: RmqContext){
     const channel = context.getChannelRef();

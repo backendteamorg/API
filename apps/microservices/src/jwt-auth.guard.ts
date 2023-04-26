@@ -1,10 +1,12 @@
-import {CanActivate, ExecutionContext, Injectable, UnauthorizedException} from "@nestjs/common";
-import {Observable} from "rxjs";
+import {CanActivate, ExecutionContext, Injectable, UnauthorizedException,Inject} from "@nestjs/common";
+import {Observable, catchError, of, switchMap} from "rxjs";
 import {JwtService} from "@nestjs/jwt";
+import { ClientProxy } from "@nestjs/microservices";
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
-    constructor(private jwtService: JwtService) {
+    constructor(private jwtService: JwtService,
+        @Inject('AUTH_SERVICE') private rabbitAuthService: ClientProxy) {
     }
 
     canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
@@ -19,7 +21,24 @@ export class JwtAuthGuard implements CanActivate {
             }
 
             const user = this.jwtService.verify(token);
+            
             req.user = user;
+            this.rabbitAuthService.send({
+                cmd: 'decode-jwt'
+            },{user}).pipe(
+                switchMap(({ exp }) => {
+                  if (!exp) return of(false);
+          
+                  const TOKEN_EXP_MS = exp * 1000;
+          
+                  const isJwtValid = Date.now() < TOKEN_EXP_MS;
+          
+                  return of(isJwtValid);
+                }),
+                catchError(() => {
+                  throw new UnauthorizedException();
+                }),
+              );
             return true;
         } catch (e) {
             throw new UnauthorizedException({message: 'Пользователь не авторизован'})

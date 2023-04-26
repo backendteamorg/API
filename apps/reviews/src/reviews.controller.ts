@@ -8,13 +8,13 @@ export class ReviewsController {
   constructor(private readonly reviewsService: ReviewsService) {}
 
   
-  @Post()
-  @MessagePattern({ cmd: 'post-review' })
-  async register(@Ctx() context: RmqContext, @Payload() review: ReviewsOfMoviesDto) {
+  
+  @MessagePattern({ cmd: 'post-review'})
+  async postReview(@Ctx() context: RmqContext,@Payload() review: ReviewsOfMoviesDto){
     const channel = context.getChannelRef();
     const message = context.getMessage();
     channel.ack(message);
 
-    return this.reviewsService.postReviews(review);
+    return 
   }
 }

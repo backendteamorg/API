@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Inject, Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, HttpException, HttpStatus, Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import {JwtService} from "@nestjs/jwt";
 import * as bcrypt from 'bcryptjs'
 import { AuthDto } from './dto/auth.dto';
@@ -11,6 +11,16 @@ export class AuthService {
      @Inject('ROLES_SERVICE') private rolesService,
      private jwtService: JwtService){}
      
+
+     async getUserFromHeader(jwt: string): Promise<UserJwt> {
+        if (!jwt) return;
+    
+        try {
+          return this.jwtService.decode(jwt) as UserJwt;
+        } catch (error) {
+          throw new BadRequestException();
+        }
+      }
 
 
      async login(userDto: AuthDto) {

@@ -6,7 +6,7 @@ import { Ctx, MessagePattern, Payload, RmqContext } from '@nestjs/microservices'
 export class FilmsController {
   constructor(private readonly filmsService: FilmsService) {}
 
-  @Get()
+  
   @MessagePattern({ cmd: 'get-films-title'})
   async getFilmsTitle(@Ctx() context: RmqContext){
     const channel = context.getChannelRef();
@@ -15,7 +15,7 @@ export class FilmsController {
 
     return 'FilmsService'
   }
-  @Get()
+
   @MessagePattern({ cmd: 'parser-films'})
   async getFilms(@Ctx() context: RmqContext){
     const channel = context.getChannelRef();
@@ -24,7 +24,7 @@ export class FilmsController {
 
     return this.filmsService.formDatabase()
   }
-  @Get()
+ 
   @MessagePattern({ cmd: 'get-all-films'})
   async getAllFilms(@Ctx() context: RmqContext){
     const channel = context.getChannelRef();

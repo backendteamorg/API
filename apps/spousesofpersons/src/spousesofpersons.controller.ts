@@ -6,7 +6,6 @@ import { Ctx, MessagePattern, RmqContext } from '@nestjs/microservices';
 export class SpousesofpersonsController {
   constructor(private readonly spousesofpersonsService: SpousesofpersonsService) {}
 
-  @Get()
   @MessagePattern({ cmd: 'sposes-of-person-parser'})
   async getPersons(@Ctx() context: RmqContext){
     const channel = context.getChannelRef();

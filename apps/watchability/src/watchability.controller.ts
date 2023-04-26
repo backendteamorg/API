@@ -5,7 +5,7 @@ import { Ctx, MessagePattern, RmqContext } from '@nestjs/microservices';
 @Controller()
 export class WatchabilityController {
   constructor(private readonly watchabilityService: WatchabilityService) {}
-  @Get()
+  
   @MessagePattern({ cmd: 'parser-watchability'})
   async getPersons(@Ctx() context: RmqContext){
     const channel = context.getChannelRef();

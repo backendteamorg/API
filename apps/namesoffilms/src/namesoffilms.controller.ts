@@ -6,7 +6,7 @@ import { Ctx, MessagePattern, RmqContext } from '@nestjs/microservices';
 export class NamesoffilmsController {
   constructor(private readonly namesoffilmsService: NamesoffilmsService) {}
 
-  @Get()
+  
   @MessagePattern({ cmd: 'parser-namesoffilms'})
   async getPersons(@Ctx() context: RmqContext){
     const channel = context.getChannelRef();
