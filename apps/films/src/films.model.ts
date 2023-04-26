@@ -7,6 +7,7 @@ interface FilmsCreationAttr {
     id: number;
     feesworld: string;
     feesusa:string;
+    audience:string;
     status:string;
     externalIdkpHD:string;
     externalIdimdb:string;
@@ -63,11 +64,13 @@ export class Films extends Model<Films, FilmsCreationAttr> {
     feesworld: string;
     @Column({type: DataType.STRING})
     feesusa:string;
-    @Column({type: DataType.STRING,unique:true})
+    @Column({type: DataType.STRING})
+    audience:string;
+    @Column({type: DataType.STRING})
     externalIdkpHD:string;
-    @Column({type: DataType.STRING,unique:true})
+    @Column({type: DataType.STRING})
     externalIdimdb:string;
-    @Column({type: DataType.INTEGER,unique:true})
+    @Column({type: DataType.INTEGER})
     externalIdtmdb:number;
     @Column({type: DataType.FLOAT})
     ratingkp: number;

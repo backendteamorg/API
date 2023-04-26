@@ -14,11 +14,11 @@ export class Videos extends Model<Videos, VideosCreationAttr> {
     id: number;
     @Column({type: DataType.INTEGER})
     movieid: number;
-    @Column({type: DataType.STRING})
+    @Column({type: DataType.TEXT})
     url:string;
     @Column({type: DataType.STRING})
     name:string;
-    @Column({type: DataType.STRING})
+    @Column({type: DataType.TEXT})
     site:string;
     @Column({type: DataType.STRING})
     type:string;

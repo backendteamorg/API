@@ -5,9 +5,7 @@ interface ReviewsOfMoviesCreationAttr {
     id: number;
     movieid: number;
     title:string;
-    type:string;
     review:string;
-    date:string;
     author:string;
     
 }
@@ -20,12 +18,8 @@ export class ReviewsOfMovies extends Model<ReviewsOfMovies, ReviewsOfMoviesCreat
     movieid: number;
     @Column({type: DataType.TEXT})
     title:string;
-    @Column({type: DataType.STRING})
-    type:string;
     @Column({type: DataType.TEXT})
     review:string;
-    @Column({type: DataType.DATE})
-    date:string;
     @Column({type: DataType.STRING})
     author:string;
 }

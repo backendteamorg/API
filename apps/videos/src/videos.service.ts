@@ -39,16 +39,19 @@ export class VideosService {
       let json = await genresREQ.json();
       let arrSpokenLanguage = []
       for(let i = 0;i<json.docs.length;i++){
-        for(let j = 0;j<json.docs[i].videos.trailers.length;j++){
-          await arrSpokenLanguage.push(
-            {
-              movieid: json.docs[i].id,
-              url: json.docs[i].videos.trailers[j].url,
-              name: json.docs[i].videos.trailers[j].name,
-              site:json.docs[i].videos.trailers[j].site,
-              type:json.docs[i].videos.trailers[j].type
-            }
-            )
+        if(json.docs[i].videos){
+          for(let j = 0;j<json.docs[i].videos.trailers.length;j++){
+            await arrSpokenLanguage.push(
+              {
+                movieid: json.docs[i].id,
+                url: json.docs[i].videos.trailers[j]?.url,
+                name: json.docs[i].videos.trailers[j]?.name,
+                site:json.docs[i].videos.trailers[j]?.site,
+                type:json.docs[i].videos.trailers[j]?.type
+              }
+              )
+          }
+          
         }
       }
       return await this.videosRepository.bulkCreate(arrSpokenLanguage)

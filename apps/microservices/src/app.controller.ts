@@ -325,12 +325,12 @@ async getRole(
     {});
 
 }
-@ApiOperation({summary: 'Сделать запрос к api чтобы получить тех кто снимался в фильмах данные о которых были получены ранее'})
+@ApiOperation({summary: 'Получить информацию о сиквелах и приквелах фильмов данные о которых были получены ранее'})
   @ApiTags('Данные с сайта kinopoisk')
-  @Get('rewiews/parsing')
-  async rewiewsParser() {
-    return await this.rabbitesReviewsOfFilmsService.send({
-      cmd: 'parser-reviews',
+  @Get('spousesperson/parsing')
+  async spousespersonParser() {
+    return await this.rabbitesSpousesPersonService.send({
+      cmd: 'sposes-of-person-parser',
     },
     {});
 
@@ -341,16 +341,6 @@ async getRole(
   async getpersonProfile() {
     return await this.rabbitePersonService.send({
       cmd: 'get-all-person-profile',
-    },
-    {});
-
-}
-@ApiOperation({summary: 'Получить информацию о сиквелах и приквелах фильмов данные о которых были получены ранее'})
-  @ApiTags('Данные с сайта kinopoisk')
-  @Get('spousesperson/parsing')
-  async spousespersonParser() {
-    return await this.rabbitesSpousesPersonService.send({
-      cmd: 'sposes-of-person-parser',
     },
     {});
 
@@ -378,7 +368,7 @@ async getRole(
   }
   @ApiOperation({summary: 'Получить всех кто учавтсовал в сьемках фильмов данные о которых были получены ранее'})
   @ApiTags('Данные с сайта kinopoisk')
-  @Get('persnos')
+  @Get('persons')
   async GetAllPerson() {
     return await this.rabbitPersonsFilmsService.send({
       cmd: 'get-all-persons',
@@ -392,6 +382,16 @@ async getRole(
   async getAllCountries() {
     return await this.rabbitCountriesFilmsService.send({
       cmd: 'get-all-countries',
+    },
+    {});
+
+  }
+  @ApiOperation({summary: 'Получить все сохраненные отзывы фильмов данные о которых были получены ранее'})
+  @ApiTags('Данные с сайта kinopoisk')
+  @Get('getreviews')
+  async getAllReviews() {
+    return await this.rabbitesReviewsOfFilmsService.send({
+      cmd: 'post-reviews',
     },
     {});
 

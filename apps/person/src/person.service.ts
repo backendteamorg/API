@@ -24,7 +24,7 @@ export class PersonService {
   async formDatabase() {
     let arrPerson = await this.getAllPersons()
     let arrIDPersons = []
-    for(let i = 0 ; i<arrPerson.length;i++){
+    for(let i = 0 ; i<100;i++){
       if(arrIDPersons.includes(arrPerson[i].personid)){
         i++
       }
@@ -34,7 +34,7 @@ export class PersonService {
     }
     if(arrIDPersons.length!=0){
       const personREQ =  await fetch(`https://api.kinopoisk.dev/v1/person?id=${arrIDPersons.join('&id=')}&selectFields=id%20name%20enName%20photo%20sex%20\
-growth%20birthday%20death%20age%20birthPlace%20deathPlace%20countAwards&limit=1000)`, {
+growth%20birthday%20death%20age%20birthPlace%20deathPlace%20countAwards&sortField=countAwards&sortType=-1&limit=100)`, {
         method: 'GET',
         headers:{
                   'X-API-KEY': 'QTD9VCR-EW8M0Y4-QR6W0Y1-Y8J1BFT',
@@ -71,8 +71,11 @@ growth%20birthday%20death%20age%20birthPlace%20deathPlace%20countAwards&limit=10
           )
       }
       return this.personsRepository.bulkCreate(arrPerson)
-}
-  }
-
+      }
+      else{
+        console.log("Ошибка HTTP: " + personREQ.status);
+      }
+    
+    }
 }
 }
