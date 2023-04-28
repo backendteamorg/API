@@ -9,6 +9,10 @@ export class GenresService {
   constructor(@InjectModel(GenresOfFilms) private genresRepository: typeof GenresOfFilms,
   @Inject('FILM_SERVICE') private rabbitFilmsService: ClientProxy){}
 
+  async getGenresByMovieId(idM:number){
+    return await this.genresRepository.findAll({where:{movieid:idM}})
+  }
+
   async getAllFilms() {
     const ob$ = await this.rabbitFilmsService.send({
       cmd: 'get-all-films',

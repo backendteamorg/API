@@ -18,9 +18,21 @@ export class PersonService {
     const person = await firstValueFrom(ob$).catch((err) => console.error(err));
     return person;
   }
+
+
   async getAllPersonProfile(){
     return await this.personsRepository.findAll()
   }
+
+
+
+  async getPersonById(idP:number){
+
+    return await this.personsRepository.findByPk(idP)
+  }
+
+
+
   async formDatabase() {
     let arrPerson = await this.getAllPersons()
     let arrIDPersons = []

@@ -1,6 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
 import { SequelsAndPrequelsService } from './sequels-and-prequels.service';
-import { Ctx, MessagePattern, RmqContext } from '@nestjs/microservices';
+import { Ctx, MessagePattern, Payload, RmqContext } from '@nestjs/microservices';
 
 @Controller()
 export class SequelsAndPrequelsController {
@@ -13,5 +13,16 @@ export class SequelsAndPrequelsController {
     channel.ack(message);
 
     return this.sequelsAndPrequelsService.formDatabase()
+  }
+
+  @MessagePattern({ cmd: 'get-sequelsAndPrequels-by-moveid' })
+  async getUserById(
+    @Ctx() context: RmqContext,
+    @Payload() movie: { id: number },) {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return this.sequelsAndPrequelsService.getSequelsAndPrequelsByMovieId(movie.id);
   }
 }

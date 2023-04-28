@@ -3,9 +3,10 @@ import { IsString } from "class-validator";
 
 export class ReviewsOfMoviesDto {
     movieid: number;
-    @ApiProperty({example: 'user@mail.ru',description: 'Почта'})
+    @ApiProperty()
     @IsString({message: 'Должно быть строкой'})
     review:string;
+    @ApiProperty()
     @IsString({message: 'Должно быть строкой'})
     author:string;
 }

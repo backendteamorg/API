@@ -18,6 +18,12 @@ export class SequelsAndPrequelsService {
     const films = await firstValueFrom(ob$).catch((err) => console.error(err));
     return films;
   }
+
+  async getSequelsAndPrequelsByMovieId(idM:number){
+    return await this.sequilesandProquelsRepository.findAll({where:{movieid:idM}})
+  }
+
+
   async formDatabase() {
     let Arrfilm = await this.getAllFilms()
     let filmIdArr = [];

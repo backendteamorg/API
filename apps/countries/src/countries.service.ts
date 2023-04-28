@@ -54,4 +54,7 @@ export class CountriesService {
     async getAllCountries(){
       await this.countriesRepository.findAll()
     }
+    async getCountriesByMovieId(idC:number){
+      return await this.countriesRepository.findAll({where:{movieid:idC}})
+    }
 }

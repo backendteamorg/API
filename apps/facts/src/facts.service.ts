@@ -59,4 +59,10 @@ export class FactsService {
   }
 }
 }
+async getAllFacts(){
+  return await this.factsRepository.findAll()
+}
+async getFacrsOfFilmByMovieId(idF:number){
+  return await this.factsRepository.findAll({where:{movieid:idF}})
+}
 }

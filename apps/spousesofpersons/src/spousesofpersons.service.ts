@@ -6,7 +6,7 @@ import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class SpousesofpersonsService {
-  constructor(@InjectModel(SposesOfPerson) private personsRepository:typeof SposesOfPerson,
+  constructor(@InjectModel(SposesOfPerson) private personsSpousesOfRepository:typeof SposesOfPerson,
   @Inject('PERSONQWE_SERVICE') private rabbitPesronsService: ClientProxy){}
 
 
@@ -17,6 +17,10 @@ export class SpousesofpersonsService {
     {});
     const person = await firstValueFrom(ob$).catch((err) => console.error(err));
     return person;
+  }
+
+  async getSpousesByPersonId(idP:number){
+    return await this.personsSpousesOfRepository.findAll({where:{personid:idP}})
   }
   async formDatabase() {
     let arrPer = await this.getAllPersons()
@@ -53,7 +57,7 @@ export class SpousesofpersonsService {
           }
         }
       }
-      return await this.personsRepository.bulkCreate(arrPerson)
+      return await this.personsSpousesOfRepository.bulkCreate(arrPerson)
 }
   }
 

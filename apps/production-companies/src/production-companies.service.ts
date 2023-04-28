@@ -19,6 +19,9 @@ export class ProductionCompaniesService {
       return films;
     }
 
+    async getProductionCompaniesByMovieId(idM:number){
+      return await this.productioncompaniesRepository.findAll({where:{movieid:idM}})
+    }
     
     async formDatabase() {
       let ArrFILms = await this.getAllFilms()

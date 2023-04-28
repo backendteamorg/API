@@ -19,6 +19,9 @@ export class PersonsService {
     return films;
   }
 
+  async getPersonsOfMovieByMovieId(idP:number){
+    return await this.personsRepository.findAll({where:{movieid:idP}})
+  }
 
   async formDatabase() {
     let arrfilm = await this.getAllFilms()

@@ -33,7 +33,7 @@ export class FilmsController {
 
     return this.filmsService.getAllFilm()
   }
-  @MessagePattern({ cmd: 'get-film' })
+  @MessagePattern({ cmd: 'get-film-by-id' })
   async getUserById(
     @Ctx() context: RmqContext,
     @Payload() film: { id: number },) {

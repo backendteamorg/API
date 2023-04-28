@@ -1,6 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
 import { SpokenLanguagesService } from './spoken-languages.service';
-import { Ctx, MessagePattern, RmqContext } from '@nestjs/microservices';
+import { Ctx, MessagePattern, Payload, RmqContext } from '@nestjs/microservices';
 
 @Controller()
 export class SpokenLanguagesController {
@@ -14,5 +14,16 @@ export class SpokenLanguagesController {
     channel.ack(message);
 
     return this.spokenLanguagesService.formDatabase()
+  }
+
+  @MessagePattern({ cmd: 'get-spokenLanguages-by-moveid' })
+  async getUserById(
+    @Ctx() context: RmqContext,
+    @Payload() movie: { id: number },) {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return this.spokenLanguagesService.getSpokenLanguagesByMovieId(movie.id);
   }
 }

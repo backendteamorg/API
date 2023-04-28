@@ -1,6 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
 import { SpousesofpersonsService } from './spousesofpersons.service';
-import { Ctx, MessagePattern, RmqContext } from '@nestjs/microservices';
+import { Ctx, MessagePattern, Payload, RmqContext } from '@nestjs/microservices';
 
 @Controller()
 export class SpousesofpersonsController {
@@ -13,5 +13,16 @@ export class SpousesofpersonsController {
     channel.ack(message);
 
     return this.spousesofpersonsService.formDatabase()
+  }
+
+  @MessagePattern({ cmd: 'get-spousesofperson-by-id' })
+  async getUserById(
+    @Ctx() context: RmqContext,
+    @Payload() person: { id: number },) {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return this.spousesofpersonsService.getSpousesByPersonId(person.id);
   }
 }

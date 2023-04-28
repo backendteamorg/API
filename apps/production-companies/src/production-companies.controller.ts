@@ -1,6 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
 import { ProductionCompaniesService } from './production-companies.service';
-import { Ctx, MessagePattern, RmqContext } from '@nestjs/microservices';
+import { Ctx, MessagePattern, Payload, RmqContext } from '@nestjs/microservices';
 
 @Controller()
 export class ProductionCompaniesController {
@@ -14,5 +14,14 @@ export class ProductionCompaniesController {
 
     return this.productionCompaniesService.formDatabase()
   }
-  
+  @MessagePattern({ cmd: 'get-productionCompanies-by-moveid' })
+  async getUserById(
+    @Ctx() context: RmqContext,
+    @Payload() movie: { id: number },) {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return this.productionCompaniesService.getProductionCompaniesByMovieId(movie.id);
+  }
 }

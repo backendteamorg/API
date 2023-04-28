@@ -19,6 +19,9 @@ export class NamesoffilmsService {
     return films;
   }
 
+  async getNamesOfFilmsByMovieId(idN:number){
+    return await this.namesOfFilmsRepository.findAll({where:{movieid:idN}})
+  }
 
 
  async formDatabase() {

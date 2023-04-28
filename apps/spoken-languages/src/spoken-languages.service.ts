@@ -19,6 +19,11 @@ export class SpokenLanguagesService {
     return films;
   }
 
+  
+  async getSpokenLanguagesByMovieId(idU:number){
+    return await this.spokenlanguageRepository.findAll({where:{movieid:idU}})
+  }
+
 
   async formDatabase() {
     let Arrfilms = await this.getAllFilms()

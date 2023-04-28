@@ -1,6 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
 import { GenresService } from './genres.service';
-import { Ctx, MessagePattern, RmqContext } from '@nestjs/microservices';
+import { Ctx, MessagePattern, Payload, RmqContext } from '@nestjs/microservices';
 
 @Controller()
 export class GenresController {
@@ -22,6 +22,17 @@ export class GenresController {
     channel.ack(message);
 
     return this.genresService.formDatabase()
+  }
+
+  @MessagePattern({ cmd: 'get-genres-by-moveid' })
+  async getUserById(
+    @Ctx() context: RmqContext,
+    @Payload() movie: { id: number },) {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return this.genresService.getGenresByMovieId(movie.id);
   }
 
   
