@@ -29,8 +29,11 @@ export class ReviewsService {
       return films;
     }
 
-    async postReview(){
-      return this.rabbitAuthService
+
+    
+
+    async postReview(dto:ReviewsOfMoviesDto){
+      return await this.reviewsRepository.create(dto)
     }
 
 }

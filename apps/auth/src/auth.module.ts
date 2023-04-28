@@ -4,7 +4,7 @@ import { AuthService } from './auth.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { Auth } from './auth.model';
-import { JwtModule, JwtService } from '@nestjs/jwt';
+import { JwtModule } from '@nestjs/jwt';
 import { ClientProxyFactory, Transport } from '@nestjs/microservices';
 
 @Module({
@@ -56,5 +56,6 @@ import { ClientProxyFactory, Transport } from '@nestjs/microservices';
         inject:[ConfigService]
     },
   ],
+
 })
 export class AuthModule {}

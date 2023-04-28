@@ -12,17 +12,7 @@ export class AuthService {
      private jwtService: JwtService){}
      
 
-     async getUserFromHeader(jwt: string): Promise<UserJwt> {
-        if (!jwt) return;
-    
-        try {
-          return this.jwtService.decode(jwt) as UserJwt;
-        } catch (error) {
-          throw new BadRequestException();
-        }
-      }
-
-
+  
      async login(userDto: AuthDto) {
         const user = await this.validateUser(userDto)
         return this.generateToken(user)
@@ -61,7 +51,8 @@ export class AuthService {
             const role = await this.getRole("USER")
             const hashPassword = await bcrypt.hash(dto.password, 5);
             const user = await this.authRepository.create({email:dto.email, password: hashPassword,role:role.value})
-            return this.generateToken(user)
+            const token = await this.generateToken(user)
+            return {token, user}
         }
         catch(e){
             console.log(e)

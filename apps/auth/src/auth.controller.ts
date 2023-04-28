@@ -1,7 +1,9 @@
-import { Controller, Get ,Body,Post} from '@nestjs/common';
+import { Controller, Get ,Body,Post, UseGuards} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Ctx, MessagePattern, Payload, RmqContext } from '@nestjs/microservices';
 import { AuthDto } from './dto/auth.dto';
+import { JwtAuthGuard } from 'apps/microservices/src/jwt-auth.guard';
+import { ApiProperty } from '@nestjs/swagger';
 
 @Controller('auth')
 export class AuthController {
@@ -14,17 +16,6 @@ export class AuthController {
     channel.ack(message);
 
     return 'AuthService'
-  }
-
-  @MessagePattern({ cmd: 'decode-jwt' })
-  async decodeJwt(
-    @Ctx() context: RmqContext,
-    @Payload() payload: { jwt: string }) {
-      const channel = context.getChannelRef();
-      const message = context.getMessage();
-      channel.ack(message);
-
-    return this.authService.getUserFromHeader(payload.jwt);
   }
 
   

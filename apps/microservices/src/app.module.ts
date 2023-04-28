@@ -1,8 +1,9 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ClientProxyFactory,Transport } from '@nestjs/microservices';
 import { JwtModule } from '@nestjs/jwt';
+import { AuthModule } from 'apps/auth/src/auth.module';
 
 
 @Module({

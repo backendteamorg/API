@@ -1,9 +1,10 @@
 import { Controller, Get,Inject,Post,Body, UseGuards, Put,Param ,Delete} from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { JwtAuthGuard } from './jwt-auth.guard';
-import { ApiOperation, ApiProperty, ApiTags } from '@nestjs/swagger';
+import { ApiCreatedResponse, ApiOperation, ApiProperty, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { RolesGuard } from './roles.guard';
 import { Roles } from './roles-auth.decorator';
+import { IsEmail, IsString } from 'class-validator';
 
 
 
@@ -56,10 +57,9 @@ async getRole(
         },
         {value:value},
         );
-   }
+  }
   @ApiTags('Регистрация и вход')
   @Post('registration')
-  @ApiProperty({type:String})
   @ApiOperation({summary: 'Регистрация'})
   async register(
   @Body('email') email: string,
@@ -404,7 +404,7 @@ async getRole(
 
   }
   @UseGuards(JwtAuthGuard)
-  @ApiOperation({summary: 'Получить все сохраненные данные о странах фильмов данные о которых были получены ранее'})
+  @ApiOperation({summary: 'Сделать отзыв к фильму данные о котором были получены ранее'})
   @ApiTags('Данные с сайта kinopoisk')
   @Post('postreview')
   async getReviews(
