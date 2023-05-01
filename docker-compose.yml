@@ -71,6 +71,7 @@ services:
     depends_on:
       - rabbitmq
       - roles_postgres
+      - films
     ports:
       - 6128:6128
     volumes:
@@ -88,6 +89,8 @@ services:
       - apps/roles/.development.env
     environment:
       PG_DATA: /var/lib/postgresql/data
+    depends_on:
+      - films_postgres
     ports:
       - 5434:5432
     volumes:
@@ -123,6 +126,8 @@ services:
       PG_DATA: /var/lib/postgresql/data
     ports:
       - 5433:5432
+    depends_on:
+      - roles_postgres
     volumes:
       - pgdataauth:/var/lib/postgresql/data
     restart: always
@@ -157,6 +162,8 @@ services:
       PG_DATA: /var/lib/postgresql/data
     ports:
       - 5435:5432
+    depends_on:
+      - films_postgres
     volumes:
       - pgdatacountries:/var/lib/postgresql/data
     restart: always
@@ -190,6 +197,8 @@ services:
       PG_DATA: /var/lib/postgresql/data
     ports:
       - 5436:5432
+    depends_on:
+      - films_postgres
     volumes:
       - pgdatafacts:/var/lib/postgresql/data
     restart: always
@@ -223,6 +232,8 @@ services:
       PG_DATA: /var/lib/postgresql/data
     ports:
       - 5437:5432
+    depends_on:
+      - films_postgres
     volumes:
       - pgdatagenres:/var/lib/postgresql/data
     restart: always
@@ -256,6 +267,8 @@ services:
       PG_DATA: /var/lib/postgresql/data
     ports:
       - 5438:5432
+    depends_on:
+      - films_postgres
     volumes:
       - pgdatanamesoffilms:/var/lib/postgresql/data
     restart: always
@@ -291,6 +304,8 @@ services:
       - 5440:5432
     volumes:
       - pgdatapersons:/var/lib/postgresql/data
+    depends_on:
+      - films_postgres
     restart: always
 
   person:
@@ -322,6 +337,8 @@ services:
       PG_DATA: /var/lib/postgresql/data
     ports:
       - 5439:5432
+    depends_on:
+      - films_postgres
     volumes:
       - pgdataperson:/var/lib/postgresql/data
     restart: always
@@ -356,6 +373,8 @@ services:
       PG_DATA: /var/lib/postgresql/data
     ports:
       - 5441:5432
+    depends_on:
+      - films_postgres
     volumes:
       - pgdataproduction-companies:/var/lib/postgresql/data
     restart: always
@@ -389,6 +408,8 @@ services:
       PG_DATA: /var/lib/postgresql/data
     ports:
       - 5442:5432
+    depends_on:
+      - films_postgres
     volumes:
       - pgdatasequels-and-prequels:/var/lib/postgresql/data
     restart: always
@@ -422,6 +443,8 @@ services:
       PG_DATA: /var/lib/postgresql/data
     ports:
       - 5443:5432
+    depends_on:
+      - films_postgres
     volumes:
       - pgdataspoken-languages:/var/lib/postgresql/data
     restart: always
@@ -455,6 +478,8 @@ services:
       PG_DATA: /var/lib/postgresql/data
     ports:
       - 5444:5432
+    depends_on:
+      - films_postgres
     volumes:
       - pgdataspousesofpersons:/var/lib/postgresql/data
     restart: always
@@ -490,6 +515,9 @@ services:
       - 5445:5432
     volumes:
       - pgdatavideos:/var/lib/postgresql/data
+    depends_on:
+      - films_postgres
+      - spousesofpersons_postgres
     restart: always
 
   watchability:
@@ -523,6 +551,9 @@ services:
       - 5446:5432
     volumes:
       - pgdatawatchability:/var/lib/postgresql/data
+    depends_on:
+      - films_postgres
+      - videos_postgres
     restart: always
 
 volumes:
