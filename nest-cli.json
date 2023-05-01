@@ -171,6 +171,24 @@
       "compilerOptions": {
         "tsConfigPath": "apps/roles/tsconfig.app.json"
       }
+    },
+    "google_auth": {
+      "type": "application",
+      "root": "apps/google_auth",
+      "entryFile": "main",
+      "sourceRoot": "apps/google_auth/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/google_auth/tsconfig.app.json"
+      }
+    },
+    "vk_auth": {
+      "type": "application",
+      "root": "apps/vk_auth",
+      "entryFile": "main",
+      "sourceRoot": "apps/vk_auth/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/vk_auth/tsconfig.app.json"
+      }
     }
   }
 }
