@@ -1,4 +1,4 @@
-import { Controller, Get,Inject,Post,Body, UseGuards, Put,Param ,Delete} from '@nestjs/common';
+import { Controller, Get,Inject,Post,Body, UseGuards, Put,Param ,Delete, Patch} from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { ApiCreatedResponse, ApiOperation, ApiProperty, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -27,7 +27,8 @@ export class AppController {
   @Inject('PERSONQWE_SERVICE') private rabbitePersonService: ClientProxy,
   @Inject('SPOSES_OF_PERSONQWE_SERVICE') private rabbitesSpousesPersonService: ClientProxy,
   @Inject('ROLES_SERVICE') private rabbitesRoleService: ClientProxy,
-  @Inject('REVIEWS_SERVICE') private rabbitesReviewsOfFilmsService: ClientProxy) {}
+  @Inject('REVIEWS_SERVICE') private rabbitesReviewsOfFilmsService: ClientProxy,
+  @Inject('NAMESOFGENRES_SERVICE') private rabbitnamesofGenresService: ClientProxy,) {}
 
 
   @ApiTags('Роли')
@@ -275,6 +276,17 @@ async getRole(
     {});
 
   }
+
+  @ApiOperation({summary: 'Получить информацию с api о жанрах фильмов данные о которых были получены ранее'})
+  @ApiTags('Данные с api kinopoisk')
+  @Get('admin/namesofgenres/parsing')
+  async nemesofgenresgParser() {
+    return await this.rabbitnamesofGenresService.send({
+      cmd: 'parser-namesofgenres',
+    },
+    {});
+
+}
   
   @ApiOperation({summary: 'Получить информацию с api о жанрах фильмов данные о которых были получены ранее'})
   @ApiTags('Данные с api kinopoisk')
@@ -383,6 +395,16 @@ async getRole(
     {});
 
 }
+@ApiOperation({summary: 'Получить сохраненную информацию о жанрах фильмов данные о которых были получены ранее'})
+  @ApiTags('Данные с сайта kinopoisk')
+  @Get('namesgenres')
+  async GetnamesGenres() {
+    return await this.rabbitnamesofGenresService.send({
+      cmd: 'get-namesofgenres',
+    },
+    {});
+
+  }
   @ApiOperation({summary: 'Получить сохраненную информацию о жанрах фильмов данные о которых были получены ранее'})
   @ApiTags('Данные с сайта kinopoisk')
   @Get('genres')
@@ -600,4 +622,34 @@ async getFilm(
     });
 
   }
+  
+  @Patch('film')
+  async updateNameOfMovie(
+    @Body('id') id: number,
+    @Body('name') name: string) {
+    return this.rabbitFilmsService.send(
+      {
+        cmd: 'update-nameoffilm',
+      },
+      {
+        id,
+        name
+      },
+    );
+  }
+  @Patch('namesofgenre')
+  async updateGenreOfMovie(
+    @Body('id') id: number,
+    @Body('genre') genre: string) {
+    return this.rabbitnamesofGenresService.send(
+      {
+        cmd: 'update-namesgenres',
+      },
+      {
+        id,
+        genre
+      },
+    );
+  }
+
 }

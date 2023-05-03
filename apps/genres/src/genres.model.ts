@@ -1,10 +1,10 @@
-import { Table, Model, Column, DataType, BelongsToMany} from "sequelize-typescript";
+import { Table, Model, Column, DataType} from "sequelize-typescript";
 
 
 interface GenresOfFilmsCreationAttr {
     id: number;
-    genre:string;
     movieid:number;
+    genreid:number;
 }
 
 @Table({tableName: "genresOfFilms", createdAt: false, updatedAt: false})
@@ -14,8 +14,7 @@ export class GenresOfFilms extends Model<GenresOfFilms, GenresOfFilmsCreationAtt
     id: number;
     @Column({type: DataType.INTEGER})
     movieid:number;
-    @Column({type: DataType.STRING})
-    genre:string;
+    @Column({type: DataType.INTEGER})
+    genreid:number;
 
-    
 }

@@ -7,7 +7,8 @@ import { firstValueFrom } from 'rxjs';
 @Injectable()
 export class GenresService {
   constructor(@InjectModel(GenresOfFilms) private genresRepository: typeof GenresOfFilms,
-  @Inject('FILM_SERVICE') private rabbitFilmsService: ClientProxy){}
+  @Inject('FILM_SERVICE') private rabbitFilmsService: ClientProxy,
+  @Inject('NAMESGENRES_SERVICE') private rabbitnamesGenresService: ClientProxy){}
 
   async getGenresByMovieId(idM:number){
     return await this.genresRepository.findAll({where:{movieid:idM}})
@@ -21,14 +22,30 @@ export class GenresService {
     const films = await firstValueFrom(ob$).catch((err) => console.error(err));
     return films;
   }
+  async getAllnamesGenres() {
+    const ob$ = await this.rabbitnamesGenresService.send({
+      cmd: 'get-namesofgenres',
+    },
+    {});
+    const namesgenres = await firstValueFrom(ob$).catch((err) => console.error(err));
+    return namesgenres;
+  }
   
   async formDatabase() {
+
     let ArrFilms = await this.getAllFilms()
     let filmIdArr = [];
     for(let i = 0; i<ArrFilms.length;i++){
       filmIdArr.push(ArrFilms[i].id);
     }
-    if(filmIdArr.length!=0){
+
+    let ArrNamesGenres = await this.getAllnamesGenres()
+    let arrnamesGenres = []
+    for(let i = 0; i<ArrNamesGenres.length;i++){
+      arrnamesGenres.push(ArrNamesGenres[i].genre);
+    }
+    
+    if((filmIdArr.length!=0)&&(arrnamesGenres.length!=0)){
       const genresREQ =  await fetch(`https://api.kinopoisk.dev/v1/movie?id=${filmIdArr.join('&id=')}&selectFields=genres%20id&limit=1000)`, {
         method: 'GET',
         headers:{
@@ -41,24 +58,33 @@ export class GenresService {
       let arrGenres=[]
       for(let i =0; i< json.docs.length;i++){
         for(let j =0; j<json.docs[i].genres.length;j++){
-          await arrGenres.push(
-          {
-            movieid:json.docs[i].id,
-            genre:json.docs[i].genres[j].name
+          if(await this.genresRepository.findOne({where:{movieid:json.docs[i].id,genreid:arrnamesGenres.indexOf(json.docs[i].genres[j].name)+1}})){
+            j++
           }
-          )
+          else{
+            await arrGenres.push( { 
+              movieid:json.docs[i].id,
+              genreid:arrnamesGenres.indexOf(json.docs[i].genres[j].name)+1})
+          }
+        
+          
         }
       }
-      return this.genresRepository.bulkCreate(arrGenres)
+      return await this.genresRepository.bulkCreate( arrGenres)
     }
     else{
       console.log("Ошибка HTTP: " + genresREQ.status);
     }
         
     }
+    else{
+      return 'DB_FILMS OR DB_NAMES_OF_GENRE IS EMPTY'
+    }
   }
 
   async getAllGenres(){
     await this.genresRepository.findAll()
   }
+
+  
 }

@@ -189,6 +189,15 @@
       "compilerOptions": {
         "tsConfigPath": "apps/vk_auth/tsconfig.app.json"
       }
+    },
+    "genresnames": {
+      "type": "application",
+      "root": "apps/genresnames",
+      "entryFile": "main",
+      "sourceRoot": "apps/genresnames/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/genresnames/tsconfig.app.json"
+      }
     }
   }
 }

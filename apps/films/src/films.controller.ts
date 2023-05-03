@@ -1,6 +1,7 @@
 import { Controller, Get } from '@nestjs/common';
 import { FilmsService } from './films.service';
 import { Ctx, MessagePattern, Payload, RmqContext } from '@nestjs/microservices';
+import { FilmDto } from './dto/film.dto';
 
 @Controller()
 export class FilmsController {
@@ -42,5 +43,16 @@ export class FilmsController {
     channel.ack(message);
 
     return this.filmsService.getFilmById(film.id);
+  }
+
+  @MessagePattern({ cmd: 'update-nameoffilm' })
+  async UpdateDprofile(
+    @Ctx() context: RmqContext,
+    @Payload() film: FilmDto) {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return this.filmsService.updateNameMovie(film);
   }
 }

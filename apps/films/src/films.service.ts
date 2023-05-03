@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Films } from './films.model';
+import { FilmDto } from './dto/film.dto';
 
 
 @Injectable()
@@ -96,5 +97,13 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
     }
     async getFilmById(idF:number){
         return await this.filmRepository.findOne({where:{id:idF}})
+    }
+
+    async updateNameMovie(dto:FilmDto){
+        const film =  await this.filmRepository.findOne({where: {id: dto.id}})
+        film.name = dto.name
+        film.save()
+        return film
+
     }
 }

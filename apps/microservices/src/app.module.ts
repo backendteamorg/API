@@ -395,6 +395,28 @@ import { AuthModule } from 'apps/auth/src/auth.module';
         },
         inject:[ConfigService]
     },
+    {
+      provide: 'NAMESOFGENRES_SERVICE',
+        useFactory:(configService:ConfigService)=> {
+          const USER = configService.get('RABBITMQ_DEFAULT_USER');
+          const PASSWORD =  configService.get('RABBITMQ_DEFAULT_PASS');
+          const HOST = configService.get('RABBITMQ_HOST');
+          const QUEUE = configService.get('RABBITMQ_GENRESNAMES_QUEUE');
+    
+          return ClientProxyFactory.create({
+            transport: Transport.RMQ,
+            options: {
+              urls:[`amqp://${USER}:${PASSWORD}@${HOST}`],
+              noAck:false,
+              queue: QUEUE,
+              queueOptions: {
+                durable: true
+              }
+            }
+          })
+        },
+        inject:[ConfigService]
+    },
 
   ],
 })
