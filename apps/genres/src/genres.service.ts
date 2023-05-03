@@ -70,7 +70,7 @@ export class GenresService {
           
         }
       }
-      return await this.genresRepository.bulkCreate( arrGenres)
+      return await this.genresRepository.bulkCreate(arrGenres)
     }
     else{
       console.log("Ошибка HTTP: " + genresREQ.status);
@@ -83,7 +83,7 @@ export class GenresService {
   }
 
   async getAllGenres(){
-    await this.genresRepository.findAll()
+    return await this.genresRepository.findAll()
   }
 
   

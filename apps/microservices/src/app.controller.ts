@@ -407,7 +407,7 @@ async getRole(
   }
   @ApiOperation({summary: 'Получить сохраненную информацию о жанрах фильмов данные о которых были получены ранее'})
   @ApiTags('Данные с сайта kinopoisk')
-  @Get('genres')
+  @Get('allgenres')
   async GetGenres() {
     return await this.rabbitGenresFilmsService.send({
       cmd: 'get-all-genres',

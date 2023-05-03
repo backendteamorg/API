@@ -592,13 +592,12 @@ services:
       - videos_postgres
     restart: always
 
-  postgres_admin:
-    image: dpage/pgadmin4
-    environment:
-      POSTGRES_URI: postgresql://postgres:qwe@postgres:5432
-      POSTGRES_PASSWORD: qwe
+  adminer:
+    image: adminer
+    restart: always
     ports:
-      - '15432:80'
+      - 8080:8080
+    container_name: adminer
 
 volumes:
   pgdatafilm:
