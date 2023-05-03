@@ -25,6 +25,12 @@ export class GenresnamesService {
         for(let i = 0; i<ArrFilms.length;i++){
           filmIdArr.push(ArrFilms[i].id);
         }
+        let NamesgenresArr = []
+        let NamesGenres = await this.namesofgenresmoviesRepository.findAll()
+        for(let i = 0; i<NamesGenres.length;i++){
+          NamesgenresArr.push(NamesGenres[i].genre);
+        }
+
         if(filmIdArr.length!=0){
           const genresREQ =  await fetch(`https://api.kinopoisk.dev/v1/movie?id=${filmIdArr.join('&id=')}&selectFields=genres&limit=1000)`, {
             method: 'GET',
@@ -38,25 +44,13 @@ export class GenresnamesService {
           let arrGenres=[]
           for(let i =0; i< json.docs.length;i++){
             for(let j =0; j<json.docs[i].genres.length;j++){
-              if((arrGenres.includes(json.docs[i].genres[j].name))===false){
-                if((await this.namesofgenresmoviesRepository.findOne({where:{genre:json.docs[i].genres[j].name}}))){
-                  j++
-                }
-                else{
-                  await arrGenres.push(
-                    
-                    json.docs[i].genres[j].name
-                    
-                    )
-                }
-            }
+              if( ((arrGenres.includes(json.docs[i].genres[j].name))===false)&&((NamesgenresArr.includes(json.docs[i].genres[j].name))===false) ){
+                arrGenres.push(json.docs[i].genres[j].name)
 
             }
           }
-          for(let i = 0 ; i < arrGenres.length;i++){
-            arrGenres[i] = {genre:arrGenres[i]}
           }
-          return this.namesofgenresmoviesRepository.bulkCreate(arrGenres)
+          return arrGenres
         }
         else{
           console.log("Ошибка HTTP: " + genresREQ.status);

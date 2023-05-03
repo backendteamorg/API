@@ -83,7 +83,7 @@ async getRole(
       @Body('email') email: string,
       @Body('password') password: string,
     ) {
-      return this.rabbitAuthService.send(
+      return await this.rabbitAuthService.send(
         {
           cmd: 'login',
         },
@@ -155,7 +155,7 @@ async getRole(
     @Body('second_name') second_name: string,
     @Body('phonenumber') phonenumber: string,
   ) {
-    return this.rabbitProfileService.send(
+    return await this.rabbitProfileService.send(
       {
         cmd: 'create-profile',
       },
@@ -176,7 +176,7 @@ async getRole(
     @Body('fisrt_name') fisrt_name: string,
     @Body('second_name') second_name: string,
     @Body('phonenumber') phonenumber: string,) {
-    return this.rabbitProfileService.send(
+    return await this.rabbitProfileService.send(
       {
         cmd: 'update-profile',
       },
@@ -192,8 +192,8 @@ async getRole(
   @ApiOperation({summary: 'Удалить профиль'})
   @ApiTags('Профиль')
   @Delete('profile/:id')
-    deletePorfile(@Param('id') id:number) {
-      return this.rabbitProfileService.send({
+    async deletePorfile(@Param('id') id:number) {
+      return await this.rabbitProfileService.send({
         cmd: 'delete-profile',
       },
       {id}
@@ -627,7 +627,7 @@ async getFilm(
   async updateNameOfMovie(
     @Body('id') id: number,
     @Body('name') name: string) {
-    return this.rabbitFilmsService.send(
+    return await this.rabbitFilmsService.send(
       {
         cmd: 'update-nameoffilm',
       },
@@ -641,7 +641,7 @@ async getFilm(
   async updateGenreOfMovie(
     @Body('id') id: number,
     @Body('genre') genre: string) {
-    return this.rabbitnamesofGenresService.send(
+    return await this.rabbitnamesofGenresService.send(
       {
         cmd: 'update-namesgenres',
       },

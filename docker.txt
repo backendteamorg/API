@@ -1,4 +1,4 @@
-  microservices:
+microservices:
     build:
       context: ./
       dockerfile: ./apps/microservices/Dockerfile
@@ -575,6 +575,13 @@
       - films_postgres
       - videos_postgres
     restart: always
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+    container_name: adminer
 
 volumes:
   pgdatafilm:
