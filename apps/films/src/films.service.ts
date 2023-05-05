@@ -10,7 +10,7 @@ export class FilmsService {
 
 
   async formDatabase() {
-    const movieREQ =  await fetch(`https://api.kinopoisk.dev/v1/movie?&selectFields=\
+    const movieREQ =  await fetch(`https://api.kinopoisk.dev/v1/movie?type=movie&type=cartoon&selectFields=\
 fees%20status%20externalId%20rating%20votes%20backdrop%20movieLength%20images%20id%20type%20\
 name%20description%20distributors%20\
 premiere%20slogan%20year%20budget%20poster%20lists%20typeNumber%20alternativeName%20enName%20ageRating%20\

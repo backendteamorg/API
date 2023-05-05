@@ -45,12 +45,20 @@ export class GenresnamesService {
           for(let i =0; i< json.docs.length;i++){
             for(let j =0; j<json.docs[i].genres.length;j++){
               if( ((arrGenres.includes(json.docs[i].genres[j].name))===false)&&((NamesgenresArr.includes(json.docs[i].genres[j].name))===false) ){
-                arrGenres.push(json.docs[i].genres[j].name)
+                arrGenres.push(
+                  
+                  json.docs[i].genres[j].name
+                  
+                )
 
             }
           }
           }
-          return arrGenres
+          let arrGenresObj = []
+          for(let i = 0 ; i < arrGenres.length;i++){
+            arrGenresObj.push({genre:arrGenres[i]})
+          }
+          return await this.namesofgenresmoviesRepository.bulkCreate(arrGenresObj)
         }
         else{
           console.log("Ошибка HTTP: " + genresREQ.status);
@@ -66,6 +74,7 @@ export class GenresnamesService {
     async updateGenre(dto:GenresNamesDto){
       const genre = await this.namesofgenresmoviesRepository.findOne({where:{id:dto.id}})
       genre.genre = dto.genre
+      genre.enName = dto.enName
       genre.save()
       return genre
     }

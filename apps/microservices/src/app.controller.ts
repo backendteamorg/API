@@ -170,7 +170,7 @@ async getRole(
   @ApiOperation({summary: 'Обновить профиль'})
   @ApiTags('Профиль')
   @UseGuards(JwtAuthGuard)
-  @Put('profile')
+  @Patch('profile')
   async updateProfile(
     @Body('userId') userId: number,
     @Body('fisrt_name') fisrt_name: string,
@@ -622,7 +622,8 @@ async getFilm(
     });
 
   }
-  
+  @ApiOperation({summary: 'Изменить название фильма'})
+  @ApiTags('Данные с сайта kinopoisk')
   @Patch('film')
   async updateNameOfMovie(
     @Body('id') id: number,
@@ -637,17 +638,21 @@ async getFilm(
       },
     );
   }
+  @ApiOperation({summary: 'Изменить название жанра'})
+  @ApiTags('Данные с сайта kinopoisk')
   @Patch('namesofgenre')
   async updateGenreOfMovie(
     @Body('id') id: number,
-    @Body('genre') genre: string) {
+    @Body('genre') genre: string,
+    @Body('enName') enName: string) {
     return await this.rabbitnamesofGenresService.send(
       {
         cmd: 'update-namesgenres',
       },
       {
         id,
-        genre
+        genre,
+        enName
       },
     );
   }

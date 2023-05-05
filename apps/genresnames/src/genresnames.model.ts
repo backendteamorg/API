@@ -4,6 +4,7 @@ import { Table, Model, Column, DataType} from "sequelize-typescript";
 interface namesGenresOfFilmsCreationAttr {
     id: number;
     genre:string;
+    enName:string;
 }
 
 @Table({tableName: "namesgenresOfFilms", createdAt: false, updatedAt: false})
@@ -13,5 +14,7 @@ export class namesGenresOfFilms extends Model<namesGenresOfFilms, namesGenresOfF
     id: number;
     @Column({type: DataType.STRING})
     genre:string;
+    @Column({type: DataType.STRING})
+    enName:string;
     
 }
