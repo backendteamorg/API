@@ -30,6 +30,12 @@ export class NamesoffilmsService {
    for(let i = 0; i<ArrFilms.length;i++){
      filmIdArr.push(ArrFilms[i].id);
    }
+   let RepNames = await this.namesOfFilmsRepository.findAll()
+   let ArrRepNames = []
+   for(let i = 0; i<RepNames.length;i++){
+    ArrRepNames.push(RepNames[i].movieid+' '+RepNames[i].name);
+  }
+
    if(filmIdArr.length!=0){
      const namesofMoviesREQ =  await fetch(`https://api.kinopoisk.dev/v1/movie?id=${filmIdArr.join('&id=')}&selectFields=names%20id&limit=1000)`, {
        method: 'GET',
@@ -43,17 +49,19 @@ export class NamesoffilmsService {
      let arrNamesOfFilms = []
      for(let i =0;i<json.docs.length;i++){
         for(let j =0; j< json.docs[i].names.length;j++){
-          await arrNamesOfFilms.push(
-            {
-              movieid:json.docs[i].id,
-              name:json.docs[i].names[j].name,
-              language:json.docs[i].names[j].language,
-              type:json.docs[i].names[j].type,
+          if((ArrRepNames.includes(json.docs[i].id+' '+json.docs[i].names[j].name)===false)){
+            await arrNamesOfFilms.push(
+              {
+                movieid: json.docs[i].id,
+                name: json.docs[i].names[j].name,
+                language: json.docs[i].names[j].language,
+                type: json.docs[i].names[j].type
               }
-              )
+                )
+          }
         }
      }
-     return this.namesOfFilmsRepository.bulkCreate(arrNamesOfFilms)
+     return await this.namesOfFilmsRepository.bulkCreate(arrNamesOfFilms)
       
    }
    else{

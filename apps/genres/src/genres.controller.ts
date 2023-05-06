@@ -25,7 +25,7 @@ export class GenresController {
   }
 
   @MessagePattern({ cmd: 'get-genres-by-moveid' })
-  async getUserById(
+  async getGenresByMovieId(
     @Ctx() context: RmqContext,
     @Payload() movie: { id: number },) {
     const channel = context.getChannelRef();
@@ -35,5 +35,14 @@ export class GenresController {
     return this.genresService.getGenresByMovieId(movie.id);
   }
 
-  
+  @MessagePattern({ cmd: 'get-movies-by-genreid' })
+  async getMoviesByGenreId(
+    @Ctx() context: RmqContext,
+    @Payload() genre: { genreid: number },) {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return this.genresService.getMoviesByGenreId(genre.genreid);
+  }
 }

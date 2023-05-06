@@ -34,4 +34,28 @@ export class PersonsController {
 
     return this.personsService.getPersonsOfMovieByMovieId(movie.id);
   }
+
+  @MessagePattern({ cmd: 'get-movies-by-director' })
+  async getMoviesByDirector(
+    @Ctx() context: RmqContext,
+    @Payload() director: {director:string}, ) {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return this.personsService.getAllMoviesByDirector(director.director);
+  
+  }
+
+  @MessagePattern({ cmd: 'get-movies-by-actor' })
+  async getMoviesByActor(
+    @Ctx() context: RmqContext,
+    @Payload() actor: {actor:string}, ) {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return this.personsService.getAllMoviesByActor(actor.actor);
+  
+  }
 }

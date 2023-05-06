@@ -42,12 +42,12 @@ export class GenresService {
     let ArrNamesGenres = await this.getAllnamesGenres()
     let arrnamesGenres = []
     for(let i = 0; i<ArrNamesGenres.length;i++){
-      arrnamesGenres.push(ArrNamesGenres[i].genre);
+      arrnamesGenres.push(ArrNamesGenres[i]);
     }
     let genreRepArr = []
     let genreRep = await this.genresRepository.findAll()
-    for(let i = 0; i<genreRep.length;i++){
-      genreRepArr.push(genreRep[i].movieid+genreRep[i].genreid);
+    for(let i = 0 ; i <genreRep.length;i++ ){
+      genreRepArr.push('genreid: '+(genreRep[i].genreid)+' : '+'movieid: '+genreRep[i].movieid)
     }
 
     if((filmIdArr.length!=0)&&(arrnamesGenres.length!=0)){
@@ -63,17 +63,21 @@ export class GenresService {
       let arrGenres=[]
       for(let i =0; i< json.docs.length;i++){
         for(let j =0; j<json.docs[i].genres.length;j++){
-          if( (genreRepArr.includes(json.docs[i].id+ arrnamesGenres.indexOf(json.docs[i].genres[j].name)+1))===false){
-            arrGenres.push(
-              {
-                movieid:json.docs[i].id,
-                genreid:arrnamesGenres.indexOf(json.docs[i].genres[j].name)+1
-              }
-              )
+          for(let n = 0 ; n<arrnamesGenres.length;n++ ){
+            if((arrnamesGenres[n].genre === json.docs[i].genres[j].name)&&(genreRepArr.includes('genreid: '+(arrnamesGenres[n].id)+' : '+'movieid: '+json.docs[i].id)===false)){
+                arrGenres.push(
+                    {
+                      movieid:json.docs[i].id,
+                      genreid:arrnamesGenres[n].id
+                    }
+                    )
+                
+              
+            }
+          }
           }
         }
-      }
-      return await this.genresRepository.bulkCreate( arrGenres)
+        return await this.genresRepository.bulkCreate(arrGenres)
     }
     else{
       console.log("Ошибка HTTP: " + genresREQ.status);
@@ -87,6 +91,10 @@ export class GenresService {
 
   async getAllGenres(){
     return await this.genresRepository.findAll()
+  }
+
+  async getMoviesByGenreId(GenreId:number){
+    return await this.genresRepository.findAll({where:{genreid:GenreId}})
   }
 
   

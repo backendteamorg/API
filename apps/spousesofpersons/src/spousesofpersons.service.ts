@@ -28,6 +28,11 @@ export class SpousesofpersonsService {
     for(let i = 0 ; i<arrPer.length;i++){
         arrPersons.push(arrPer[i].id)
     }
+    let spousedRep = await this.personsSpousesOfRepository.findAll()
+    let ArrSpoused = []
+    for(let i = 0 ; i<spousedRep.length;i++){
+      ArrSpoused.push(spousedRep[i].sposesid)
+  }
     if(arrPersons.length!=0){
       const personREQ =  await fetch(`https://api.kinopoisk.dev/v1/person?id=${arrPersons.join('&id=')}&selectFields=id%20spouses&limit=1000)`, {
         method: 'GET',
@@ -42,18 +47,21 @@ export class SpousesofpersonsService {
       for(let i = 0 ; i< json.docs.length;i++){
         if(json.docs[i].spouses){
           for(let j = 0;j<json.docs[i].spouses.length;j++){
-            await arrPerson.push(
-              {
-                personid:json.docs[i].id,
-                sposesid:json.docs[i].spouses[j]?.id,
-                name:json.docs[i].spouses[j]?.name,
-                divorced:json.docs[i].spouses[j]?.divorced,
-                divorcedReason:json.docs[i].spouses[j]?.divorcedReason,
-                sex:json.docs[i].spouses[j]?.sex,
-                children:json.docs[i].spouses[j]?.children,
-                relation:json.docs[i].spouses[j]?.relation,
-              }
-              )
+            if((ArrSpoused.includes(json.docs[i].spouses[j]?.id))===false){
+              await arrPerson.push(
+                {
+                  personid:json.docs[i].id,
+                  sposesid:json.docs[i].spouses[j]?.id,
+                  name:json.docs[i].spouses[j]?.name,
+                  divorced:json.docs[i].spouses[j]?.divorced,
+                  divorcedReason:json.docs[i].spouses[j]?.divorcedReason,
+                  sex:json.docs[i].spouses[j]?.sex,
+                  children:json.docs[i].spouses[j]?.children,
+                  relation:json.docs[i].spouses[j]?.relation,
+                }
+                )
+
+            }
           }
         }
       }

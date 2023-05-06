@@ -31,6 +31,11 @@ export class SpokenLanguagesService {
     for(let i = 0; i<Arrfilms.length;i++){
       filmIdArr.push(Arrfilms[i].id);
     }
+    let SpokenRep = await this.spokenlanguageRepository.findAll()
+    let SpokenArr = []
+    for(let i = 0; i<SpokenRep.length;i++){
+      SpokenArr.push(SpokenRep[i].movieid+' '+SpokenRep[i].name+' '+SpokenRep[i].nameEn);
+    }
     if(filmIdArr.length!=0){
       const genresREQ =  await fetch(`https://api.kinopoisk.dev/v1/movie?id=${filmIdArr.join('&id=')}&selectFields=id%20spokenLanguages&\
 &limit=1000)`, {
@@ -45,13 +50,15 @@ export class SpokenLanguagesService {
       let arrSpokenLanguage = []
       for(let i = 0;i<json.docs.length;i++){
         for(let j = 0;j<json.docs[i].spokenLanguages.length;j++){
-          await arrSpokenLanguage.push(
-            {
-              movieid: json.docs[i].id,
-              name: json.docs[i].spokenLanguages[j].name,
-              nameEn:json.docs[i].spokenLanguages[j].nameEn
-            }
-            )
+          if((SpokenArr.includes(json.docs[i].id+' '+json.docs[i].spokenLanguages[j].name+' '+json.docs[i].spokenLanguages[j].nameEn))===false){
+            await arrSpokenLanguage.push(
+              {
+                movieid: json.docs[i].id,
+                name: json.docs[i].spokenLanguages[j].name,
+                nameEn:json.docs[i].spokenLanguages[j].nameEn
+              }
+              )
+          }
         }
       }
       return await this.spokenlanguageRepository.bulkCreate(arrSpokenLanguage)

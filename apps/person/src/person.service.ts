@@ -44,6 +44,11 @@ export class PersonService {
         arrIDPersons.push(arrPerson[i].personid)
       }
     }
+    let PersonRep = await this.personsRepository.findAll()
+    let arrPersonRep = []
+    for(let i = 0; i<PersonRep.length;i++){
+      arrPersonRep.push(PersonRep[i].id);
+    }
     if(arrIDPersons.length!=0){
       const personREQ =  await fetch(`https://api.kinopoisk.dev/v1/person?id=${arrIDPersons.join('&id=')}&selectFields=id%20name%20enName%20photo%20sex%20\
 growth%20birthday%20death%20age%20birthPlace%20deathPlace%20countAwards&sortField=countAwards&sortType=-1&limit=100)`, {
@@ -65,24 +70,27 @@ growth%20birthday%20death%20age%20birthPlace%20deathPlace%20countAwards&sortFiel
         for( let j = 0 ; j < json.docs[i].deathPlace?.length;j++){
           deathPl.push(json.docs[i].deathPlace[j]?.value)
         }
-        await arrPerson.push(
-          {
-            id:json.docs[i].id,
-            name:json.docs[i].name,
-            enName:json.docs[i].enName,
-            photo:json.docs[i].photo,
-            sex:json.docs[i].sex,
-            growth:json.docs[i].growth,
-            birthday:json.docs[i].birthday,
-            death:json.docs[i].death,
-            age:json.docs[i].age,
-            birthPlace:berthpl.join(','),
-            deathPlace:deathPl.join(','),
-            countAwards:json.docs[i].countAwards,
-          }
-          )
+        if((arrPersonRep.includes(json.docs[i].id))===false){
+          await arrPerson.push(
+            {
+              id:json.docs[i].id,
+              name:json.docs[i].name,
+              enName:json.docs[i].enName,
+              photo:json.docs[i].photo,
+              sex:json.docs[i].sex,
+              growth:json.docs[i].growth,
+              birthday:json.docs[i].birthday,
+              death:json.docs[i].death,
+              age:json.docs[i].age,
+              birthPlace:berthpl.join(','),
+              deathPlace:deathPl.join(','),
+              countAwards:json.docs[i].countAwards,
+            }
+            )
+
+        }
       }
-      return this.personsRepository.bulkCreate(arrPerson)
+      return await this.personsRepository.bulkCreate(arrPerson)
       }
       else{
         console.log("Ошибка HTTP: " + personREQ.status);

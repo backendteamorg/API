@@ -26,11 +26,16 @@ export class ProductionCompaniesService {
     async formDatabase() {
       let ArrFILms = await this.getAllFilms()
       let filmIdArr = [];
-        for(let i = 0; i<ArrFILms.length;i++){
+      for(let i = 0; i<ArrFILms.length;i++){
           filmIdArr.push(ArrFILms[i].id);
-        }
-        if(filmIdArr.length!=0){
-          const genresREQ =  await fetch(`https://api.kinopoisk.dev/v1/movie?id=${filmIdArr.join('&id=')}&selectFields=id%20productionCompanies\
+      }
+      let producrPer = await this.productioncompaniesRepository.findAll()
+      let ArrProducePer = []
+      for(let i = 0; i<producrPer.length;i++){
+        ArrProducePer.push(producrPer[i].movieid+' '+producrPer[i].name);
+    }
+      if(filmIdArr.length!=0){
+      const genresREQ =  await fetch(`https://api.kinopoisk.dev/v1/movie?id=${filmIdArr.join('&id=')}&selectFields=id%20productionCompanies\
 &limit=1000)`, {
             method: 'GET',
             headers:{
@@ -43,7 +48,7 @@ export class ProductionCompaniesService {
           let arrproductionCompanies = []
           for(let i = 0; i<json.docs.length;i++){
             for(let j = 0 ; j< json.docs[i].productionCompanies.length;j++){
-                if(json.docs[i].productionCompanies[j].name|| json.docs[i].productionCompanies[j].url ||json.docs[i].productionCompanies[j].previewUrl ){
+                if((ArrProducePer.includes(json.docs[i].id+' '+json.docs[i].productionCompanies[j].name))===false ){
                   await arrproductionCompanies.push(
                     {
                       movieid: json.docs[i].id,

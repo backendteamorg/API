@@ -29,6 +29,11 @@ export class WatchabilityService {
     for(let i = 0; i<FilmsArr.length;i++){
       filmIdArr.push(FilmsArr[i].id);
     }
+    let WatchRep = await this.watchabilityRepository.findAll()
+    let ArrWatch = []
+    for(let i = 0; i<WatchRep.length;i++){
+      ArrWatch.push(WatchRep[i].movieid+' '+WatchRep[i].name);
+    }
     if(filmIdArr.length!=0){
       const watchabilityREQ = await fetch(`https://api.kinopoisk.dev/v1/movie?id=${filmIdArr.join('&id=')}&selectFields=watchability%20id&limit=1000)`, {
         method: 'GET',
@@ -43,14 +48,16 @@ export class WatchabilityService {
       for(let n =0; n < json.docs.length;n++){
         if(json.docs[n].watchability.items)
         for(let m=0; m < json.docs[n].watchability.items.length;m++){
-          await arrWhatchability.push(
-            {
-              movieid:json.docs[n].id,
-              name:json.docs[n].watchability.items[m].name,
-              logo:json.docs[n].watchability.items[m].logo?.url,
-              url:json.docs[n].watchability.items[m].url
-            }
-            )
+          if((ArrWatch.includes(json.docs[n].id+' '+json.docs[n].watchability.items[m].name))===false){
+            await arrWhatchability.push(
+              {
+                movieid:json.docs[n].id,
+                name:json.docs[n].watchability.items[m].name,
+                logo:json.docs[n].watchability.items[m].logo?.url,
+                url:json.docs[n].watchability.items[m].url
+              }
+              )
+          }
         }
       }
      return await this.watchabilityRepository.bulkCreate(arrWhatchability)

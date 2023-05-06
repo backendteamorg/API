@@ -22,6 +22,11 @@ export class CountriesService {
         for(let i = 0; i<Arrfilm.length;i++){
           filmIdArr.push(Arrfilm[i].id);
         }
+        let RepCountrues = await this.countriesRepository.findAll()
+        let RepArrCountries = []
+        for(let i = 0 ; i < RepCountrues.length; i++){
+          RepArrCountries.push(RepCountrues[i].movieid+' '+RepCountrues[i].country)
+        }
         if(filmIdArr.length!=0){
           const countriesREQ =  await fetch(`https://api.kinopoisk.dev/v1/movie?id=${filmIdArr.join('&id=')}&selectFields=countries%20id&limit=1000)`, {
             method: 'GET',
@@ -35,15 +40,17 @@ export class CountriesService {
           let arrCountries = []
           for(let i =0;i<json.docs.length;i++){
             for(let j =0;j<json.docs[i].countries.length;j++){
-              await arrCountries.push(
-              {
-                movieid:json.docs[i].id,
-                country:json.docs[i].countries[j].name
+              if(RepArrCountries.includes(json.docs[i].id+' '+json.docs[i].countries[j].name)===false){
+                await arrCountries.push(
+                  {
+                    movieid:json.docs[i].id,
+                    country:json.docs[i].countries[j].name
+                  }
+                  )
               }
-              )
             }
           }
-          return this.countriesRepository.bulkCreate(arrCountries)
+          return await this.countriesRepository.bulkCreate(arrCountries)
         }
         else{
           console.log("Ошибка HTTP: " + countriesREQ.status);
@@ -56,5 +63,9 @@ export class CountriesService {
     }
     async getCountriesByMovieId(idC:number){
       return await this.countriesRepository.findAll({where:{movieid:idC}})
+    }
+
+    async getMoviesByCountry(country:string){
+      return await this.countriesRepository.findAll({where:{country:country}})
     }
 }

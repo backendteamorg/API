@@ -622,6 +622,7 @@ async getFilm(
     });
 
   }
+  
   @ApiOperation({summary: 'Изменить название фильма'})
   @ApiTags('Данные с сайта kinopoisk')
   @Patch('film')
@@ -638,12 +639,12 @@ async getFilm(
       },
     );
   }
+  
   @ApiOperation({summary: 'Изменить название жанра'})
   @ApiTags('Данные с сайта kinopoisk')
   @Patch('namesofgenre')
   async updateGenreOfMovie(
     @Body('id') id: number,
-    @Body('genre') genre: string,
     @Body('enName') enName: string) {
     return await this.rabbitnamesofGenresService.send(
       {
@@ -651,10 +652,82 @@ async getFilm(
       },
       {
         id,
-        genre,
         enName
       },
     );
+  }
+
+  @ApiOperation({summary: 'Получить фильмы указанного жанра'})
+  @ApiTags('(Фильры) Данные с сайта kinopoisk')
+  @Get('movies/genre/:genre')
+  async getMoviesByGenre(
+    @Param('genre') genre: string) {
+      return await this.rabbitnamesofGenresService.send(
+          {
+           cmd: 'get-movies-by-genre',
+          },
+          {genre:genre},
+          );
+  }
+  @ApiOperation({summary: 'Получить фильмы указанной страны'})
+  @ApiTags('(Фильры) Данные с сайта kinopoisk')
+  @Get('movies/country/:country')
+  async getMoviesByCountry(
+    @Param('country') country: string) {
+      return await this.rabbitCountriesFilmsService.send(
+          {
+           cmd: 'get-movies-by-country',
+          },
+          {country:country},
+          );
+  }
+  @ApiOperation({summary: 'Получить фильмы отсортированные по рейтингу кинопоиска'})
+  @ApiTags('(Фильры) Данные с сайта kinopoisk')
+  @Get('movies/rating/:rating')
+  async getMoviesByRating(
+    @Param('rating') rating: number) {
+      return await this.rabbitFilmsService.send(
+          {
+           cmd: 'get-film-by-rating',
+          },
+          {rating:rating},
+          );
+  }
+  @ApiOperation({summary: 'Получить фильмы отсортированные по количеству оценок кинопоиска'})
+  @ApiTags('(Фильры) Данные с сайта kinopoisk')
+  @Get('movies/voteskp/:voteskp')
+  async getMoviesByVotesKp(
+    @Param('voteskp') voteskp: number) {
+      return await this.rabbitFilmsService.send(
+          {
+           cmd: 'get-film-by-votesKinopoisk',
+          },
+          {voteskp:voteskp},
+          );
+  }
+  @ApiOperation({summary: 'Получить фильмы по режисеру'})
+  @ApiTags('(Фильры) Данные с сайта kinopoisk')
+  @Get('movies/director/:director')
+  async getMoviesByDirector(
+    @Param('director') director: string) {
+      return await this.rabbitPersonsFilmsService.send(
+          {
+           cmd: 'get-movies-by-director',
+          },
+          {director:director},
+          );
+  }
+  @ApiOperation({summary: 'Получить фильмы по актеру'})
+  @ApiTags('(Фильры) Данные с сайта kinopoisk')
+  @Get('movies/actor/:actor')
+  async getMoviesByActor(
+    @Param('actor') actor: string) {
+      return await this.rabbitPersonsFilmsService.send(
+          {
+           cmd: 'get-movies-by-actor',
+          },
+          {actor:actor},
+          );
   }
 
 }

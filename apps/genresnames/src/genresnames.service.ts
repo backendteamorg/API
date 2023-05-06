@@ -4,11 +4,14 @@ import { namesGenresOfFilms } from './genresnames.model';
 import { firstValueFrom } from 'rxjs';
 import { ClientProxy } from '@nestjs/microservices';
 import { GenresNamesDto } from './dto/genresnames.dto';
+import { Op } from 'sequelize';
 
 @Injectable()
 export class GenresnamesService {
     constructor(@InjectModel(namesGenresOfFilms) private namesofgenresmoviesRepository,
-    @Inject('FILM_SERVICE') private rabbitFilmsService: ClientProxy){}
+    @Inject('FILM_SERVICE') private rabbitFilmsService: ClientProxy,
+    @Inject('GENRES_SERVICE') private rabbitGenresService: ClientProxy){}
+
     async getAllFilms() {
         const ob$ = await this.rabbitFilmsService.send({
           cmd: 'get-all-films',
@@ -18,7 +21,15 @@ export class GenresnamesService {
         return films;
       }
 
-
+    async getMoviesByGenreId(genreId:number){
+      const ob$ = await this.rabbitGenresService.send({
+        cmd: 'get-movies-by-genreid',
+      },
+      {genreid:genreId});
+      const films = await firstValueFrom(ob$).catch((err) => console.error(err));
+      return films;
+    }
+    
     async formDatabase() {
         let ArrFilms = await this.getAllFilms()
         let filmIdArr = [];
@@ -73,9 +84,28 @@ export class GenresnamesService {
     
     async updateGenre(dto:GenresNamesDto){
       const genre = await this.namesofgenresmoviesRepository.findOne({where:{id:dto.id}})
-      genre.genre = dto.genre
       genre.enName = dto.enName
       genre.save()
       return genre
+    }
+
+    async getMoviesGenres(){
+
+    }
+
+    async getMoviesByGenre(genre:string){
+      const genrename =  await this.namesofgenresmoviesRepository.findOne({
+        where:{[Op.or]: [
+          { enName: genre },
+          { genre: genre }
+        ]
+    }})
+       if (genrename){
+          return await this.getMoviesByGenreId(genrename.id)
+       }
+      else{
+        return 'Фильмов введенного жанра нету в базе данных'
+      }
+     
     }
 }

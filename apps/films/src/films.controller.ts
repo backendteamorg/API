@@ -23,7 +23,7 @@ export class FilmsController {
     const message = context.getMessage();
     channel.ack(message);
 
-    return this.filmsService.formDatabase()
+    return await this.filmsService.formDatabase()
   }
  
   @MessagePattern({ cmd: 'get-all-films'})
@@ -32,7 +32,7 @@ export class FilmsController {
     const message = context.getMessage();
     channel.ack(message);
 
-    return this.filmsService.getAllFilm()
+    return await this.filmsService.getAllFilm()
   }
   @MessagePattern({ cmd: 'get-film-by-id' })
   async getUserById(
@@ -42,7 +42,7 @@ export class FilmsController {
     const message = context.getMessage();
     channel.ack(message);
 
-    return this.filmsService.getFilmById(film.id);
+    return await this.filmsService.getFilmById(film.id);
   }
 
   @MessagePattern({ cmd: 'update-nameoffilm' })
@@ -53,6 +53,27 @@ export class FilmsController {
     const message = context.getMessage();
     channel.ack(message);
 
-    return this.filmsService.updateNameMovie(film);
+    return await this.filmsService.updateNameMovie(film);
+  }
+
+  @MessagePattern({ cmd: 'get-film-by-rating' })
+  async getMoviesByRating(
+    @Ctx() context: RmqContext,
+    @Payload() film: { rating: number },) {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return await this.filmsService.getMoviesByRating(film.rating);
+  }
+  @MessagePattern({ cmd: 'get-film-by-votesKinopoisk' })
+  async getMoviesByVotesKp(
+    @Ctx() context: RmqContext,
+    @Payload() film: { voteskp: number },) {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return await this.filmsService.getMoviesByVotesKinopoisk(film.voteskp);
   }
 }

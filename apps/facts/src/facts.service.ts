@@ -24,6 +24,11 @@ export class FactsService {
    for(let i = 0; i<arrFilm.length;i++){
      filmIdArr.push(arrFilm[i].id);
    }
+   let factRep = await this.factsRepository.findAll()
+   let ArrFactRep = []
+   for(let i = 0  ; i< factRep.length; i++ ){
+    ArrFactRep.push(factRep[i].movieid+' '+factRep[i].value)
+   }
    if(filmIdArr.length!=0){
     const factsREQ =  await fetch(`https://api.kinopoisk.dev/v1/movie?id=${filmIdArr.join('&id=')}&selectFields=facts%20id&limit=1000)`, {
       method: 'GET',
@@ -38,15 +43,17 @@ export class FactsService {
     for(let n =0; n < json.docs.length;n++){
       if(json.docs[n].facts){
         for(let m=0; m < json.docs[n].facts.length;m++){
-          await arrFacts.push( 
-          {
-            movieid:json.docs[n].id,
-            value:json.docs[n].facts[m].value,
-            type:json.docs[n].facts[m].type,
-            spoiler:json.docs[n].facts[m].spoiler
-          } 
-          )
-        }
+          if(ArrFactRep.includes(json.docs[n].id+' '+json.docs[n].facts[m].value)===false){
+            await arrFacts.push( 
+              {
+                movieid:json.docs[n].id,
+                value:json.docs[n].facts[m].value,
+                type:json.docs[n].facts[m].type,
+                spoiler:json.docs[n].facts[m].spoiler
+              } 
+              )
+            }
+          }
 
       }
     }

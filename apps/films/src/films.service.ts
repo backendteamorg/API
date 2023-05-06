@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Films } from './films.model';
 import { FilmDto } from './dto/film.dto';
+import { Op } from 'sequelize';
 
 
 @Injectable()
@@ -105,5 +106,27 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
         film.save()
         return film
 
+    }
+
+    async getMoviesByRating(rating:number){
+        return await this.filmRepository.findAll({
+            where:{
+                ratingkp:{
+                    [Op.gte]:rating
+                }
+            }
+        }
+        )
+    }
+
+    async getMoviesByVotesKinopoisk(votes:number){
+        return await this.filmRepository.findAll({
+            where:{
+                voteskp:{
+                    [Op.gte]:votes
+                }
+            }
+        }
+        )
     }
 }

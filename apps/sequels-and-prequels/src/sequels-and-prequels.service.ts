@@ -30,6 +30,11 @@ export class SequelsAndPrequelsService {
     for(let i = 0; i<Arrfilm.length;i++){
       filmIdArr.push(Arrfilm[i].id);
     }
+    let SeqRep = await this.sequilesandProquelsRepository.findAll()
+    let ArrSeq  = []
+    for(let i = 0; i<SeqRep.length;i++){
+      ArrSeq.push(SeqRep[i].movieid+' '+SeqRep[i].sequelsAndPrequelsID);
+    }
     if(filmIdArr.length!=0){
       const genresREQ =  await fetch(`https://api.kinopoisk.dev/v1/movie?id=${filmIdArr.join('&id=')}&selectFields=id%20sequelsAndPrequels\
 &limit=1000)`, {
@@ -44,21 +49,23 @@ export class SequelsAndPrequelsService {
       let arrsequilesandProquels = []
       for(let i =0;i<json.docs.length;i++){
         for(let j=0;j<json.docs[i].sequelsAndPrequels.length;j++){
-          await arrsequilesandProquels.push(
-            {
-              movieid:json.docs[i].id,
-              sequelsAndPrequelsID:json.docs[i].sequelsAndPrequels[j].id,
-              name:json.docs[i].sequelsAndPrequels[j].name,
-              enName:json.docs[i].sequelsAndPrequels[j].enName,
-              alternativeName:json.docs[i].sequelsAndPrequels[j].alternativeName,
-              type:json.docs[i].sequelsAndPrequels[j].type,
-              posterurl:json.docs[i].sequelsAndPrequels[j].poster.url,
-              posterpreviewUrl:json.docs[i].sequelsAndPrequels[j].poster.previewUrl,
-            }
-            )
+          if((ArrSeq.includes(json.docs[i].id+' '+json.docs[i].sequelsAndPrequels[j].id))===false){
+            await arrsequilesandProquels.push(
+              {
+                movieid:json.docs[i].id,
+                sequelsAndPrequelsID:json.docs[i].sequelsAndPrequels[j].id,
+                name:json.docs[i].sequelsAndPrequels[j].name,
+                enName:json.docs[i].sequelsAndPrequels[j].enName,
+                alternativeName:json.docs[i].sequelsAndPrequels[j].alternativeName,
+                type:json.docs[i].sequelsAndPrequels[j].type,
+                posterurl:json.docs[i].sequelsAndPrequels[j].poster.url,
+                posterpreviewUrl:json.docs[i].sequelsAndPrequels[j].poster.previewUrl,
+              }
+              )
+          }
         }
       }
-      return this.sequilesandProquelsRepository.bulkCreate(arrsequilesandProquels)
+      return await this.sequilesandProquelsRepository.bulkCreate(arrsequilesandProquels)
 } 
 }
 }
