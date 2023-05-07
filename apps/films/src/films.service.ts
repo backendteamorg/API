@@ -22,11 +22,17 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
             'Content-Type': 'application/json',
         },
     })
+    let FilmArr = []
+    let RepfIMS = await this.filmRepository.findAll()
+    for(let i = 0 ; i < RepfIMS.length;i++){
+        FilmArr.push(RepfIMS[i].id)
+    }
     if(movieREQ.ok){
         let json = await movieREQ.json();
         let arrMovies = []
         for(let i = 0; i <json.docs.length;i++){
-            await arrMovies.push(
+            if((FilmArr.includes(json.docs[i].id))===false){
+                await arrMovies.push(
                 {
                     feesworld: ''+json.docs[i].fees.world?.value+' '+json.docs[i].fees.world?.currency,
                     feesusa: ''+json.docs[i].fees.usa?.value+' '+json.docs[i].fees.usa?.currency,
@@ -79,6 +85,8 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
                     
                 }
                 )
+
+            }
         }
         return await this.filmRepository.bulkCreate(arrMovies)
         

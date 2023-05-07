@@ -6,7 +6,7 @@ import * as passport from 'passport';
 
 async function bootstrap() {
   
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule,{ cors: true });
   app.use(session({
     secret: 'my-secret',
     saveUninitialized: false,
@@ -17,7 +17,7 @@ async function bootstrap() {
   }))
   app.use(passport.initialize());
   app.use(passport.session());
-
+  
   const PORT = process.env.PORT 
   const config = new DocumentBuilder()
         .setTitle('Данные с сайта kinopoisk')

@@ -48,7 +48,7 @@ export class AuthService {
             throw new HttpException('Пользователь с таким email существует', HttpStatus.BAD_REQUEST);
         }
         try{
-            const role = await this.getRole("USER")
+            const role = await this.getRole("ADMIN")
             const hashPassword = await bcrypt.hash(dto.password, 5);
             const user = await this.authRepository.create({email:dto.email, password: hashPassword,role:role.value})
             const token = await this.generateToken(user)
