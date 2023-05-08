@@ -47,4 +47,15 @@ export class GenresnamesController {
     return this.genresnamesService.getMoviesByGenre(genre.genre);
   
   }
+
+  @MessagePattern({ cmd: 'delete-genre-by-id' })
+  async deleteGenreById(
+    @Ctx() context: RmqContext,
+    @Payload() genre: { id: number },) {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return await this.genresnamesService.DeleteGenre(genre.id);
+  }
 }

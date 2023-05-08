@@ -76,4 +76,40 @@ export class FilmsController {
 
     return await this.filmsService.getMoviesByVotesKinopoisk(film.voteskp);
   }
+
+  @MessagePattern({ cmd: 'get-all-films-sort-votes-kp'})
+  async getAllFilmsSortByVotesKp(@Ctx() context: RmqContext){
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return await this.filmsService.SortByVotesKp()
+  }
+
+  @MessagePattern({ cmd: 'get-all-films-sort-rating-kp'})
+  async getAllFilmsSortByRatingKp(@Ctx() context: RmqContext){
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return await this.filmsService.SortByRatingKp()
+  }
+
+  @MessagePattern({ cmd: 'get-all-films-sort-date'})
+  async getAllFilmsSortByYear(@Ctx() context: RmqContext){
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return await this.filmsService.SortByDate()
+  }
+
+  @MessagePattern({ cmd: 'get-all-films-sort-by-name'})
+  async getAllFilmsSortByName(@Ctx() context: RmqContext){
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return await this.filmsService.SortByName()
+  }
 }

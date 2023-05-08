@@ -213,7 +213,7 @@ async getRole(
   
   @ApiOperation({summary: 'Сделать запрос к api на информацию о фильмах с сайта "Кинопоиск"'})
   @ApiTags('Данные с api kinopoisk')
-  @Get('adminfilms/parsing')
+  @Get('admin/films/parsing')
   async parsingFilms() {
     return await this.rabbitFilmsService.send({
       cmd: 'parser-films',
@@ -623,8 +623,8 @@ async getFilm(
 
   }
   
-  @ApiOperation({summary: 'Изменить название фильма'})
-  @ApiTags('Данные с сайта kinopoisk')
+  @ApiOperation({summary: 'Изменить название фильма (Пример: {"id":2, "name":"dsadrewr"})'})
+  @ApiTags('(Редактирвоание данных) Данные с сайта kinopoisk')
   @Patch('film')
   async updateNameOfMovie(
     @Body('id') id: number,
@@ -640,8 +640,8 @@ async getFilm(
     );
   }
   
-  @ApiOperation({summary: 'Изменить название жанра'})
-  @ApiTags('Данные с сайта kinopoisk')
+  @ApiOperation({summary: 'Изменить название жанра (Пример: {"id":2, "genre:"павуке","enName":"dsadrewr"})'})
+  @ApiTags('(Редактирвоание данных) Данные с сайта kinopoisk')
   @Patch('namesofgenre')
   async updateGenreOfMovie(
     @Body('id') id: number,
@@ -654,6 +654,18 @@ async getFilm(
         id,
         enName
       },
+    );
+  }
+  @ApiOperation({summary: 'Удалить название жанра по id'})
+  @ApiTags('(Редактирвоание данных) Данные с сайта kinopoisk')
+  @Delete('namesofgenre/:id')
+  async deleteGenreOfMovie(
+    @Param('id') id: number) {
+    return await this.rabbitnamesofGenresService.send(
+      {
+        cmd: 'delete-genre-by-id',
+      },
+      {id:id},
     );
   }
 
@@ -730,4 +742,45 @@ async getFilm(
           );
   }
 
+  @ApiOperation({summary: 'Получить сохраненные данные о фильмах сортированные по количеству оценок на Kinopoisk'})
+  @ApiTags('(Сортированные данные) Данные с сайта kinopoisk')
+  @Get('films/sort/byvoteskp')
+  async getAllFilmsSortByVotesKp() {
+    return await this.rabbitFilmsService.send({
+      cmd: 'get-all-films-sort-votes-kp',
+    },
+    {});
+
+}
+@ApiOperation({summary: 'Получить сохраненные данные о фильмах сортированные по рейтенгу на Kinopoisk'})
+  @ApiTags('(Сортированные данные) Данные с сайта kinopoisk')
+  @Get('films/sort/byratingkp')
+  async getAllFilmsSortByRatingKp() {
+    return await this.rabbitFilmsService.send({
+      cmd: 'get-all-films-sort-rating-kp',
+    },
+    {});
+
+}
+@ApiOperation({summary: 'Получить сохраненные данные о фильмах сортированные по дате выхода'})
+  @ApiTags('(Сортированные данные) Данные с сайта kinopoisk')
+  @Get('films/sort/date')
+  async getAllFilmsSortByDate() {
+    return await this.rabbitFilmsService.send({
+      cmd: 'get-all-films-sort-date',
+    },
+    {});
+
+}
+
+@ApiOperation({summary: 'Получить сохраненные данные о фильмах сортированные по алфавиту'})
+  @ApiTags('(Сортированные данные) Данные с сайта kinopoisk')
+  @Get('films/sort/name')
+  async getAllFilmsSortByName() {
+    return await this.rabbitFilmsService.send({
+      cmd: 'get-all-films-sort-by-name',
+    },
+    {});
+
+}
 }

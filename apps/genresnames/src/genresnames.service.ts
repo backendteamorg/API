@@ -84,6 +84,7 @@ export class GenresnamesService {
     
     async updateGenre(dto:GenresNamesDto){
       const genre = await this.namesofgenresmoviesRepository.findOne({where:{id:dto.id}})
+      genre.genre = dto.genre
       genre.enName = dto.enName
       genre.save()
       return genre
@@ -108,4 +109,10 @@ export class GenresnamesService {
       }
      
     }
-}
+
+    async DeleteGenre(idG:number){
+      const genre = await this.namesofgenresmoviesRepository.findOne({where:{id:idG}})
+      genre.destroy()
+      return `Жанр с id ${idG} удален`
+    }
+  }

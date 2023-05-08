@@ -52,7 +52,7 @@ async updateProfil(dto:ProfileDto){
 async deleteProfile(userId:number){
     const profile =   await this.profileRepository.findOne({where: {userId: userId}})
     const id = profile.userId
-    await profile.destroy()
+    profile.destroy()
     return `Профиль пользователя ${id} удален`
 }
 async getProfiles(){

@@ -137,4 +137,52 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
         }
         )
     }
+
+    async SortByVotesKp(){
+        let Arrfilm = []
+        const  films = await this.filmRepository.findAll()
+        for(let i = 0 ;i<films.length;i++ ){
+            Arrfilm.push(films[i])
+        }
+        return Arrfilm.sort((a, b) => b.voteskp - a.voteskp)
+    }
+
+    async SortByRatingKp(){
+        let Arrfilm = []
+        const  films = await this.filmRepository.findAll()
+        for(let i = 0 ;i<films.length;i++ ){
+            Arrfilm.push(films[i])
+        }
+        return Arrfilm.sort((a, b) => b.ratingkp - a.ratingkp)
+    }
+
+    async SortByDate(){
+        let Arrfilm = []
+        const  films = await this.filmRepository.findAll()
+        for(let i = 0 ;i<films.length;i++ ){
+            Arrfilm.push(films[i])
+        }
+        return Arrfilm.sort((a, b) => b.year - a.year)
+    }
+
+    async SortByName(){
+        let Arrfilm = []
+        const  films = await this.filmRepository.findAll()
+        for(let i = 0 ;i<films.length;i++ ){
+            Arrfilm.push(films[i])
+        }
+        return Arrfilm.sort((a, b) => {
+            const nameA = a.name.toUpperCase(); // ignore upper and lowercase
+            const nameB = b.name.toUpperCase(); // ignore upper and lowercase
+            if (nameA < nameB) {
+              return -1;
+            }
+            if (nameA > nameB) {
+              return 1;
+            }
+          
+            // names must be equal
+            return 0;
+          });
+    }
 }
