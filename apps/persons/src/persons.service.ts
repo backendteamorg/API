@@ -83,7 +83,7 @@ persons.id%20persons.photo%20persons.name%20persons.enName%20persons.profession%
       [Op.and]:
       [
         {[Op.or]:[{profession:'режиссеры'},{enProfession:'director'}]},
-        {[Op.or]:[{name:director},{enName:director}]}
+        {[Op.or]:[{name:{[Op.like]:director+'%'}},{enName:{[Op.like]:director+'%'}}]}
       ],
     }});
 
@@ -94,7 +94,7 @@ persons.id%20persons.photo%20persons.name%20persons.enName%20persons.profession%
       [Op.and]:
       [
         {[Op.or]:[{profession:'актеры'},{enProfession:'actor'}]},
-        {[Op.or]:[{name:actor},{enName:actor}]}
+        {[Op.or]:[{name:{[Op.like]:actor+'%'}},{enName:{[Op.like]:actor+'%'}}]}
       ],
     }});
 

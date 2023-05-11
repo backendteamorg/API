@@ -1,10 +1,11 @@
-import { Controller, Get,Inject,Post,Body, UseGuards, Put,Param ,Delete, Patch} from '@nestjs/common';
+import { Controller, Get,Inject,Post,Body, UseGuards, Put,Param ,Delete, Patch, Req} from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { ApiCreatedResponse, ApiOperation, ApiProperty, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { RolesGuard } from './roles.guard';
 import { Roles } from './roles-auth.decorator';
 import { IsEmail, IsString } from 'class-validator';
+import { GoogleAuthGuard } from './gooogle.guard';
 
 
 
@@ -602,7 +603,7 @@ async getFilm(
     }
 
 
-  @UseGuards(JwtAuthGuard)
+  
   @ApiOperation({summary: 'Сделать отзыв к фильму данные о котором были получены ранее'})
   @ApiTags('Данные с сайта kinopoisk')
   @Post('postreview')
@@ -610,6 +611,7 @@ async getFilm(
   @Body('movieid') movieid: number,
   @Body('title') title: string,
   @Body('review') review: string,
+  @Body('author') author: string
   ) {
     
     return await this.rabbitesReviewsOfFilmsService.send({
@@ -618,7 +620,29 @@ async getFilm(
     {
       movieid,
       title,
-      review
+      review,
+      author
+    });
+
+  }
+  @ApiOperation({summary: 'Сделать отзыв к фильму данные о котором были получены ранее'})
+  @ApiTags('Данные с сайта kinopoisk')
+  @Post('postreviewcomment')
+  async getReviewsComment(
+  @Body('reviewid') reviewid: number,
+  @Body('title') title: string,
+  @Body('comment') comment: string,
+  @Body('author') author: string
+  ) {
+    
+    return await this.rabbitesReviewsOfFilmsService.send({
+      cmd: 'post-review-comment',
+    },
+    {
+      reviewid,
+      title,
+      comment,
+      author
     });
 
   }
@@ -773,7 +797,7 @@ async getFilm(
 
 }
 
-@ApiOperation({summary: 'Получить сохраненные данные о фильмах сортированные по алфавиту'})
+  @ApiOperation({summary: 'Получить сохраненные данные о фильмах сортированные по алфавиту'})
   @ApiTags('(Сортированные данные) Данные с сайта kinopoisk')
   @Get('films/sort/name')
   async getAllFilmsSortByName() {
@@ -783,4 +807,21 @@ async getFilm(
     {});
 
 }
+  @ApiOperation({summary: 'Авторизация через google'})
+  @ApiTags('Регистрация и вход')
+  @Get('auth-google')
+  @UseGuards(GoogleAuthGuard)
+  async googleAuth(@Req() req) {} 
+
+  @ApiOperation({summary: 'Авторизация через google'})
+  @ApiTags('Регистрация и вход')
+  @Get('redirect')
+    @UseGuards(GoogleAuthGuard)
+    googleAuthRedirect(@Req() req) {
+        const accessToken = req.user;
+        return {accessToken};
+  }
+  
+  
+
 }

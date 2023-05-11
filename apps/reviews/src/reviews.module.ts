@@ -6,6 +6,7 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { ReviewsOfMovies } from './reviews.model';
 import { ClientProxyFactory, Transport } from '@nestjs/microservices';
 import { JwtModule } from '@nestjs/jwt';
+import { ReviewsCommentsOfMovies } from './reviews.comment.model';
 
 @Module({
   imports: [
@@ -26,10 +27,10 @@ import { JwtModule } from '@nestjs/jwt';
       username: process.env.POSTGRES_USER,
       password: process.env.POSTGRES_PASSWORD,
       database: process.env.POSTGRES_DB,
-      models: [ReviewsOfMovies],
+      models: [ReviewsOfMovies,ReviewsCommentsOfMovies],
       autoLoadModels: true
     }),
-    SequelizeModule.forFeature([ReviewsOfMovies]),
+    SequelizeModule.forFeature([ReviewsOfMovies,ReviewsCommentsOfMovies]),
   ],
   controllers: [ReviewsController],
   providers: [ReviewsService,

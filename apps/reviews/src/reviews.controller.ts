@@ -2,6 +2,7 @@ import { Controller, Get ,Post} from '@nestjs/common';
 import { ReviewsService } from './reviews.service';
 import { Ctx, MessagePattern, Payload, RmqContext } from '@nestjs/microservices';
 import { ReviewsOfMoviesDto } from './dto/reviews.dto';
+import { ReviewsCommentOfMoviesDto } from './dto/reviews.comment.dto';
 
 @Controller()
 export class ReviewsController {
@@ -15,6 +16,15 @@ export class ReviewsController {
     const message = context.getMessage();
     channel.ack(message);
 
-    return 
+    return this.reviewsService.postReview(review)
+  }
+
+  @MessagePattern({ cmd: 'post-review-comment'})
+  async postReviewComment(@Ctx() context: RmqContext,@Payload() review: ReviewsCommentOfMoviesDto){
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return this.reviewsService.postReviewComment(review)
   }
 }

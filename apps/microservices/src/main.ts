@@ -6,7 +6,8 @@ import * as passport from 'passport';
 
 async function bootstrap() {
   
-  const app = await NestFactory.create(AppModule,{ cors: true });
+  const app = await NestFactory.create(AppModule,{cors:true});
+  
   app.use(session({
     secret: 'my-secret',
     saveUninitialized: false,
@@ -17,7 +18,7 @@ async function bootstrap() {
   }))
   app.use(passport.initialize());
   app.use(passport.session());
-  
+
   const PORT = process.env.PORT 
   const config = new DocumentBuilder()
         .setTitle('Данные с сайта kinopoisk')
@@ -26,7 +27,6 @@ async function bootstrap() {
         .build()
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup('/api/docs', app, document)
-
   await app.listen(PORT, ()=>console.log(`Server started on port = ${PORT}`)) 
 }
 bootstrap();

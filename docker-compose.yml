@@ -61,6 +61,38 @@ services:
       - pgdatafilm:/var/lib/postgresql/data
     restart: always
 
+  reviews:
+    build:
+      context: ./
+      dockerfile: ./apps/reviews/Dockerfile
+    env_file:
+      - apps/reviews/.development.env
+    depends_on:
+      - rabbitmq
+      - reviews_postgres
+    ports:
+      - 6142:6142
+    volumes:
+      - .:/usr/src/app 
+      - /usr/src/app/node_modules
+    command: npm run start:dev reviews 
+    restart: always
+    container_name: reviews
+
+    
+  reviews_postgres:
+    container_name: reviews_postgres
+    image: postgres:12
+    env_file:
+      - apps/reviews/.development.env
+    environment:
+      PG_DATA: /var/lib/postgresql/data
+    ports:
+      - 5448:5432
+    volumes:
+      - pgdatarevies:/var/lib/postgresql/data
+    restart: always
+
 
   roles:
     build:
@@ -616,4 +648,4 @@ volumes:
   pgdatavideos:
   pgdatawatchability:
   pgdatagenresnames:
-
+  pgdatarevies:
