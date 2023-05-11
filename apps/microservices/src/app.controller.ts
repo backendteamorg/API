@@ -34,6 +34,7 @@ export class AppController {
 
   @ApiTags('Роли')
   @Post('createrole')
+  @ApiOperation({summary: 'Создать роль {"value":"ADMIN","description":"Администратор"}'})
   async createRole(
    
     @Body('value') value: string,
@@ -62,7 +63,7 @@ async getRole(
   }
   @ApiTags('Регистрация и вход')
   @Post('registration')
-  @ApiOperation({summary: 'Регистрация'})
+  @ApiOperation({summary: 'Регистрация {"email":"ADMIN@mail.ru","password":"Администратор"}'})
   async register(
   @Body('email') email: string,
   @Body('password') password: string,
@@ -78,7 +79,7 @@ async getRole(
       );
     }
     @ApiTags('Регистрация и вход')
-    @ApiOperation({summary: 'Вход'})
+    @ApiOperation({summary: 'Вход {"email":"ADMIN@mail.ru","password":"Администратор"}'})
     @Post('login')
     async login(
       @Body('email') email: string,
@@ -114,7 +115,7 @@ async getRole(
       {});
 
   }
-  @ApiTags('Профиль')
+  @ApiTags('(Отключено) Профиль')
   @ApiOperation({summary: 'TITLE_PROFILE'})
   @Get('title_profile')
   async getPorifle() {
@@ -125,7 +126,7 @@ async getRole(
 
   } 
   @ApiOperation({summary: 'Получить все профили'})
-  @ApiTags('Профиль')
+  @ApiTags('(Отключено) Профиль')
   @Get('profiles')
     async getProfiles() {
       return await this.rabbitProfileService.send({
@@ -135,7 +136,7 @@ async getRole(
       );
 
     }
-  @ApiTags('Профиль')
+  @ApiTags('(Отключено) Профиль')
   @ApiOperation({summary: 'Получить профиль по ИН пользователя'})
   @Get('profile/:id')
   async getProfile(@Param('id') id:number) {
@@ -147,7 +148,7 @@ async getRole(
 
   }
   @ApiOperation({summary: 'Создать профиль'})
-  @ApiTags('Профиль')
+  @ApiTags('(Отключено) Профиль')
   @UseGuards(JwtAuthGuard)
   @Post('profile')
   async createProfile(
@@ -169,7 +170,7 @@ async getRole(
     );
   }
   @ApiOperation({summary: 'Обновить профиль'})
-  @ApiTags('Профиль')
+  @ApiTags('(Отключено) Профиль')
   @UseGuards(JwtAuthGuard)
   @Patch('profile')
   async updateProfile(
@@ -191,7 +192,7 @@ async getRole(
   }
   @UseGuards(JwtAuthGuard)
   @ApiOperation({summary: 'Удалить профиль'})
-  @ApiTags('Профиль')
+  @ApiTags('(Отключено) Профиль')
   @Delete('profile/:id')
     async deletePorfile(@Param('id') id:number) {
       return await this.rabbitProfileService.send({
@@ -604,7 +605,7 @@ async getFilm(
 
 
   
-  @ApiOperation({summary: 'Сделать отзыв к фильму данные о котором были получены ранее'})
+  @ApiOperation({summary: 'Сделать отзыв к фильму данные о котором были получены ранее {"movieid":301,"title":"Лучший фильм","review":"Это лучший фильм который я смотрел","author":"asd"}'})
   @ApiTags('Данные с сайта kinopoisk')
   @Post('postreview')
   async getReviews(
@@ -625,7 +626,7 @@ async getFilm(
     });
 
   }
-  @ApiOperation({summary: 'Сделать отзыв к фильму данные о котором были получены ранее'})
+  @ApiOperation({summary: 'Сделать коментарий к отзыву фильма данные о котором были получены ранее {"reviewid":1,"title":"Согласен","comment":"Аналогично","author":"asd"}'})
   @ApiTags('Данные с сайта kinopoisk')
   @Post('postreviewcomment')
   async getReviewsComment(
