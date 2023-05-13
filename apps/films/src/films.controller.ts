@@ -37,7 +37,15 @@ export class FilmsController {
     return await this.filmsService.getAllFilmsWithAllInfo()
   }
 
-  
+  @MessagePattern({ cmd: 'get-all-films'})
+  async getAllFilms(@Ctx() context: RmqContext){
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return await this.filmsService.getAllFilms()
+  }
+
   @MessagePattern({ cmd: 'get-film-by-id' })
   async getUserById(
     @Ctx() context: RmqContext,

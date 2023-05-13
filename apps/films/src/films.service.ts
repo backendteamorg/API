@@ -625,7 +625,9 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
 
 
 
-
+    async getAllFilms(){
+        return this.filmRepository.findAll()
+    }
 
 
 
