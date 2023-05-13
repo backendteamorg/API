@@ -19,6 +19,9 @@ export class WatchabilityService {
     return films;
   }
 
+  async getAllWhatchability(){
+    return await this.watchabilityRepository.findAll()
+  }
   async getWatchabilityByMovieId(idM:number){
     return await this.watchabilityRepository.findAll({where:{movieid:idM}})
   }

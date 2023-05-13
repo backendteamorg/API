@@ -15,6 +15,14 @@ export class NamesoffilmsController {
 
     return this.namesoffilmsService.formDatabase()
   }
+  @MessagePattern({ cmd: 'get-all-namesoffilms'})
+  async getAllNames(@Ctx() context: RmqContext){
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return this.namesoffilmsService.getAllNamesOfFilms()
+  }
 
   @MessagePattern({ cmd: 'get-namesOfFilms-by-moveid' })
   async getUserById(

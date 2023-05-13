@@ -22,6 +22,8 @@ export class GenresService {
     const films = await firstValueFrom(ob$).catch((err) => console.error(err));
     return films;
   }
+
+  
   async getAllnamesGenres() {
     const ob$ = await this.rabbitnamesGenresService.send({
       cmd: 'get-namesofgenres',

@@ -24,6 +24,10 @@ export class SequelsAndPrequelsService {
   }
 
 
+  async getAllSequelsAndPrequels(){
+    return await this.sequilesandProquelsRepository.findAll()
+  }
+
   async formDatabase() {
     let Arrfilm = await this.getAllFilms()
     let filmIdArr = [];

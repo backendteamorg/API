@@ -356,7 +356,8 @@ async getRole(
 
 }
 
-@ApiOperation({summary: 'Получить  c api информацию о сиквелах и приквелах фильмов данные о которых были получены ранее'})
+
+@ApiOperation({summary: 'Получить c api информацию о супругах людей снимавшихся в фильмах данные о которых были получены ранее'})
   @ApiTags('Данные с api kinopoisk')
   @Get('admin/spousesperson/parsing')
   async spousespersonParser() {
@@ -366,6 +367,18 @@ async getRole(
     {});
 
 }
+ 
+@ApiOperation({summary: 'Получить все сохраненные данные о фильмах'}) ///////////////////////////////////////////////////////////////////////////////////
+@ApiTags('Суммарные данные с сайта kinopoisk')
+@Get('filmswithinfo')
+async getAllFilmsWithInfo() {
+  return await this.rabbitFilmsService.send({
+    cmd: 'get-all-films-with-info',
+  },
+  {});
+
+}
+
 @ApiOperation({summary: 'Получить сохраненные данные о фильмах'})
   @ApiTags('Данные с сайта kinopoisk')
   @Get('films')
@@ -606,7 +619,7 @@ async getFilm(
 
   
   @ApiOperation({summary: 'Сделать отзыв к фильму данные о котором были получены ранее {"movieid":301,"title":"Лучший фильм","review":"Это лучший фильм который я смотрел","author":"asd"}'})
-  @ApiTags('Данные с сайта kinopoisk')
+  @ApiTags('Отзывы и комментарии')
   @Post('postreview')
   async getReviews(
   @Body('movieid') movieid: number,
@@ -627,7 +640,7 @@ async getFilm(
 
   }
   @ApiOperation({summary: 'Сделать коментарий к отзыву фильма данные о котором были получены ранее {"reviewid":1,"title":"Согласен","comment":"Аналогично","author":"asd"}'})
-  @ApiTags('Данные с сайта kinopoisk')
+  @ApiTags('Отзывы и комментарии')
   @Post('postreviewcomment')
   async getReviewsComment(
   @Body('reviewid') reviewid: number,
@@ -648,7 +661,7 @@ async getFilm(
 
   }
   
-  @ApiOperation({summary: 'Изменить название фильма (Пример: {"id":2, "name":"dsadrewr"})'})
+  @ApiOperation({summary: 'Изменить название фильма (Пример: {"id":301, "name":"Matrix"})'})
   @ApiTags('(Редактирвоание данных) Данные с сайта kinopoisk')
   @Patch('film')
   async updateNameOfMovie(
@@ -665,7 +678,7 @@ async getFilm(
     );
   }
   
-  @ApiOperation({summary: 'Изменить название жанра (Пример: {"id":2, "genre:"павуке","enName":"dsadrewr"})'})
+  @ApiOperation({summary: 'Изменить название жанра (Пример: {"id":1, "genre:"драма","enName":"drame"})'})
   @ApiTags('(Редактирвоание данных) Данные с сайта kinopoisk')
   @Patch('namesofgenre')
   async updateGenreOfMovie(
@@ -808,21 +821,8 @@ async getFilm(
     {});
 
 }
-  @ApiOperation({summary: 'Авторизация через google'})
-  @ApiTags('Регистрация и вход')
-  @Get('auth-google')
-  @UseGuards(GoogleAuthGuard)
-  async googleAuth(@Req() req) {} 
+ 
 
-  @ApiOperation({summary: 'Авторизация через google'})
-  @ApiTags('Регистрация и вход')
-  @Get('redirect')
-    @UseGuards(GoogleAuthGuard)
-    googleAuthRedirect(@Req() req) {
-        const accessToken = req.user;
-        return {accessToken};
-  }
-  
-  
+
 
 }

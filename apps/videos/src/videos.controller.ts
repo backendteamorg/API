@@ -8,12 +8,21 @@ export class VideosController {
   
  
   @MessagePattern({ cmd: 'videos-parsing'})
-  async getPersons(@Ctx() context: RmqContext){
+  async getVideos(@Ctx() context: RmqContext){
     const channel = context.getChannelRef();
     const message = context.getMessage();
     channel.ack(message);
 
     return this.videosService.formDatabase()
+  }
+
+  @MessagePattern({ cmd: 'get-all-videos'})
+  async getAllVideos(@Ctx() context: RmqContext){
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return this.videosService.getAllVideos()
   }
 
   @MessagePattern({ cmd: 'get-videos-by-moveid' })

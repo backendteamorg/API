@@ -8,12 +8,21 @@ export class SpokenLanguagesController {
 
   
   @MessagePattern({ cmd: 'spoken-langeage-parser'})
-  async getPersons(@Ctx() context: RmqContext){
+  async getSpokenLanguage(@Ctx() context: RmqContext){
     const channel = context.getChannelRef();
     const message = context.getMessage();
     channel.ack(message);
 
     return this.spokenLanguagesService.formDatabase()
+  }
+
+  @MessagePattern({ cmd: 'get-all-spoken-langeage'})
+  async getAllSpokenLanguage(@Ctx() context: RmqContext){
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return this.spokenLanguagesService.getAllSpokenLanguage()
   }
 
   @MessagePattern({ cmd: 'get-spokenLanguages-by-moveid' })

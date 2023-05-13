@@ -23,7 +23,9 @@ export class NamesoffilmsService {
     return await this.namesOfFilmsRepository.findAll({where:{movieid:idN}})
   }
 
-
+  async getAllNamesOfFilms(){
+    return await this.namesOfFilmsRepository.findAll()
+  }
  async formDatabase() {
   let ArrFilms = await this.getAllFilms()
   let filmIdArr = [];

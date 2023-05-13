@@ -7,12 +7,20 @@ export class WatchabilityController {
   constructor(private readonly watchabilityService: WatchabilityService) {}
   
   @MessagePattern({ cmd: 'parser-watchability'})
-  async getPersons(@Ctx() context: RmqContext){
+  async getWhatchability(@Ctx() context: RmqContext){
     const channel = context.getChannelRef();
     const message = context.getMessage();
     channel.ack(message);
 
     return this.watchabilityService.formDatabase()
+  }
+  @MessagePattern({ cmd: 'get-all-watchability'})
+  async getAllWhatchability(@Ctx() context: RmqContext){
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return this.watchabilityService.getAllWhatchability()
   }
 
   @MessagePattern({ cmd: 'get-watchability-by-moveid' })

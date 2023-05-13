@@ -90,9 +90,7 @@ export class GenresnamesService {
       return genre
     }
 
-    async getMoviesGenres(){
-
-    }
+    
 
     async getMoviesByGenre(genre:string){
       const genrename =  await this.namesofgenresmoviesRepository.findOne({

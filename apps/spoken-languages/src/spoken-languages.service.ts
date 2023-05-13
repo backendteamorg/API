@@ -24,6 +24,10 @@ export class SpokenLanguagesService {
     return await this.spokenlanguageRepository.findAll({where:{movieid:idU}})
   }
 
+  async getAllSpokenLanguage(){
+    return await this.spokenlanguageRepository.findAll()
+  }
+
 
   async formDatabase() {
     let Arrfilms = await this.getAllFilms()

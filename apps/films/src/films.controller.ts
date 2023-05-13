@@ -26,14 +26,18 @@ export class FilmsController {
     return await this.filmsService.formDatabase()
   }
  
-  @MessagePattern({ cmd: 'get-all-films'})
-  async getAllFilms(@Ctx() context: RmqContext){
+ 
+
+  @MessagePattern({ cmd: 'get-all-films-with-info'})
+  async getAllFilmsWithInfo(@Ctx() context: RmqContext){
     const channel = context.getChannelRef();
     const message = context.getMessage();
     channel.ack(message);
 
-    return await this.filmsService.getAllFilm()
+    return await this.filmsService.getAllFilmsWithAllInfo()
   }
+
+  
   @MessagePattern({ cmd: 'get-film-by-id' })
   async getUserById(
     @Ctx() context: RmqContext,

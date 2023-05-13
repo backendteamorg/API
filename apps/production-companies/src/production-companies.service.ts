@@ -23,6 +23,10 @@ export class ProductionCompaniesService {
       return await this.productioncompaniesRepository.findAll({where:{movieid:idM}})
     }
     
+    async getAllProductionCompanies(){
+      return await this.productioncompaniesRepository.findAll()
+    }
+
     async formDatabase() {
       let ArrFILms = await this.getAllFilms()
       let filmIdArr = [];

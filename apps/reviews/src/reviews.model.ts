@@ -1,8 +1,8 @@
-import { Table, Model, Column, DataType, BelongsToMany} from "sequelize-typescript";
+import { Table, Model, Column, DataType, BelongsToMany, HasMany} from "sequelize-typescript";
+import { ReviewsCommentsOfMovies } from "./reviews.comment.model";
 
 
 interface ReviewsOfMoviesCreationAttr {
-    id: number;
     movieid: number;
     title:string;
     review:string;

@@ -1,4 +1,5 @@
-import { Table, Model, Column, DataType, BelongsToMany} from "sequelize-typescript";
+import { Table, Model, Column, DataType, BelongsToMany, HasOne, BelongsTo} from "sequelize-typescript";
+import { ReviewsOfMovies } from "./reviews.model";
 
 
 interface ReviewsCommentsOfMoviesCreationAttr {
@@ -22,4 +23,6 @@ export class ReviewsCommentsOfMovies extends Model<ReviewsCommentsOfMovies, Revi
     comment:string;
     @Column({type: DataType.STRING})
     author:string;
+
+    
 }
