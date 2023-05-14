@@ -22,6 +22,9 @@ export class SpousesofpersonsService {
   async getSpousesByPersonId(idP:number){
     return await this.personsSpousesOfRepository.findAll({where:{personid:idP}})
   }
+  async getSpousesOfPersonId(){
+    return await this.personsSpousesOfRepository.findAll()
+  }
   async formDatabase() {
     let arrPer = await this.getAllPersons()
     let arrPersons = []

@@ -639,19 +639,57 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
         return film
 
     }
+///// Фильры ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    async getMoviesByRating(rating:number){
-        return await this.filmRepository.findAll({
-            where:{
-                ratingkp:{
-                    [Op.gte]:rating
-                }
+    async getMoviesByRatingKp(rating:number){
+        const films = await this.getAllFilmsWithAllInfo()
+        let Arrfilm = []
+        for(let i = 0 ;i<films.length;i++ ){
+            if(films[i].film.ratingkp>=rating){
+                Arrfilm.push(films[i])
             }
+            
         }
-        )
+        return Arrfilm.sort((a, b) => a.film.ratingkp - b.film.ratingkp)
+    }
+    async getMoviesByRatingIMB(rating:number){
+        const films = await this.getAllFilmsWithAllInfo()
+        let Arrfilm = []
+        for(let i = 0 ;i<films.length;i++ ){
+            if(films[i].film.ratingimdb>=rating){
+                Arrfilm.push(films[i])
+            }
+            
+        }
+        return Arrfilm.sort((a, b) => a.film.ratingimdb - b.film.ratingimdb)
+    }
+    async getMoviesByRatingfilmCritics(rating:number){
+        const films = await this.getAllFilmsWithAllInfo()
+        let Arrfilm = []
+        for(let i = 0 ;i<films.length;i++ ){
+            if(films[i].film.ratingfilmCritics>=rating){
+                Arrfilm.push(films[i])
+            }
+            
+        }
+        return Arrfilm.sort((a, b) => a.film.ratingfilmCritics - b.film.ratingfilmCritics)
+    }
+
+    async getMoviesByRatingfilmRusCritics(rating:number){
+        const films = await this.getAllFilmsWithAllInfo()
+        let Arrfilm = []
+        let rat = rating*10
+        for(let i = 0 ;i<films.length;i++ ){
+            if(films[i].film.ratingrussianFilmCritics>=rat){
+                Arrfilm.push(films[i])
+            }
+            
+        }
+        return Arrfilm.sort((a, b) => a.film.ratingrussianFilmCritics - b.film.ratingrussianFilmCritics)
     }
 
     async getMoviesByVotesKinopoisk(votes:number){
+        const films = await this.getAllFilmsWithAllInfo()
         return await this.filmRepository.findAll({
             where:{
                 voteskp:{
@@ -661,43 +699,44 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
         }
         )
     }
+///// Сортировка////////////////////////////////////////////////////////////////////////////////////////////////
 
     async SortByVotesKp(){
+        const films = await this.getAllFilmsWithAllInfo()
         let Arrfilm = []
-        const  films = await this.filmRepository.findAll()
         for(let i = 0 ;i<films.length;i++ ){
             Arrfilm.push(films[i])
         }
-        return Arrfilm.sort((a, b) => b.voteskp - a.voteskp)
+        return Arrfilm.sort((a, b) => b.film.voteskp - a.film.voteskp)
     }
 
     async SortByRatingKp(){
+        const films = await this.getAllFilmsWithAllInfo()
         let Arrfilm = []
-        const  films = await this.filmRepository.findAll()
         for(let i = 0 ;i<films.length;i++ ){
             Arrfilm.push(films[i])
         }
-        return Arrfilm.sort((a, b) => b.ratingkp - a.ratingkp)
+        return Arrfilm.sort((a, b) => b.film.ratingkp - a.film.ratingkp)
     }
 
     async SortByDate(){
         let Arrfilm = []
-        const  films = await this.filmRepository.findAll()
+        const films = await this.getAllFilmsWithAllInfo()
         for(let i = 0 ;i<films.length;i++ ){
             Arrfilm.push(films[i])
         }
-        return Arrfilm.sort((a, b) => b.year - a.year)
+        return Arrfilm.sort((a, b) => b.film.year - a.film.year)
     }
 
     async SortByName(){
         let Arrfilm = []
-        const  films = await this.filmRepository.findAll()
+        const films = await this.getAllFilmsWithAllInfo()
         for(let i = 0 ;i<films.length;i++ ){
             Arrfilm.push(films[i])
         }
         return Arrfilm.sort((a, b) => {
-            const nameA = a.name.toUpperCase(); // ignore upper and lowercase
-            const nameB = b.name.toUpperCase(); // ignore upper and lowercase
+            const nameA = a.film.name.toUpperCase(); // ignore upper and lowercase
+            const nameB = b.film.name.toUpperCase(); // ignore upper and lowercase
             if (nameA < nameB) {
               return -1;
             }

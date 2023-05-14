@@ -68,15 +68,45 @@ export class FilmsController {
     return await this.filmsService.updateNameMovie(film);
   }
 
-  @MessagePattern({ cmd: 'get-film-by-rating' })
-  async getMoviesByRating(
+  @MessagePattern({ cmd: 'get-film-by-rating-kp' })
+  async getMoviesByRatingKp(
     @Ctx() context: RmqContext,
     @Payload() film: { rating: number },) {
     const channel = context.getChannelRef();
     const message = context.getMessage();
     channel.ack(message);
 
-    return await this.filmsService.getMoviesByRating(film.rating);
+    return await this.filmsService.getMoviesByRatingKp(film.rating);
+  }
+  @MessagePattern({ cmd: 'get-film-by-rating-Imb' })
+  async getMoviesByRatingImb(
+    @Ctx() context: RmqContext,
+    @Payload() film: { rating: number },) {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return await this.filmsService.getMoviesByRatingIMB(film.rating);
+  }
+  @MessagePattern({ cmd: 'get-film-by-rating-Critics' })
+  async getMoviesByRatingCritics(
+    @Ctx() context: RmqContext,
+    @Payload() film: { rating: number },) {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return await this.filmsService.getMoviesByRatingfilmCritics(film.rating);
+  }
+  @MessagePattern({ cmd: 'get-film-by-rating-rus-Critics' })
+  async getMoviesByRatingRusCritics(
+    @Ctx() context: RmqContext,
+    @Payload() film: { rating: number },) {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return await this.filmsService.getMoviesByRatingfilmRusCritics(film.rating);
   }
   @MessagePattern({ cmd: 'get-film-by-votesKinopoisk' })
   async getMoviesByVotesKp(
@@ -88,6 +118,7 @@ export class FilmsController {
 
     return await this.filmsService.getMoviesByVotesKinopoisk(film.voteskp);
   }
+  
 
   @MessagePattern({ cmd: 'get-all-films-sort-votes-kp'})
   async getAllFilmsSortByVotesKp(@Ctx() context: RmqContext){

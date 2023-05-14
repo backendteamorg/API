@@ -368,8 +368,8 @@ async getRole(
 
 }
  
-@ApiOperation({summary: 'Получить все сохраненные данные о фильмах'}) ///////////////////////////////////////////////////////////////////////////////////
-@ApiTags('Суммарные данные с сайта kinopoisk')
+@ApiOperation({summary: 'Получить все сохраненные данные о фильмах'}) /////////////////////////////////////////////////////////////(Суммарные данные)//////////////////////
+@ApiTags('(Суммарные данные) с сайта kinopoisk')
 @Get('filmswithinfo')
 async getAllFilmsWithInfo() {
   return await this.rabbitFilmsService.send({
@@ -378,6 +378,41 @@ async getAllFilmsWithInfo() {
   {});
 
 }
+@ApiOperation({summary: 'Получить сохраненный фильм по id'})
+@ApiTags('(Суммарные данные) с сайта kinopoisk')
+@Get('film/:id')
+async getFilm(
+  @Param('id') id: number) {
+    return await this.rabbitFilmsService.send(
+        {
+         cmd: 'get-film-by-id',
+        },
+        {id:id},
+        );
+}
+@ApiOperation({summary: 'Получить все сохраненные данные о тех кто учавтсовал в сьемках фильмов данные о которых были получены ранее'})
+  @ApiTags('(Суммарные данные) с сайта kinopoisk')
+  @Get('personswithinfo')
+  async GetAllPersonWithInfo() {
+    return await this.rabbitPersonsFilmsService.send({
+      cmd: 'get-all-persons-with-info',
+    },
+    {});
+
+  }
+
+  @ApiOperation({summary: 'Получить всю инфомрацию о персоне по id'})
+  @ApiTags('(Суммарные данные) с сайта kinopoisk')
+  @Get('personWithAllInfo/:id')
+  async getPersonWithAllInfo(
+    @Param('id') id: number) {
+    return await this.rabbitPersonsFilmsService.send(
+      {
+        cmd: 'get-all-info-personsoffilms-by-personid',
+      },
+      {id:id},
+    );
+  }
 
 @ApiOperation({summary: 'Получить сохраненные данные о фильмах'})
   @ApiTags('Данные с сайта kinopoisk')
@@ -450,18 +485,6 @@ async getAllFilmsWithInfo() {
     {});
 
   }
-  @ApiOperation({summary: 'Получить сохраненный фильм по id'})
-@ApiTags('Данные с сайта kinopoisk')
-@Get('film/:id')
-async getFilm(
-  @Param('id') id: number) {
-    return await this.rabbitFilmsService.send(
-        {
-         cmd: 'get-film-by-id',
-        },
-        {id:id},
-        );
-}
   @ApiOperation({summary: 'Получить сохраненные данные о фактах фильма'})
   @ApiTags('Данные с сайта kinopoisk')
   @Get('genres/:id')
@@ -733,16 +756,17 @@ async getFilm(
   }
   @ApiOperation({summary: 'Получить фильмы отсортированные по рейтингу кинопоиска'})
   @ApiTags('(Фильры) Данные с сайта kinopoisk')
-  @Get('movies/rating/:rating')
-  async getMoviesByRating(
+  @Get('movies/ratingkp/:rating')
+  async getMoviesByRatingKp(
     @Param('rating') rating: number) {
       return await this.rabbitFilmsService.send(
           {
-           cmd: 'get-film-by-rating',
+           cmd: 'get-film-by-rating-kp',
           },
           {rating:rating},
           );
   }
+  
   @ApiOperation({summary: 'Получить фильмы отсортированные по количеству оценок кинопоиска'})
   @ApiTags('(Фильры) Данные с сайта kinopoisk')
   @Get('movies/voteskp/:voteskp')
@@ -822,7 +846,5 @@ async getFilm(
 
 }
  
-
-
 
 }

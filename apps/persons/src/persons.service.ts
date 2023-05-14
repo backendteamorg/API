@@ -8,7 +8,9 @@ import { Op } from 'sequelize';
 @Injectable()
 export class PersonsService {
   constructor(@InjectModel(Persons) private personsRepository:typeof Persons,
-  @Inject('FILM_SERVICE') private rabbitFilmsService: ClientProxy){}
+  @Inject('FILM_SERVICE') private rabbitFilmsService: ClientProxy,
+  @Inject('PERSONQWE_SERVICE') private rabbitePersonService: ClientProxy,
+  @Inject('SPOSES_OF_PERSONQWE_SERVICE') private rabbitesSpousesPersonService: ClientProxy){}
 
 
   async getAllFilms() {
@@ -19,6 +21,126 @@ export class PersonsService {
     const films = await firstValueFrom(ob$).catch((err) => console.error(err));
     return films;
   }
+  async getPerson() {
+    const ob$ = await this.rabbitePersonService.send({
+      cmd: 'get-all-person-profile',
+    },
+    {});
+    const person = await firstValueFrom(ob$).catch((err) => console.error(err));
+    return person;
+  }
+  async getSpousesOfPerson() {
+    const ob$ = await this.rabbitesSpousesPersonService.send({
+      cmd: 'get-all-sposes-of-person',
+    },
+    {});
+    const spouses = await firstValueFrom(ob$).catch((err) => console.error(err));
+    return spouses;
+  }
+  
+  async getAllPersonsWithAllInfo(){
+    const persnsoffilms = await this.personsRepository.findAll()
+    const person = await  this.getPerson()
+    const spouses = await this.getSpousesOfPerson()
+    let ArrPersons = []
+    for(let q = 0 ; q<person.length;q++ ){
+      let ArrPersonsFIlms = []
+      for(let w = 0 ; w <persnsoffilms.length;w++){
+        if(person[q].id===persnsoffilms[w].personid){
+          ArrPersonsFIlms.push({
+            movieid:persnsoffilms[w].movieid,
+            profession:persnsoffilms[w].profession,
+            enProfession:persnsoffilms[w].enProfession,
+
+          })
+        }
+      }
+
+      let ArrSpouses = []
+      for(let w = 0 ; w < spouses.length;w++){
+        if(person[q].id===spouses[w].personid){
+          ArrSpouses.push({
+            sposesid:spouses[w].sposesid,
+            name:spouses[w].name,
+            divorced:spouses[w].divorced,
+            divorcedReason:spouses[w].divorcedReason,
+            sex:spouses[w].sex,
+            children:spouses[w].children,
+            relation:spouses[w].relation,
+          })
+        }
+      }
+      
+      
+      ArrPersons.push({
+        person:person[q],
+        movies:ArrPersonsFIlms,
+        spouses:ArrSpouses
+
+      })
+    }
+
+    return ArrPersons
+  }
+
+  async getPersonById(id:number){
+    const ob$ = await this.rabbitePersonService.send({
+      cmd: 'get-person-by-id',
+    },
+    {id:id});
+    const person = await firstValueFrom(ob$).catch((err) => console.error(err));
+    return person;
+}
+async getSpousesBypersonId(id:number){
+  const ob$ = await this.rabbitesSpousesPersonService.send({
+    cmd: 'get-spousesofperson-by-id',
+  },
+  {id:id});
+  const spouses = await firstValueFrom(ob$).catch((err) => console.error(err));
+  return spouses;
+}
+
+  async getAllInfoOfPersonsByPersonId(idP:number){
+    const persnsoffilms = await this.personsRepository.findAll({where:{personid:idP}})
+    const person = await this.getPersonById(idP)
+    const spouses = await this.getSpousesBypersonId(idP)
+    let ArrMovies =[]
+    for(let q =0 ; q <persnsoffilms.length;q++){
+      ArrMovies.push({
+        movieid:persnsoffilms[q].movieid,
+        profession:persnsoffilms[q].profession,
+        enProfession:persnsoffilms[q].enProfession,
+      })
+    }
+    let ArrSpouses = []
+    for(let q = 0 ; q < spouses.length;q++){
+      ArrSpouses.push({
+        sposesid:spouses[0].sposesid,
+        name:spouses[0].name,
+        divorced:spouses[0].divorced,
+        divorcedReason:spouses[0].divorcedReason,
+        sex:spouses[0].sex,
+        children:spouses[0].children,
+        relation:spouses[0].relation,
+      })
+    }
+    let ArrPerson = []
+    ArrPerson.push({
+      person:person,
+      movies:ArrMovies,
+      spouses:ArrSpouses
+    })
+    return ArrPerson
+  }
+
+
+
+  async getAllInfoOfPersonsByMovieId(idM:number){
+
+  }
+
+
+
 
   async getPersonsOfMovieByMovieId(idP:number){
     return await this.personsRepository.findAll({where:{movieid:idP}})

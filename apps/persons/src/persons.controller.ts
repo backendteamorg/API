@@ -24,6 +24,16 @@ export class PersonsController {
     return this.personsService.getAllPersons()
   }
 
+
+  @MessagePattern({ cmd: 'get-all-persons-with-info'})
+  async getAllPersonsWithInfo(@Ctx() context: RmqContext){
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return this.personsService.getAllPersonsWithAllInfo()
+  }
+
   @MessagePattern({ cmd: 'get-personsoffilms-by-moveid' })
   async getUserById(
     @Ctx() context: RmqContext,
@@ -33,6 +43,17 @@ export class PersonsController {
     channel.ack(message);
 
     return this.personsService.getPersonsOfMovieByMovieId(movie.id);
+  }
+
+  @MessagePattern({ cmd: 'get-all-info-personsoffilms-by-personid' })
+  async getAllInfoPersonBypersonId(
+    @Ctx() context: RmqContext,
+    @Payload() person: { id: number },) {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return this.personsService.getAllInfoOfPersonsByPersonId(person.id);
   }
 
   @MessagePattern({ cmd: 'get-movies-by-director' })
