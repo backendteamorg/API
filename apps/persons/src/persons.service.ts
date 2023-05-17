@@ -5,6 +5,7 @@ import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
 import { Op } from 'sequelize';
 
+
 @Injectable()
 export class PersonsService {
   constructor(@InjectModel(Persons) private personsRepository:typeof Persons,
@@ -200,25 +201,29 @@ persons.id%20persons.photo%20persons.name%20persons.enName%20persons.profession%
     return await this.personsRepository.findAll()
   }
 
+
+  async getMoviesByDirectorAndActor(str:string){
+    const director = str.split("@")[0]
+    const actor = str.split("@")[1]
+    return await this.personsRepository.findAll({where:{
+      [Op.or]:[{[Op.and]:[   {[Op.or]:[{profession:'режиссеры'},{enProfession:'director'}]},  {[Op.or]:[{name:{[Op.like]:director+'%'}},{enName:{[Op.like]:director+'%'}}]}],},
+      {[Op.and]: [   {[Op.or]:[{profession:'актеры'},{enProfession:'actor'}]},   {[Op.or]:[{name:{[Op.like]:actor+'%'}},{enName:{[Op.like]:actor+'%'}}]}],}],
+    }});
+      
+  }
+
   async getAllMoviesByDirector(director:string){
     return await this.personsRepository.findAll({where:{
-      [Op.and]:
-      [
-        {[Op.or]:[{profession:'режиссеры'},{enProfession:'director'}]},
-        {[Op.or]:[{name:{[Op.like]:director+'%'}},{enName:{[Op.like]:director+'%'}}]}
-      ],
+      [Op.and]:[   {[Op.or]:[{profession:'режиссеры'},{enProfession:'director'}]},  {[Op.or]:[{name:{[Op.like]:director+'%'}},{enName:{[Op.like]:director+'%'}}]}],
     }});
 
   }
 
   async getAllMoviesByActor(actor:string){
     return await this.personsRepository.findAll({where:{
-      [Op.and]:
-      [
-        {[Op.or]:[{profession:'актеры'},{enProfession:'actor'}]},
-        {[Op.or]:[{name:{[Op.like]:actor+'%'}},{enName:{[Op.like]:actor+'%'}}]}
-      ],
-    }});
+      [Op.and]: [   {[Op.or]:[{profession:'актеры'},{enProfession:'actor'}]},   {[Op.or]:[{name:{[Op.like]:actor+'%'}},{enName:{[Op.like]:actor+'%'}}]}],
+    }}
+    );
 
   }
 }

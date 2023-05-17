@@ -2,6 +2,7 @@ import { Controller, Get } from '@nestjs/common';
 import { FilmsService } from './films.service';
 import { Ctx, MessagePattern, Payload, RmqContext } from '@nestjs/microservices';
 import { FilmDto } from './dto/film.dto';
+import { FilteDto } from './dto/filtre.dto';
 
 @Controller()
 export class FilmsController {
@@ -57,6 +58,29 @@ export class FilmsController {
     return await this.filmsService.getFilmById(film.id);
   }
 
+  @MessagePattern({ cmd: 'get-movies-by-director' })
+  async getMoviesByDirector(
+    @Ctx() context: RmqContext,
+    @Payload() director: {director:string}, ) {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return this.filmsService.getFilmsByDirector(director.director);
+  
+  }
+
+  @MessagePattern({ cmd: 'get-movies-by-actor' })
+  async getMoviesByActor(
+    @Ctx() context: RmqContext,
+    @Payload() actor: {actor:string}, ) {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return this.filmsService.getFilmsByActor(actor.actor);
+  
+  }
   @MessagePattern({ cmd: 'update-nameoffilm' })
   async UpdateDprofile(
     @Ctx() context: RmqContext,
@@ -78,36 +102,7 @@ export class FilmsController {
 
     return await this.filmsService.getMoviesByRatingKp(film.rating);
   }
-  @MessagePattern({ cmd: 'get-film-by-rating-Imb' })
-  async getMoviesByRatingImb(
-    @Ctx() context: RmqContext,
-    @Payload() film: { rating: number },) {
-    const channel = context.getChannelRef();
-    const message = context.getMessage();
-    channel.ack(message);
-
-    return await this.filmsService.getMoviesByRatingIMB(film.rating);
-  }
-  @MessagePattern({ cmd: 'get-film-by-rating-Critics' })
-  async getMoviesByRatingCritics(
-    @Ctx() context: RmqContext,
-    @Payload() film: { rating: number },) {
-    const channel = context.getChannelRef();
-    const message = context.getMessage();
-    channel.ack(message);
-
-    return await this.filmsService.getMoviesByRatingfilmCritics(film.rating);
-  }
-  @MessagePattern({ cmd: 'get-film-by-rating-rus-Critics' })
-  async getMoviesByRatingRusCritics(
-    @Ctx() context: RmqContext,
-    @Payload() film: { rating: number },) {
-    const channel = context.getChannelRef();
-    const message = context.getMessage();
-    channel.ack(message);
-
-    return await this.filmsService.getMoviesByRatingfilmRusCritics(film.rating);
-  }
+ 
   @MessagePattern({ cmd: 'get-film-by-votesKinopoisk' })
   async getMoviesByVotesKp(
     @Ctx() context: RmqContext,
@@ -120,39 +115,17 @@ export class FilmsController {
   }
   
 
-  @MessagePattern({ cmd: 'get-all-films-sort-votes-kp'})
-  async getAllFilmsSortByVotesKp(@Ctx() context: RmqContext){
+
+  @MessagePattern({ cmd: 'get-films-use-filtres' })
+  async register(@Ctx() context: RmqContext, @Payload() filtre: FilteDto) {
     const channel = context.getChannelRef();
     const message = context.getMessage();
     channel.ack(message);
 
-    return await this.filmsService.SortByVotesKp()
+    return this.filmsService.getFilmsUseFiltre(filtre);
   }
 
-  @MessagePattern({ cmd: 'get-all-films-sort-rating-kp'})
-  async getAllFilmsSortByRatingKp(@Ctx() context: RmqContext){
-    const channel = context.getChannelRef();
-    const message = context.getMessage();
-    channel.ack(message);
+  
 
-    return await this.filmsService.SortByRatingKp()
-  }
-
-  @MessagePattern({ cmd: 'get-all-films-sort-date'})
-  async getAllFilmsSortByYear(@Ctx() context: RmqContext){
-    const channel = context.getChannelRef();
-    const message = context.getMessage();
-    channel.ack(message);
-
-    return await this.filmsService.SortByDate()
-  }
-
-  @MessagePattern({ cmd: 'get-all-films-sort-by-name'})
-  async getAllFilmsSortByName(@Ctx() context: RmqContext){
-    const channel = context.getChannelRef();
-    const message = context.getMessage();
-    channel.ack(message);
-
-    return await this.filmsService.SortByName()
-  }
+ 
 }

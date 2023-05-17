@@ -36,17 +36,7 @@ export class GenresnamesController {
     return this.genresnamesService.updateGenre(genre);
   }
 
-  @MessagePattern({ cmd: 'get-movies-by-genre' })
-  async getUserById(
-    @Ctx() context: RmqContext,
-    @Payload() genre: {genre:string}, ) {
-    const channel = context.getChannelRef();
-    const message = context.getMessage();
-    channel.ack(message);
-
-    return this.genresnamesService.getMoviesByGenre(genre.genre);
   
-  }
 
   @MessagePattern({ cmd: 'delete-genre-by-id' })
   async deleteGenreById(

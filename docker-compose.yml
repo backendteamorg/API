@@ -13,6 +13,7 @@ services:
       - apps/microservices/.development.env
     restart: always
     container_name: rabbitmq
+
   microservices:
     build:
       context: ./
@@ -648,4 +649,3 @@ volumes:
   pgdatawatchability:
   pgdatagenresnames:
   pgdatarevies:
-  

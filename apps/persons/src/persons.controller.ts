@@ -2,6 +2,8 @@ import { Controller, Get } from '@nestjs/common';
 import { PersonsService } from './persons.service';
 import { Ctx, MessagePattern, Payload, RmqContext } from '@nestjs/microservices';
 
+
+
 @Controller()
 export class PersonsController {
   constructor(private readonly personsService: PersonsService) {}
@@ -54,6 +56,18 @@ export class PersonsController {
     channel.ack(message);
 
     return this.personsService.getAllInfoOfPersonsByPersonId(person.id);
+  }
+
+  @MessagePattern({ cmd: 'get-movies-by-director-and-actor' })
+  async getMoviesByDirectorandActor(
+    @Ctx() context: RmqContext,
+    @Payload() str: {str:string}, ) {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return this.personsService.getMoviesByDirectorAndActor(str.str);
+  
   }
 
   @MessagePattern({ cmd: 'get-movies-by-director' })

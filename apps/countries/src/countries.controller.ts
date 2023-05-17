@@ -35,16 +35,6 @@ export class CountriesController {
     return this.countriesService.getCountriesByMovieId(movie.id);
   }
 
-  @MessagePattern({ cmd: 'get-movies-by-country' })
-  async getMoviesByCountry(
-    @Ctx() context: RmqContext,
-    @Payload() country: {country:string}, ) {
-    const channel = context.getChannelRef();
-    const message = context.getMessage();
-    channel.ack(message);
-
-    return this.countriesService.getMoviesByCountry(country.country);
   
-  }
   
 }

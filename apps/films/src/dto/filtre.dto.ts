@@ -1,8 +1,13 @@
 import { IsNumber, IsString } from "class-validator";
 
-export class FilmDto{
-    @IsString({message: 'Должно быть строкой'})
-    readonly genre:string;
-    @IsString({message: 'Должно быть строкой'})
-    readonly name:string;
+export class FilteDto{
+    readonly genre:string[];
+    readonly countries:string[];
+    readonly ratingKp: number; 
+    readonly votesKp: number;
+    readonly director: string;
+    readonly actor: string;
+   
+    
+
 }

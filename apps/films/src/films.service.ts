@@ -6,6 +6,7 @@ import { Op } from 'sequelize';
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
 import e from 'express';
+import { FilteDto } from './dto/filtre.dto';
 
 @Injectable()
 export class FilmsService {
@@ -652,57 +653,159 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
         }
         return Arrfilm.sort((a, b) => a.film.ratingkp - b.film.ratingkp)
     }
-    async getMoviesByRatingIMB(rating:number){
-        const films = await this.getAllFilmsWithAllInfo()
-        let Arrfilm = []
-        for(let i = 0 ;i<films.length;i++ ){
-            if(films[i].film.ratingimdb>=rating){
-                Arrfilm.push(films[i])
-            }
-            
-        }
-        return Arrfilm.sort((a, b) => a.film.ratingimdb - b.film.ratingimdb)
-    }
-    async getMoviesByRatingfilmCritics(rating:number){
-        const films = await this.getAllFilmsWithAllInfo()
-        let Arrfilm = []
-        for(let i = 0 ;i<films.length;i++ ){
-            if(films[i].film.ratingfilmCritics>=rating){
-                Arrfilm.push(films[i])
-            }
-            
-        }
-        return Arrfilm.sort((a, b) => a.film.ratingfilmCritics - b.film.ratingfilmCritics)
-    }
-
-    async getMoviesByRatingfilmRusCritics(rating:number){
-        const films = await this.getAllFilmsWithAllInfo()
-        let Arrfilm = []
-        let rat = rating*10
-        for(let i = 0 ;i<films.length;i++ ){
-            if(films[i].film.ratingrussianFilmCritics>=rat){
-                Arrfilm.push(films[i])
-            }
-            
-        }
-        return Arrfilm.sort((a, b) => a.film.ratingrussianFilmCritics - b.film.ratingrussianFilmCritics)
-    }
+    
 
     async getMoviesByVotesKinopoisk(votes:number){
         const films = await this.getAllFilmsWithAllInfo()
-        return await this.filmRepository.findAll({
-            where:{
-                voteskp:{
-                    [Op.gte]:votes
+        let Arrfilm = []
+        for(let i = 0 ;i<films.length;i++ ){
+            if(films[i].film.voteskp>=votes){
+                Arrfilm.push(films[i])
+            }
+            
+        }
+        return Arrfilm.sort((a, b) => a.film.voteskp - b.film.voteskp)
+        
+    }
+    async getAllMoviesByDirector(director:string){
+        const ob$ = await this.rabbitPersonsFilmsService.send({
+            cmd: 'get-movies-by-director',
+          },
+          {director:director});
+          const persons = await firstValueFrom(ob$).catch((err) => console.error(err));
+          return persons;
+    }
+    async getFilmsByDirector(director:string){
+        const films = await this.getAllFilmsWithAllInfo()
+        const persons = await this.getAllMoviesByDirector(director)
+        let ArrFilm = []
+        for(let q = 0 ; q < persons.length;q++){
+            for(let w = 0 ; w <films.length;w++){
+                if(persons[q].movieid===films[w].film.id){
+                    ArrFilm.push(films[w])
                 }
             }
         }
-        )
+        return ArrFilm
     }
-///// Сортировка////////////////////////////////////////////////////////////////////////////////////////////////
-
-    async SortByVotesKp(){
+    async getMoviesByActor(actor:string){
+        const ob$ = await this.rabbitPersonsFilmsService.send({
+            cmd: 'get-movies-by-actor',
+          },
+          {actor:actor});
+          const persons = await firstValueFrom(ob$).catch((err) => console.error(err));
+          return persons;
+    }
+    async getFilmsByActor(actor:string){
         const films = await this.getAllFilmsWithAllInfo()
+        const persons = await this.getMoviesByActor(actor)
+        let ArrFilm = []
+        for(let q = 0 ; q < persons.length;q++){
+            for(let w = 0 ; w <films.length;w++){
+                if(persons[q].movieid===films[w].film.id){
+                    ArrFilm.push(films[w])
+                }
+            }
+        }
+        return ArrFilm
+    }
+
+
+    async getAllMoviesByDirectorAndActor(str:string){
+        const ob$ = await this.rabbitPersonsFilmsService.send({
+            cmd: 'get-movies-by-director-and-actor',
+          },
+          {
+            str:str,
+        }
+        );
+          const persons = await firstValueFrom(ob$).catch((err) => console.error(err));
+          return persons;
+    }
+    async getFilmsByDirectorActor(str:string){
+        const films = await this.getAllFilmsWithAllInfo()
+        const persons = await this.getAllMoviesByDirectorAndActor(str)
+        let ArrFilm = []
+        for(let q = 0 ; q < persons.length;q++){
+            for(let w = 0 ; w <films.length;w++){
+                if(persons[q].movieid===films[w].film.id){
+                    ArrFilm.push(films[w])
+                }
+            }
+        }
+        return ArrFilm
+    }
+
+    async getFilmsUseFiltre(dto:FilteDto){
+        const films = await this.getAllFilmsWithAllInfo()
+        let ArrFilms = []
+        let ArrFilmsId = []
+        for(let q = 0 ;q< films.length;q++){
+            if(dto.genre!=undefined){
+                for(let w = 0 ;w<dto.genre.length ;w++){
+                    for(let e = 0 ; e< films[q].genres.length;e++){
+                        if((dto.genre[w]===films[q].genres[e].name)&&(ArrFilmsId.includes(films[q].film.id)===false)){
+                            ArrFilms.push(films[q])
+                            ArrFilmsId.push(films[q].film.id)
+                        }
+                    }
+                }
+            }
+            else if(dto.countries!=undefined){
+                for(let w = 0 ;w<dto.countries.length ;w++){
+                    for(let e = 0 ; e< films[q].countries.length;e++){
+                        if((dto.countries[w]===films[q].countries[e].name)&&(ArrFilmsId.includes(films[q].film.id)===false)){
+                            ArrFilms.push(films[q])
+                            ArrFilmsId.push(films[q].film.id)
+                        }
+                    }
+                }
+            }
+            else if((dto.ratingKp!=undefined)&&(dto.ratingKp<=films[q].film.ratingkp)&&(ArrFilmsId.includes(films[q].film.id)===false)){
+                ArrFilms.push(films[q])
+                ArrFilmsId.push(films[q].film.id)
+            }
+            else if ((dto.votesKp!=undefined)&&(dto.votesKp<=films[q].film.voteskp)&&(ArrFilmsId.includes(films[q].film.id)===false)){
+                ArrFilms.push(films[q])
+                ArrFilmsId.push(films[q].film.id)
+            }
+            else if (dto.director!=undefined){
+                const filmbydirecotr = await this.getFilmsByDirector(dto.director)
+                for(let w=0 ; w<filmbydirecotr.length;w++ ){
+                    if(ArrFilmsId.includes(filmbydirecotr[w].film.id)===false){
+                        ArrFilms.push(filmbydirecotr[w])
+                        ArrFilmsId.push(filmbydirecotr[w].film.id)
+                    }
+                }
+            }
+            else if (dto.actor!=undefined){
+                const filmbyactor = await this.getFilmsByActor(dto.actor)
+                for(let w=0 ; w<filmbyactor.length;w++ ){
+                    if(ArrFilmsId.includes(filmbyactor[w].film.id)===false){
+                        ArrFilms.push(filmbyactor[w])
+                        ArrFilmsId.push(filmbyactor[w].film.id)
+                    }
+                }
+            }
+        }
+        return ArrFilms
+
+    }
+                
+           
+
+        
+
+
+           
+        
+        
+    
+
+///// Сортировка    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    async SortByVotesKp(films){
+       
         let Arrfilm = []
         for(let i = 0 ;i<films.length;i++ ){
             Arrfilm.push(films[i])
@@ -710,8 +813,7 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
         return Arrfilm.sort((a, b) => b.film.voteskp - a.film.voteskp)
     }
 
-    async SortByRatingKp(){
-        const films = await this.getAllFilmsWithAllInfo()
+    async SortByRatingKp(films){
         let Arrfilm = []
         for(let i = 0 ;i<films.length;i++ ){
             Arrfilm.push(films[i])
@@ -719,18 +821,16 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
         return Arrfilm.sort((a, b) => b.film.ratingkp - a.film.ratingkp)
     }
 
-    async SortByDate(){
+    async SortByDate(films){
         let Arrfilm = []
-        const films = await this.getAllFilmsWithAllInfo()
         for(let i = 0 ;i<films.length;i++ ){
             Arrfilm.push(films[i])
         }
         return Arrfilm.sort((a, b) => b.film.year - a.film.year)
     }
 
-    async SortByName(){
+    async SortByName(films){
         let Arrfilm = []
-        const films = await this.getAllFilmsWithAllInfo()
         for(let i = 0 ;i<films.length;i++ ){
             Arrfilm.push(films[i])
         }

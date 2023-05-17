@@ -92,21 +92,7 @@ export class GenresnamesService {
 
     
 
-    async getMoviesByGenre(genre:string){
-      const genrename =  await this.namesofgenresmoviesRepository.findOne({
-        where:{[Op.or]: [
-          { enName: genre },
-          { genre: genre }
-        ]
-    }})
-       if (genrename){
-          return await this.getMoviesByGenreId(genrename.id)
-       }
-      else{
-        return 'Фильмов введенного жанра нету в базе данных'
-      }
-     
-    }
+    
 
     async DeleteGenre(idG:number){
       const genre = await this.namesofgenresmoviesRepository.findOne({where:{id:idG}})
