@@ -32,7 +32,7 @@ export class AppController {
   @Inject('NAMESOFGENRES_SERVICE') private rabbitnamesofGenresService: ClientProxy,) {}
 
 
-  @ApiTags('Роли')
+  @ApiTags('(Отключено) Роли')
   @Post('createrole')
   @ApiOperation({summary: 'Создать роль {"value":"ADMIN","description":"Администратор"}'})
   async createRole(
@@ -61,7 +61,7 @@ async getRole(
         {value:value},
         );
   }
-  @ApiTags('Регистрация и вход')
+  @ApiTags('(Отключено) Регистрация и вход')
   @Post('registration')
   @ApiOperation({summary: 'Регистрация {"email":"ADMIN@mail.ru","password":"Администратор"}'})
   async register(
@@ -78,7 +78,7 @@ async getRole(
         },
       );
     }
-    @ApiTags('Регистрация и вход')
+    @ApiTags('(Отключено) Регистрация и вход')
     @ApiOperation({summary: 'Вход {"email":"ADMIN@mail.ru","password":"Администратор"}'})
     @Post('login')
     async login(
@@ -95,7 +95,7 @@ async getRole(
         },
       );
     }
-  @ApiTags('Пользователи')
+  @ApiTags('(Отключено) Пользователи')
   @ApiOperation({summary: 'TITLE_USERS'})
   @Get('title_users')
   async getUser() {
@@ -105,7 +105,7 @@ async getRole(
       {});
 
     }
-  @ApiTags('Пользователи')
+  @ApiTags('(Отключено) Пользователи')
   @ApiOperation({summary: 'Получить всех пользователей'})
   @Get('users')
     async getUsers() {

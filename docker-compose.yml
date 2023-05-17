@@ -61,108 +61,11 @@ services:
       - pgdatafilm:/var/lib/postgresql/data
     restart: always
 
-  reviews:
-    build:
-      context: ./
-      dockerfile: ./apps/reviews/Dockerfile
-    env_file:
-      - apps/reviews/.development.env
-    depends_on:
-      - rabbitmq
-      - reviews_postgres
-    ports:
-      - 6142:6142
-    volumes:
-      - .:/usr/src/app 
-      - /usr/src/app/node_modules
-    command: npm run start:dev reviews 
-    restart: always
-    container_name: reviews
-
-    
-  reviews_postgres:
-    container_name: reviews_postgres
-    image: postgres:12
-    env_file:
-      - apps/reviews/.development.env
-    environment:
-      PG_DATA: /var/lib/postgresql/data
-    ports:
-      - 5448:5432
-    volumes:
-      - pgdatarevies:/var/lib/postgresql/data
-    restart: always
+  
 
 
-  roles:
-    build:
-      context: ./
-      dockerfile: ./apps/roles/Dockerfile
-    env_file:
-      - apps/roles/.development.env
-    depends_on:
-      - rabbitmq
-      - roles_postgres
-      - films
-    ports:
-      - 6128:6128
-    volumes:
-      - .:/usr/src/app 
-      - /usr/src/app/node_modules
-    command: npm run start:dev roles 
-    restart: always
-    container_name: roles
+  
 
-    
-  roles_postgres:
-    container_name: roles_postgres
-    image: postgres:12
-    env_file:
-      - apps/roles/.development.env
-    environment:
-      PG_DATA: /var/lib/postgresql/data
-    depends_on:
-      - films_postgres
-    ports:
-      - 5434:5432
-    volumes:
-      - pgdataroles:/var/lib/postgresql/data
-    restart: always
-
-  auth:
-    build:
-      context: ./
-      dockerfile: ./apps/auth/Dockerfile
-    env_file:
-      - apps/auth/.development.env
-    depends_on:
-      - rabbitmq
-      - auth_postgres
-      - roles
-    ports:
-      - 6127:6127
-    volumes:
-      - .:/usr/src/app 
-      - /usr/src/app/node_modules
-    command: npm run start:dev auth 
-    restart: always
-    container_name: auth
-
-    
-  auth_postgres:
-    container_name: auth_postgres
-    image: postgres:12
-    env_file:
-      - apps/auth/.development.env
-    environment:
-      PG_DATA: /var/lib/postgresql/data
-    ports:
-      - 5433:5432
-    depends_on:
-      - roles_postgres
-    volumes:
-      - pgdataauth:/var/lib/postgresql/data
-    restart: always
 
   
   countries:
@@ -633,8 +536,6 @@ services:
 
 volumes:
   pgdatafilm:
-  pgdataauth:
-  pgdataroles:
   pgdatacountries:
   pgdatafacts:
   pgdatagenres:
@@ -648,4 +549,3 @@ volumes:
   pgdatavideos:
   pgdatawatchability:
   pgdatagenresnames:
-  pgdatarevies:

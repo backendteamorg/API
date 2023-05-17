@@ -751,7 +751,7 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
                     }
                 }
             }
-            else if(dto.countries!=undefined){
+            if(dto.countries!=undefined){
                 for(let w = 0 ;w<dto.countries.length ;w++){
                     for(let e = 0 ; e< films[q].countries.length;e++){
                         if((dto.countries[w]===films[q].countries[e].name)&&(ArrFilmsId.includes(films[q].film.id)===false)){
@@ -761,30 +761,34 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
                     }
                 }
             }
-            else if((dto.ratingKp!=undefined)&&(dto.ratingKp<=films[q].film.ratingkp)&&(ArrFilmsId.includes(films[q].film.id)===false)){
+            if((dto.ratingKp!=undefined)&&(dto.ratingKp<=films[q].film.ratingkp)&&(ArrFilmsId.includes(films[q].film.id)===false)){
                 ArrFilms.push(films[q])
                 ArrFilmsId.push(films[q].film.id)
             }
-            else if ((dto.votesKp!=undefined)&&(dto.votesKp<=films[q].film.voteskp)&&(ArrFilmsId.includes(films[q].film.id)===false)){
+            if ((dto.votesKp!=undefined)&&(dto.votesKp<=films[q].film.voteskp)&&(ArrFilmsId.includes(films[q].film.id)===false)){
                 ArrFilms.push(films[q])
                 ArrFilmsId.push(films[q].film.id)
             }
-            else if (dto.director!=undefined){
-                const filmbydirecotr = await this.getFilmsByDirector(dto.director)
-                for(let w=0 ; w<filmbydirecotr.length;w++ ){
-                    if(ArrFilmsId.includes(filmbydirecotr[w].film.id)===false){
-                        ArrFilms.push(filmbydirecotr[w])
-                        ArrFilmsId.push(filmbydirecotr[w].film.id)
-                    }
+          
+           
+        }
+        if(dto.director!=undefined){
+            const filmbydirector = await this.getFilmsByDirector(dto.director)
+            for(let q = 0 ; q <filmbydirector.length;q++){
+                if(ArrFilmsId.includes(filmbydirector[q].film.id)===false){
+                    ArrFilms.push(filmbydirector[q])
+                    ArrFilmsId.push(filmbydirector[q].film.id)
                 }
             }
-            else if (dto.actor!=undefined){
-                const filmbyactor = await this.getFilmsByActor(dto.actor)
-                for(let w=0 ; w<filmbyactor.length;w++ ){
-                    if(ArrFilmsId.includes(filmbyactor[w].film.id)===false){
-                        ArrFilms.push(filmbyactor[w])
-                        ArrFilmsId.push(filmbyactor[w].film.id)
-                    }
+           
+            
+        }
+        if (dto.actor!=undefined){
+            const filmbyactor = await this.getFilmsByActor(dto.actor)
+            for(let q=0 ; q<filmbyactor.length;q++ ){
+                if(ArrFilmsId.includes(filmbyactor[q].film.id)===false){
+                    ArrFilms.push(filmbyactor[q])
+                    ArrFilmsId.push(filmbyactor[q].film.id)
                 }
             }
         }
