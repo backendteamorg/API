@@ -32,7 +32,7 @@ export class AppController {
   @Inject('NAMESOFGENRES_SERVICE') private rabbitnamesofGenresService: ClientProxy,) {}
 
 
-  @ApiTags('(Отключено) Роли')
+  @ApiTags('Роли')
   @Post('createrole')
   @ApiOperation({summary: 'Создать роль {"value":"ADMIN","description":"Администратор"}'})
   async createRole(
@@ -61,7 +61,7 @@ async getRole(
         {value:value},
         );
   }
-  @ApiTags('(Отключено) Регистрация и вход')
+  @ApiTags('Регистрация и вход')
   @Post('registration')
   @ApiOperation({summary: 'Регистрация {"email":"ADMIN@mail.ru","password":"Администратор"}'})
   async register(
@@ -78,7 +78,7 @@ async getRole(
         },
       );
     }
-    @ApiTags('(Отключено) Регистрация и вход')
+    @ApiTags('Регистрация и вход')
     @ApiOperation({summary: 'Вход {"email":"ADMIN@mail.ru","password":"Администратор"}'})
     @Post('login')
     async login(
@@ -95,7 +95,7 @@ async getRole(
         },
       );
     }
-  @ApiTags('(Отключено) Пользователи')
+  @ApiTags('Пользователи')
   @ApiOperation({summary: 'TITLE_USERS'})
   @Get('title_users')
   async getUser() {
@@ -105,7 +105,7 @@ async getRole(
       {});
 
     }
-  @ApiTags('(Отключено) Пользователи')
+  @ApiTags('Пользователи')
   @ApiOperation({summary: 'Получить всех пользователей'})
   @Get('users')
     async getUsers() {
@@ -257,27 +257,9 @@ async getRole(
 
   }
  
-  @ApiTags('Данные с api kinopoisk')
-  @ApiOperation({summary: 'Сделать запрос к api на информацию о том где смотреть фильмы данные о которых были получены ранее'})
-  @Get('admin/watchability/parsing')
-  async parsingwatchability() {
-    return await this.rabbitwatchabilityService.send({
-      cmd: 'parser-watchability',
-    },
-    {});
-
-  }
   
-  @ApiTags('Данные с api kinopoisk')
-  @ApiOperation({summary: 'Сделать запрос к api на информацию о фактах фильмов данные о которых были получены ранее'})
-  @Get('admin/factsofmovies/parsing')
-  async parsingfactsofmovies() {
-    return await this.rabbitfactsoffilmsService.send({
-      cmd: 'parser-facts',
-    },
-    {});
-
-  }
+  
+ 
 
   @ApiOperation({summary: 'Получить информацию с api о жанрах фильмов данные о которых были получены ранее'})
   @ApiTags('Данные с api kinopoisk')
@@ -301,27 +283,9 @@ async getRole(
 
 }
 
-@ApiTags('Данные с api kinopoisk')
-  @ApiOperation({summary: 'Сделать запрос к api на информацию о компаниях учавстовавших в сьемках фильмов данные о которых были получены ранее'})
-  @Get('admin/productioncompanies/parsing')
-  async parsingproductionCompanies() {
-    return await this.rabbitProductionCompaniesFilmsService.send({
-      cmd: 'parser-productioncompanies',
-    },
-    {});
 
-}
 
-@ApiOperation({summary: 'Получить c api информацию о языках на которых фильмы данные о которых были получены ранее'})
-  @ApiTags('Данные с api kinopoisk')
-  @Get('admin/spokenlanguage/parsing')
-  async spokenlanguageParser() {
-    return await this.rabbitSpokenLanguageService.send({
-      cmd: 'spoken-langeage-parser',
-    },
-    {});
 
-}
 
 @ApiOperation({summary: 'Получить c api информацию о трейлерах фильмов данные о которых были получены ранее'})
   @ApiTags('Данные с api kinopoisk')
@@ -334,16 +298,7 @@ async getRole(
 
 }
 
-@ApiOperation({summary: 'Получить c api информацию о сиквелах и приквелах фильмов данные о которых были получены ранее'})
-  @ApiTags('Данные с api kinopoisk')
-  @Get('admin/sequelsandprequels/parsing')
-  async sequelsandprequelsParser() {
-    return await this.rabbitequelsandprequelsService.send({
-      cmd: 'sequelsandprequels-parsing',
-    },
-    {});
 
-}
 
 @ApiOperation({summary: 'Сделать запрос к api чтобы получить тех кто снимался в фильмах данные о которых были получены ранее'})
   @ApiTags('Данные с api kinopoisk')
@@ -357,16 +312,8 @@ async getRole(
 }
 
 
-@ApiOperation({summary: 'Получить c api информацию о супругах людей снимавшихся в фильмах данные о которых были получены ранее'})
-  @ApiTags('Данные с api kinopoisk')
-  @Get('admin/spousesperson/parsing')
-  async spousespersonParser() {
-    return await this.rabbitesSpousesPersonService.send({
-      cmd: 'sposes-of-person-parser',
-    },
-    {});
 
-}
+
 @ApiOperation({summary: 'Получить сохраненные данные о фильмах используя фильтры {"genre":["семейный"],"countries":["Венгрия"],"ratingKp":5,"votesKp":5,"director":"Э","actor":"Доро"'})
 @ApiTags('(Фильры) Данные с сайта kinopoisk')
 
@@ -404,6 +351,18 @@ async getAllFilmsWithInfo() {
   {});
 
 }
+@ApiOperation({summary: 'Получить все сохраненные данные о фильмах которые могут понравиться'})
+  @ApiTags('(Редактирвоание данных) Данные с сайта kinopoisk')
+  @Delete('filmconoriymogutPonravitsa/:id')
+  async esliWavPonravilsa(
+    @Param('id') id: number) {
+    return await this.rabbitFilmsService.send(
+      {
+        cmd: 'esli-vam-ponravilsa-film',
+      },
+      {id:id},
+    );
+  }
 @ApiOperation({summary: 'Получить сохраненный фильм по id'})
 @ApiTags('(Суммарные данные) с сайта kinopoisk')
 @Get('film/:id')
@@ -451,16 +410,7 @@ async getFilm(
 
 }
 
-@ApiOperation({summary: 'Получить все сохраненные данные о фактах фильмов'})
-  @ApiTags('Данные с сайта kinopoisk')
-  @Get('factsoffilms')
-  async getAllFacts() {
-    return await this.rabbitfactsoffilmsService.send({
-      cmd: 'get-all-facts',
-    },
-    {});
 
-}
 @ApiOperation({summary: 'Получить все  сохраненные профили тех кто учавcтвовал в сьемках фильмов данные о которых были сохранены ранее'})
   @ApiTags('Данные с сайта kinopoisk')
   @Get('personsprofile')
@@ -523,18 +473,7 @@ async getFilm(
           {id:id},
           );
   }
-  @ApiOperation({summary: 'Получить сохраненные факты о фильме по id фильма'})
-  @ApiTags('Данные с сайта kinopoisk')
-  @Get('facts/:id')
-  async getFacts(
-    @Param('id') id: number) {
-      return await this.rabbitfactsoffilmsService.send(
-          {
-           cmd: 'get-facts-by-moveid',
-          },
-          {id:id},
-          );
-    }
+ 
   
   @ApiOperation({summary: 'Получить сохраненные данные о фактах фильма'})
   @ApiTags('Данные с сайта kinopoisk')
@@ -573,55 +512,10 @@ async getFilm(
           );
   }
 
-  @ApiOperation({summary: 'Получить сохраненные данные о сьемочной группе'})
-  @ApiTags('Данные с сайта kinopoisk')
-  @Get('productionCompanies/:id')
-  async getProductionCompaniesByMovieId(
-    @Param('id') id: number) {
-      return await this.rabbitProductionCompaniesFilmsService.send(
-          {
-           cmd: 'get-productionCompanies-by-moveid',
-          },
-          {id:id},
-          );
-  }
-  @ApiOperation({summary: 'Получить сохраненные данные о сиквелах и приквелах'})
-  @ApiTags('Данные с сайта kinopoisk')
-  @Get('sequelsAndPrequels/:id')
-  async getSequelsAandPrequelsByMovieId(
-    @Param('id') id: number) {
-      return await this.rabbitequelsandprequelsService.send(
-          {
-           cmd: 'get-sequelsAndPrequels-by-moveid',
-          },
-          {id:id},
-          );
-  }
-  @ApiOperation({summary: 'Получить сохраненные данные о языках на котором есть фильм, данные о котором были получены ранее'})
-  @ApiTags('Данные с сайта kinopoisk')
-  @Get('spokenLanguages/:id')
-  async getSpokenLanguagesByMovieId(
-    @Param('id') id: number) {
-      return await this.rabbitSpokenLanguageService.send(
-          {
-           cmd: 'get-spokenLanguages-by-moveid',
-          },
-          {id:id},
-          );
-  }
 
-  @ApiOperation({summary: 'Получить сохраненные данные о семье того кто участваол в сьемках'})
-  @ApiTags('Данные с сайта kinopoisk')
-  @Get('spousesofperson/:id')
-  async getSpousesOfPerson(
-    @Param('id') id: number) {
-      return await this.rabbitesSpousesPersonService.send(
-          {
-           cmd: 'get-spousesofperson-by-id',
-          },
-          {id:id},
-          );
-  }
+
+
+
 
 
   @ApiOperation({summary: 'Получить сохраненные данные о видео, фильмов данные о которых были получены ранее'})
@@ -637,18 +531,7 @@ async getFilm(
           );
   }
 
-  @ApiOperation({summary: 'Получить сохраненные данные о том где можно посмотреть фильм'})
-  @ApiTags('Данные с сайта kinopoisk')
-  @Get('whatchabilityByMovieId/:id')
-  async getWhatchabilityByMovieId(
-    @Param('id') id: number) {
-      return await this.rabbitwatchabilityService.send(
-          {
-           cmd: 'get-watchability-by-moveid',
-          },
-          {id:id},
-          );
-  }
+
 
 
 
@@ -756,6 +639,6 @@ async getFilm(
     );
   }
 
-  
+
   
 }

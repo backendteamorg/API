@@ -113,6 +113,16 @@ export class FilmsController {
 
     return await this.filmsService.getMoviesByVotesKinopoisk(film.voteskp);
   }
+  @MessagePattern({ cmd: 'esli-vam-ponravilsa-film' })
+  async eSLIWamPonravilsaEtotFilm(
+    @Ctx() context: RmqContext,
+    @Payload() film: { id: number },) {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return await this.filmsService.eSLIWamPonravilsaEtotFilm(film.id);
+  }
   
 
 

@@ -14,12 +14,7 @@ export class FilmsService {
     @Inject('GENRES_SERVICE') private rabbitGenresFilmsService: ClientProxy,
     @Inject('COUNTRIES_SERVICE') private rabbitCountriesFilmsService: ClientProxy,
     @Inject('NAMESOFFILMS_SERVICE') private rabbitNamesOfFilmsService: ClientProxy,
-    @Inject('WHATCHABILITY_SERVICE') private rabbitwatchabilityService: ClientProxy,
-    @Inject('FACTSOFFILMS_SERVICE') private rabbitfactsoffilmsService: ClientProxy,
-    @Inject('PRODUCRCOMPANIES_SERVICE') private rabbitProductionCompaniesFilmsService: ClientProxy,
-    @Inject('SPOKENLANGUAGE_SERVICE') private rabbitSpokenLanguageService: ClientProxy,
     @Inject('VIDEOS_SERVICE') private rabbitVideosService: ClientProxy,
-    @Inject('SEQUEILANDPRIQUELS_SERVICE') private rabbitequelsequelsandprequelsService: ClientProxy,
     @Inject('NAMESOFGENRES_SERVICE') private rabbitnamesofGenresService: ClientProxy,
     @Inject('PERSONS_SERVICE') private rabbitPersonsFilmsService: ClientProxy) {}
 
@@ -69,41 +64,9 @@ export class FilmsService {
           return namesoffilms;
     }
 
-    async getAllWhatchabilityOfFilms(){
-        const ob$ = await this.rabbitwatchabilityService.send({
-            cmd: 'get-all-watchability',
-          },
-          {});
-          const whatchability = await firstValueFrom(ob$).catch((err) => console.error(err));
-          return whatchability;
-    }
+   
 
-    async getAllFactsOfFilms(){
-        const ob$ = await this.rabbitfactsoffilmsService.send({
-            cmd: 'get-all-facts',
-          },
-          {});
-          const facts = await firstValueFrom(ob$).catch((err) => console.error(err));
-          return facts;
-    }
-
-    async getAllProductionCompaniesOfFilms(){
-        const ob$ = await this.rabbitProductionCompaniesFilmsService.send({
-            cmd: 'get-all-productioncompanies',
-          },
-          {});
-          const productioncompanies = await firstValueFrom(ob$).catch((err) => console.error(err));
-          return productioncompanies;
-    }
-
-    async getAllSpokenLanguageOfFilms(){
-        const ob$ = await this.rabbitSpokenLanguageService.send({
-            cmd: 'get-all-spoken-langeage',
-          },
-          {});
-          const spokenLanguage = await firstValueFrom(ob$).catch((err) => console.error(err));
-          return spokenLanguage;
-    }
+   
 
     async getAllVideosOfFilms(){
         const ob$ = await this.rabbitVideosService.send({
@@ -114,14 +77,7 @@ export class FilmsService {
           return videos;
     }
 
-    async getAllSequelsAndPrequelsOfFilms(){
-        const ob$ = await this.rabbitequelsequelsandprequelsService.send({
-            cmd: 'get-all-sequelsandprequels',
-          },
-          {});
-          const sequelsandprequels = await firstValueFrom(ob$).catch((err) => console.error(err));
-          return sequelsandprequels;
-    }
+  
 
 
     async getAllFilmsWithAllInfo(){
@@ -130,13 +86,12 @@ export class FilmsService {
         const namesofgenres = await this.getAllNamesOfGenres()
         const countries = await this.getAllCountriesOfMovies()
         const namesofmovies = await this.getAllNamesOfFilms()
-        const whatchability = await this.getAllWhatchabilityOfFilms()
-        const facts = await this.getAllFactsOfFilms()
-        const productioncompanies = await this.getAllProductionCompaniesOfFilms()
-        const spokenLanguage = await this.getAllSpokenLanguageOfFilms()
+        
+        
+        
         const persons = await this.getAllPersonsOfMovies()
         const videos = await this.getAllVideosOfFilms()
-        const sequelsandprequels = await this.getAllSequelsAndPrequelsOfFilms()
+        
         let ArrFilms = []
         
         for(let q = 0 ; q < films.length;q++){
@@ -177,54 +132,8 @@ export class FilmsService {
                         )
                 }
             }
-            let ArrWhatchability = []
-            for(let w = 0 ;w<whatchability.length;w++){
-                if(whatchability[w].movieid===films[q].id){
-                    ArrWhatchability.push(
-                        {
-                            name:whatchability[w].name,
-                            logo:whatchability[w].logo,
-                            url:whatchability[w].url,
-                            
-                        }
-                        )
-                }
-            }
-            let ArrFacts = []
-            for(let w = 0 ;w<facts.length;w++){
-                if(facts[w].movieid===films[q].id){
-                    ArrFacts.push(
-                        {
-                            value:facts[w].value,
-                            type:facts[w].type,
-                            spoiler:facts[w].spoiler
-                        }
-                        )
-                }
-            }
-            let ArrProductionCompanies = []
-            for(let w = 0 ;w<productioncompanies.length;w++){
-                if(productioncompanies[w].movieid===films[q].id){
-                    ArrProductionCompanies.push(
-                        {
-                            name:productioncompanies[w].name,
-                            url:productioncompanies[w].url,
-                            previewUrl:productioncompanies[w].previewUrl,
-                        }
-                        )
-                }
-            }
-            let ArrSpokenLanguages = []
-            for(let w = 0 ;w<spokenLanguage.length;w++){
-                if(spokenLanguage[w].movieid===films[q].id){
-                    ArrSpokenLanguages.push(
-                        {
-                            name:spokenLanguage[w].name,
-                            nameEn:spokenLanguage[w].nameEn,
-                        }
-                        )
-                }
-            }
+            
+        
             let ArrPersonsOfMovies = []
             for(let w = 0 ;w<persons.length;w++){
                 if(persons[w].movieid===films[q].id){
@@ -253,35 +162,15 @@ export class FilmsService {
                         )
                 }
             }
-            let ArrSequelsAndPrequels = []
-            for(let w = 0 ;w<sequelsandprequels.length;w++){
-                if(sequelsandprequels[w].movieid===films[q].id){
-                    ArrSequelsAndPrequels.push(
-                        {
-                            sequelsAndPrequelsID:sequelsandprequels[w].sequelsAndPrequelsID,
-                            name:sequelsandprequels[w].name,
-                            enName:sequelsandprequels[w].enName,
-                            alternativeName:sequelsandprequels[w].alternativeName,
-                            type:sequelsandprequels[w].type,
-                            posterurl:sequelsandprequels[w].posterurl,
-                            posterpreviewUrl:sequelsandprequels[w].posterpreviewUrl,
-                        }
-                        )
-                }
-            }
+     
             ArrFilms.push(
                 {
                     film:films[q],
                     genres:ArrNamesOfGenres,
                     countries:ArrCountries,
                     namesoffilm:ArrNamesofFilms,
-                    whatchability:ArrWhatchability,
-                    facts:ArrFacts,
-                    productionCompanies:ArrProductionCompanies,
-                    spokenLanguage:ArrSpokenLanguages,
                     persons:ArrPersonsOfMovies,
-                    videos:ArrVideos,
-                    sequelsAndPrequels:ArrSequelsAndPrequels    
+                    videos:ArrVideos, 
                 }
                 )
             
@@ -411,38 +300,9 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
         const namesofmovies = await firstValueFrom(ob$).catch((err) => console.error(err));
         return namesofmovies;
     }
-    async getWhatchabilityByMovieId(id:number){
-        const ob$ = await this.rabbitwatchabilityService.send({
-          cmd: 'get-watchability-by-moveid',
-        },
-        {id:id});
-        const whatchability = await firstValueFrom(ob$).catch((err) => console.error(err));
-        return whatchability;
-    }
-    async getFactsByMovieId(id:number){
-        const ob$ = await this.rabbitfactsoffilmsService.send({
-          cmd: 'get-facts-by-moveid',
-        },
-        {id:id});
-        const facts = await firstValueFrom(ob$).catch((err) => console.error(err));
-        return facts;
-    }
-    async getProductCompaniesByMovieId(id:number){
-        const ob$ = await this.rabbitProductionCompaniesFilmsService.send({
-          cmd: 'get-productionCompanies-by-moveid',
-        },
-        {id:id});
-        const productioncompanies = await firstValueFrom(ob$).catch((err) => console.error(err));
-        return productioncompanies;
-    }
-    async getSpokenLanguageByMovieId(id:number){
-        const ob$ = await this.rabbitSpokenLanguageService.send({
-          cmd: 'get-spokenLanguages-by-moveid',
-        },
-        {id:id});
-        const spokenLanguage = await firstValueFrom(ob$).catch((err) => console.error(err));
-        return spokenLanguage;
-    }
+
+ 
+
     async getPersonsByMovieId(id:number){
         const ob$ = await this.rabbitPersonsFilmsService.send({
           cmd: 'get-personsoffilms-by-moveid',
@@ -459,14 +319,7 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
         const videos = await firstValueFrom(ob$).catch((err) => console.error(err));
         return videos;
     }
-    async getSequelsAndPrequelsByMovieId(id:number){
-        const ob$ = await this.rabbitequelsequelsandprequelsService.send({
-          cmd: 'get-sequelsAndPrequels-by-moveid',
-        },
-        {id:id});
-        const sequelsandprequels = await firstValueFrom(ob$).catch((err) => console.error(err));
-        return sequelsandprequels;
-    }
+
 
     async getFilmById(idF:number){
         const film = await this.filmRepository.findOne({where:{id:idF}})
@@ -474,13 +327,9 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
         const namesofgenres = await this.getAllNamesOfGenres()
         const countries = await this.getCountriesByMovieId(idF)
         const namesofmovies = await this.getNamesOfFilmsByMovieId(idF)
-        const whatchability = await this.getWhatchabilityByMovieId(idF)
-        const facts = await this.getFactsByMovieId(idF)
-        const productioncompanies = await this.getProductCompaniesByMovieId(idF)
-        const spokenLanguage = await this.getSpokenLanguageByMovieId(idF)
         const persons = await this.getPersonsByMovieId(idF)
-        const videos = await this.getVideosByMovieId(idF)
-        const sequelsandprequels = await this.getSequelsAndPrequelsByMovieId(idF)
+        const videos = await this.getVideosByMovieId(idF)   
+        
 
 
         let ArrNamesOfGenres = []
@@ -515,50 +364,9 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
                 )
             
         }
-        let ArrWhatchability = []
-        for(let w = 0 ;w<whatchability.length;w++){
-            ArrWhatchability.push(
-                    {
-                        name:whatchability[w].name,
-                        logo:whatchability[w].logo,
-                        url:whatchability[w].url,
-                            
-                    }
-                        )
-                
-        }
-        let ArrFacts = []
-        for(let w = 0 ;w<facts.length;w++){
-            ArrFacts.push(
-                    {
-                        value:facts[w].value,
-                        type:facts[w].type,
-                        spoiler:facts[w].spoiler
-                    }
-                    )
-            
-        }
-        let ArrProductionCompanies = []
-        for(let w = 0 ;w<productioncompanies.length;w++){
-           ArrProductionCompanies.push(
-                        {
-                            name:productioncompanies[w].name,
-                            url:productioncompanies[w].url,
-                            previewUrl:productioncompanies[w].previewUrl,
-                        }
-                        )
-                
-        }
-        let ArrSpokenLanguages = []
-            for(let w = 0 ;w<spokenLanguage.length;w++){
-                ArrSpokenLanguages.push(
-                        {
-                            name:spokenLanguage[w].name,
-                            nameEn:spokenLanguage[w].nameEn,
-                        }
-                        )
-                
-        }
+        
+       
+        
         let ArrPersonsOfMovies = []
             for(let w = 0 ;w<persons.length;w++){
                 ArrPersonsOfMovies.push(
@@ -585,32 +393,15 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
                         )
                 
             }
-            let ArrSequelsAndPrequels = []
-            for(let w = 0 ;w<sequelsandprequels.length;w++){
-                    ArrSequelsAndPrequels.push(
-                        {
-                            sequelsAndPrequelsID:sequelsandprequels[w].sequelsAndPrequelsID,
-                            name:sequelsandprequels[w].name,
-                            enName:sequelsandprequels[w].enName,
-                            alternativeName:sequelsandprequels[w].alternativeName,
-                            type:sequelsandprequels[w].type,
-                            posterurl:sequelsandprequels[w].posterurl,
-                            posterpreviewUrl:sequelsandprequels[w].posterpreviewUrl,
-                        }
-                        )
-            }
+         
         return {
             film:film,
             genres:ArrNamesOfGenres,
             countries:ArrCountries,
             namesOfFilms:ArrNamesofFilms,
-            whatchability:ArrWhatchability,
-            facts:ArrFacts,
-            productioncompanies:ArrProductionCompanies,
-            spokenLanguage:ArrSpokenLanguages,
             persons:ArrPersonsOfMovies,
             videos:ArrVideos,
-            sequelsandprequels:ArrSequelsAndPrequels
+            
             
             
         }
@@ -797,8 +588,11 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
     }
                 
            
-
-        
+/////// Если вам понравился этот фильм /////////////////////////////////////////////////
+        async eSLIWamPonravilsaEtotFilm(id:number){
+        const film = await this.getFilmById(id)
+             
+        }
 
 
            
