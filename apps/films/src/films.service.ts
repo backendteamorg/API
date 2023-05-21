@@ -539,7 +539,7 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
             let ArrFilms = []
             for(let q = 0 ; q <films.length;q++){
                     for(let e = 0 ; e< films[q].genres.length;e++){
-                        if((dto.genre.includes(films[q].genres[e].name))){
+                        if( (dto.genre.includes(films[q].genres[e].name))||(dto.genre.includes(films[q].genres[e].enName)) ){
                             ArrFilms.push(films[q])
                             
                         }
@@ -569,7 +569,7 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
                 genre = false
                 country = false
                     for(let e = 0 ; e< films[q].genres.length;e++){
-                        if((dto.genre.includes(films[q].genres[e].name)===true)){
+                        if((dto.genre.includes(films[q].genres[e].name)===true)||(dto.genre.includes(films[q].genres[e].enName)===true)){
                             genre = true
                         }
                     }
@@ -595,7 +595,7 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
                 genre = false
                 country = false
                     for(let e = 0 ; e< films[q].genres.length;e++){
-                        if((dto.genre.includes(films[q].genres[e].name)===true)){
+                        if((dto.genre.includes(films[q].genres[e].name)===true)||(dto.genre.includes(films[q].genres[e].enName)===true)){
                             genre = true
                         }
                     }
@@ -621,7 +621,7 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
                 genre = false
                 country = false
                     for(let e = 0 ; e< films[q].genres.length;e++){
-                        if((dto.genre.includes(films[q].genres[e].name)===true)){
+                        if((dto.genre.includes(films[q].genres[e].name)===true)||(dto.genre.includes(films[q].genres[e].enName)===true)){
                             genre = true
                         }
                     }
@@ -678,7 +678,7 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
                 genre = false
                 country = false
                     for(let e = 0 ; e< films[q].genres.length;e++){
-                        if((dto.genre.includes(films[q].genres[e].name)===true)){
+                        if((dto.genre.includes(films[q].genres[e].name)===true)||(dto.genre.includes(films[q].genres[e].enName)===true)){
                             genre = true
                         }
                     }
@@ -710,7 +710,7 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
                 genre = false
                 country = false
                     for(let e = 0 ; e< films[q].genres.length;e++){
-                        if((dto.genre.includes(films[q].genres[e].name)===true)){
+                        if((dto.genre.includes(films[q].genres[e].name)===true)||(dto.genre.includes(films[q].genres[e].enName)===true)){
                             genre = true
                         }
                     }
@@ -732,7 +732,7 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
         if((dto.actor!=undefined)&&(dto.genre===undefined)&&(dto.countries===undefined)&&(dto.ratingKp===undefined)&&(dto.votesKp===undefined)&&(dto.director===undefined)){ ///// актер
             return await this.getFilmsByActor(dto.actor)
         }
-        if((dto.genre!=undefined)&&(dto.countries!=undefined)&&(dto.ratingKp!=undefined)&&(dto.votesKp!=undefined)&&(dto.director===undefined)&&(dto.actor!=undefined)){ ///// директор, жанр, страна, рейтинг КП, голоса КП 
+        if((dto.genre!=undefined)&&(dto.countries!=undefined)&&(dto.ratingKp!=undefined)&&(dto.votesKp!=undefined)&&(dto.director===undefined)&&(dto.actor!=undefined)){ ///// актер, жанр, страна, рейтинг КП, голоса КП 
             const films = await this.getFilmsByActor(dto.actor)
             let ArrFilms = []
             let genre = false
@@ -741,7 +741,7 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
                 genre = false
                 country = false
                     for(let e = 0 ; e< films[q].genres.length;e++){
-                        if((dto.genre.includes(films[q].genres[e].name)===true)){
+                        if((dto.genre.includes(films[q].genres[e].name)===true)||(dto.genre.includes(films[q].genres[e].enName)===true)){
                             genre = true
                         }
                     }
