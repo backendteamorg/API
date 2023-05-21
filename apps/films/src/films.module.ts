@@ -6,6 +6,7 @@ import { Films } from '../../films/src/films.model';
 import { FilmsService } from './films.service';
 import { JwtModule } from '@nestjs/jwt';
 import { ClientProxyFactory, Transport } from '@nestjs/microservices';
+import { ReviewsModule } from './reviews/reviews.module';
 
 
 @Module({
@@ -31,6 +32,7 @@ import { ClientProxyFactory, Transport } from '@nestjs/microservices';
       autoLoadModels: true
     }),
     SequelizeModule.forFeature([Films]),
+    ReviewsModule,
   ],
   controllers: [FilmsController],
   providers: [FilmsService,

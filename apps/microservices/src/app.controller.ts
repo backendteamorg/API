@@ -317,7 +317,7 @@ async getRole(
 @ApiOperation({summary: 'Получить сохраненные данные о фильмах используя фильтры {"genre":["семейный"],"countries":["Венгрия"],"ratingKp":5,"votesKp":5,"director":"Э","actor":"Доро"'})
 @ApiTags('(Фильры) Данные с сайта kinopoisk')
 
-@Post('films/filtre')
+@Post('movies')
 async getFilmsUseFiltres(
   @Body('genre') genre: string[],
   @Body('countries') countries: string[],
