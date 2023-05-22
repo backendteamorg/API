@@ -35,5 +35,14 @@ export class VideosController {
 
     return this.videosService.getVideosByMovieId(movie.id);
   }
- 
+  @MessagePattern({ cmd: 'get-videos-by-movesid' })
+  async getVidoesByMoviesId(
+    @Ctx() context: RmqContext,
+    @Payload() movie: { moviesid: number[] },) {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return this.videosService.getVideosByMoviesId(movie.moviesid);
+  } 
 }

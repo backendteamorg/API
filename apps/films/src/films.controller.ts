@@ -127,12 +127,14 @@ export class FilmsController {
 
 
   @MessagePattern({ cmd: 'get-films-use-filtres' })
-  async register(@Ctx() context: RmqContext, @Payload() filtre: FilteDto) {
+  async register(
+    @Ctx() context: RmqContext, 
+    @Payload() queryParams: any) {
     const channel = context.getChannelRef();
     const message = context.getMessage();
     channel.ack(message);
 
-    return this.filmsService.getFilmsUseFiltre(filtre);
+    return this.filmsService.getFilmsUseFiltre(queryParams);
   }
 
   

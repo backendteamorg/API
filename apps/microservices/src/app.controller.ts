@@ -1,4 +1,4 @@
-import { Controller, Get,Inject,Post,Body, UseGuards, Put,Param ,Delete, Patch, Req} from '@nestjs/common';
+import { Controller, Get,Inject,Post,Body, UseGuards, Put,Param ,Delete, Patch, Req,Query} from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { ApiCreatedResponse, ApiOperation, ApiProperty, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -6,6 +6,7 @@ import { RolesGuard } from './roles.guard';
 import { Roles } from './roles-auth.decorator';
 import { IsEmail, IsString } from 'class-validator';
 import { GoogleAuthGuard } from './gooogle.guard';
+import { FilteDto } from 'apps/films/src/dto/filtre.dto';
 
 
 
@@ -317,28 +318,15 @@ async getRole(
 @ApiOperation({summary: 'Получить сохраненные данные о фильмах используя фильтры {"genre":["семейный"],"countries":["Венгрия"],"ratingKp":5,"votesKp":5,"director":"Э","actor":"Доро"'})
 @ApiTags('(Фильры) Данные с сайта kinopoisk')
 
-@Post('movies')
+@Get('movies')
 async getFilmsUseFiltres(
-  @Body('genre') genre: string[],
-  @Body('countries') countries: string[],
-  @Body('ratingKp') ratingKp:number,
-  @Body('votesKp') votesKp:number,
-  @Body('director') director:string,
-  @Body('actor') actor:string,
-
+  @Query() queryParams: any
 ) {
   return await this.rabbitFilmsService.send(
     {
       cmd: 'get-films-use-filtres',
     },
-    {
-      genre,
-      countries,
-      ratingKp,
-      votesKp,
-      director,
-      actor,
-    },
+    {queryParams:queryParams},
   );
 }
 @ApiOperation({summary: 'Получить все сохраненные данные о фильмах'}) /////////////////////////////////////////////////////////////(Суммарные данные)//////////////////////
@@ -437,6 +425,16 @@ async getFilm(
   async GetGenres() {
     return await this.rabbitGenresFilmsService.send({
       cmd: 'get-all-genres',
+    },
+    {});
+
+  }
+  @ApiOperation({summary: 'Получить сохраненную информацию о названиях фильмов данные о которых были получены ранее'})
+  @ApiTags('Данные с сайта kinopoisk')
+  @Get('allnamesOfFilm')
+  async GetNamesOfFilms() {
+    return await this.rabbitNamesOfFilmsService.send({
+      cmd: 'get-all-namesoffilms',
     },
     {});
 

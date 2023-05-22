@@ -36,5 +36,34 @@ export class CountriesController {
   }
 
   
-  
+  @MessagePattern({ cmd: 'get-movies-by-countries-names' })
+  async getMoviesByCountriesNames(
+    @Ctx() context: RmqContext,
+    @Payload() movie: { ArrCountries: string[] },) {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return this.countriesService.getMoviesByCountriesNames(movie.ArrCountries);
+  }
+  @MessagePattern({ cmd: 'get-countriesofmovie-by-movies-id' })
+  async getCountriesOfMoviesByMoviesId(
+    @Ctx() context: RmqContext,
+    @Payload() movie: { moviesid: number[] },) {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return this.countriesService.getCountriesByMoviesid(movie.moviesid);
+  }
+  @MessagePattern({ cmd: 'get-movies-by-country-name' })
+  async getMoviesByCountryName(
+    @Ctx() context: RmqContext,
+    @Payload() movie: { country: string },) {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return this.countriesService.getMoviesByCountryName(movie.country);
+  }
 }

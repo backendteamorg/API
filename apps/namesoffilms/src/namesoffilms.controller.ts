@@ -34,5 +34,15 @@ export class NamesoffilmsController {
 
     return this.namesoffilmsService.getNamesOfFilmsByMovieId(movie.id);
   }
+  @MessagePattern({ cmd: 'get-namesOfFilms-by-moviesid' })
+  async getNamesOfFilmsByMoviesId(
+    @Ctx() context: RmqContext,
+    @Payload() movie: { moviesid: number[] },) {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return this.namesoffilmsService.getNamesOfMoviesByMoviesId(movie.moviesid);
+  }
 
 }

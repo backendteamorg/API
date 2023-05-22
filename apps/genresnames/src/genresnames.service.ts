@@ -93,10 +93,24 @@ export class GenresnamesService {
     
 
     
+    async getGenresByNames(ArrGenres:string[]){
+      return await this.namesofgenresmoviesRepository.findAll({where:{
+            [Op.or]:[{genre:{[Op.in]:ArrGenres}},{enName:{[Op.in]:ArrGenres}}]
+            }})
+    }
 
+    async getGenreByName(genre:string){
+      return await this.namesofgenresmoviesRepository.findAll({where:{
+        [Op.or]:[{genre:genre},{enName:genre}]
+
+      }})
+    }
     async DeleteGenre(idG:number){
       const genre = await this.namesofgenresmoviesRepository.findOne({where:{id:idG}})
       genre.destroy()
       return `Жанр с id ${idG} удален`
+    }
+    async getGenresNamesByGenresId(genresId:number[]){
+      return await this.namesofgenresmoviesRepository.findAll({where:{id:{[Op.in]:genresId}}})
     }
   }

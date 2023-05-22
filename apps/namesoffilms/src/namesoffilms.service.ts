@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/sequelize';
 import { NamesOfMovies } from './namesoffilms.model';
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
+import { Op } from 'sequelize';
 
 @Injectable()
 export class NamesoffilmsService {
@@ -71,6 +72,9 @@ export class NamesoffilmsService {
    }
        
     }
+ }
+ async getNamesOfMoviesByMoviesId(moviesid:number[]){
+  return await this.namesOfFilmsRepository.findAll({where:{movieid:{[Op.in]:moviesid}}})
  }
   
 }

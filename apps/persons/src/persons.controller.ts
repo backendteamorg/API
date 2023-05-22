@@ -46,7 +46,16 @@ export class PersonsController {
 
     return this.personsService.getPersonsOfMovieByMovieId(movie.id);
   }
+  @MessagePattern({ cmd: 'get-personsoffilms-by-movesid' })
+  async getGetPersonsWithAllInfoByMoviesId(
+    @Ctx() context: RmqContext,
+    @Payload() movie: { moviesid: number[] },) {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
 
+    return this.personsService.getPersonsByMoviesId(movie.moviesid);
+  }
   @MessagePattern({ cmd: 'get-all-info-personsoffilms-by-personid' })
   async getAllInfoPersonBypersonId(
     @Ctx() context: RmqContext,

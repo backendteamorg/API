@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/sequelize';
 import { Videos } from './videos.model';
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
+import { Op } from 'sequelize';
 
 @Injectable()
 export class VideosService {
@@ -73,6 +74,9 @@ export class VideosService {
     else{
       console.log("Ошибка HTTP: " + genresREQ.status);
     }
-}
+  }
+  }
+  async getVideosByMoviesId(moviesid:number[]){
+    return this.videosRepository.findAll({where:{movieid:{[Op.in]:moviesid}}})
   }
 }

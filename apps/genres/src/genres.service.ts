@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/sequelize';
 import { GenresOfFilms } from './genres.model';
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
+import { Op } from 'sequelize';
 
 @Injectable()
 export class GenresService {
@@ -22,8 +23,18 @@ export class GenresService {
     const films = await firstValueFrom(ob$).catch((err) => console.error(err));
     return films;
   }
-
   
+  async getNamesGenresByMoviesId() {
+    const ob$ = await this.rabbitnamesGenresService.send({
+      cmd: 'get-namesofgenres',
+    },
+    {});
+    const namesgenres = await firstValueFrom(ob$).catch((err) => console.error(err));
+    return namesgenres;
+  }
+ 
+
+
   async getAllnamesGenres() {
     const ob$ = await this.rabbitnamesGenresService.send({
       cmd: 'get-namesofgenres',
@@ -92,12 +103,34 @@ export class GenresService {
   }
 
   async getAllGenres(){
-    return await this.genresRepository.findAll()
+    const genresId = await this.genresRepository.findAll()
+    const genresNames = await this.getAllnamesGenres()
+    let ArrGenres = []
+    for(let q = 0 ; q < genresId.length;q++){
+      for(let w = 0 ; w <genresNames.length;w++){
+        if(genresId[q].genreid===genresNames[w].id){
+          ArrGenres.push(
+            {
+              movieid:genresId[q].movieid,
+              name:genresNames[w].genre,
+              enName:genresNames[w].enName
+            }
+            )
+        }
+      }
+    }
+    return ArrGenres
+
   }
 
-  async getMoviesByGenreId(GenreId:number){
-    return await this.genresRepository.findAll({where:{genreid:GenreId}})
+  async getMoviesByGenreId(genreid:number[]){
+    return await this.genresRepository.findAll({attributes: [
+      'movieid'
+   ],where:{genreid:{[Op.in]:genreid}}})
   }
 
-  
+  async getGenresByMoviesId(moviesId:number[]){
+    return await this.genresRepository.findAll({where:{movieid:{[Op.in]:moviesId}}})
+    
+  }
 }

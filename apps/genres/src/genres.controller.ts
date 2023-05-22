@@ -35,10 +35,20 @@ export class GenresController {
     return this.genresService.getGenresByMovieId(movie.id);
   }
 
+  @MessagePattern({ cmd: 'get-genres-by-moveies-id' })
+  async getGenresByMoviesId(
+    @Ctx() context: RmqContext,
+    @Payload() movie: { moviesId: number[] },) {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return this.genresService.getGenresByMoviesId(movie.moviesId);
+  }
   @MessagePattern({ cmd: 'get-movies-by-genreid' })
   async getMoviesByGenreId(
     @Ctx() context: RmqContext,
-    @Payload() genre: { genreid: number },) {
+    @Payload() genre: { genreid: number[] },) {
     const channel = context.getChannelRef();
     const message = context.getMessage();
     channel.ack(message);

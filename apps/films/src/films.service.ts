@@ -88,7 +88,6 @@ export class FilmsService {
         const namesofmovies = await this.getAllNamesOfFilms()
         
         
-        
         const persons = await this.getAllPersonsOfMovies()
         const videos = await this.getAllVideosOfFilms()
         
@@ -527,237 +526,555 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
         return ArrFilm
     }
 
-    async getFilmsUseFiltre(dto:FilteDto){
+
+    
+    async getMoviesGenresByNames(ArrGenres:string[]){
+        const ob$ = await this.rabbitnamesofGenresService.send({
+            cmd: 'get-genres-by-names',
+          },
+          {
+            ArrGenres:ArrGenres,
+        }
+        );
+          const arrGenres = await firstValueFrom(ob$).catch((err) => console.error(err));
+          return arrGenres;
+    }
+    async getMoviesCountriesByNames(ArrCountries:string[]){
+        const ob$ = await this.rabbitCountriesFilmsService.send({
+            cmd: 'get-movies-by-countries-names',
+          },
+          {ArrCountries:ArrCountries});
+          const countries = await firstValueFrom(ob$).catch((err) => console.error(err));
+          return countries;
+    }
+ 
+
+    async getFilmsByGenreId(genreid:number[]){
+        const ob$ = await this.rabbitGenresFilmsService.send({
+          cmd: 'get-movies-by-genreid',
+        },
+        {genreid:genreid});
+        const genres = await firstValueFrom(ob$).catch((err) => console.error(err));
+        return genres;
+    }
 
 
-        
-        
-                
-            
-        if((dto.genre!=undefined)&&(dto.countries===undefined)&&(dto.ratingKp===undefined)&&(dto.votesKp===undefined)&&(dto.director===undefined)&&(dto.actor===undefined)){ ///// жанр
-            const films = await this.getAllFilmsWithAllInfo()
-            let ArrFilms = []
-            for(let q = 0 ; q <films.length;q++){
-                    for(let e = 0 ; e< films[q].genres.length;e++){
-                        if( (dto.genre.includes(films[q].genres[e].name))||(dto.genre.includes(films[q].genres[e].enName)) ){
-                            ArrFilms.push(films[q])
-                            
-                        }
-                    }
-            }
-            return ArrFilms
-        }
-        if((dto.countries!=undefined)&&(dto.genre===undefined)&&(dto.ratingKp===undefined)&&(dto.votesKp===undefined)&&(dto.director===undefined)&&(dto.actor===undefined)){    ///// страна
-            const films = await this.getAllFilmsWithAllInfo()
-            let ArrFilms = []
-            for(let q = 0 ; q <films.length;q++){
-                    for(let e = 0 ; e< films[q].countries.length;e++){
-                        if((dto.countries.includes(films[q].countries[e].name))){
-                            ArrFilms.push(films[q])
-                        }
-                    }
-            }
-            
-            return ArrFilms
-        }
-        if((dto.genre!=undefined)&&(dto.countries!=undefined)&&(dto.ratingKp===undefined)&&(dto.votesKp===undefined)&&(dto.director===undefined)&&(dto.actor===undefined)){ ///// жанр, страна
-            const films = await this.getAllFilmsWithAllInfo()
-            let ArrFilms = []
-            let genre = false
-            let country = false
-            for(let q = 0 ; q <films.length;q++){
-                genre = false
-                country = false
-                    for(let e = 0 ; e< films[q].genres.length;e++){
-                        if((dto.genre.includes(films[q].genres[e].name)===true)||(dto.genre.includes(films[q].genres[e].enName)===true)){
-                            genre = true
-                        }
-                    }
-                    for(let e = 0 ; e< films[q].countries.length;e++){
-                        if((dto.countries.includes(films[q].countries[e].name)===true)){
-                            country = true
-                        }
-             
-                    }
-                    if((genre===true)&&(country===true)){
-                        ArrFilms.push(films[q])
-                    }
-            }
-            return ArrFilms
-        
-        }
-        if((dto.genre!=undefined)&&(dto.countries!=undefined)&&(dto.ratingKp!=undefined)&&(dto.votesKp===undefined)&&(dto.director===undefined)&&(dto.actor===undefined)){ ///// жанр, страна, рейтинг КП
-            const films = await this.getAllFilmsWithAllInfo()
-            let ArrFilms = []
-            let genre = false
-            let country = false
-            for(let q = 0 ; q <films.length;q++){
-                genre = false
-                country = false
-                    for(let e = 0 ; e< films[q].genres.length;e++){
-                        if((dto.genre.includes(films[q].genres[e].name)===true)||(dto.genre.includes(films[q].genres[e].enName)===true)){
-                            genre = true
-                        }
-                    }
-                    for(let e = 0 ; e< films[q].countries.length;e++){
-                        if((dto.countries.includes(films[q].countries[e].name)===true)){
-                            country = true
-                        }
-             
-                    }
-                    if((genre===true)&&(country===true)&&(dto.ratingKp<=films[q].film.ratingkp)){
-                        ArrFilms.push(films[q])
-                    }
-            }
-            return ArrFilms
-        
-        }
-        if((dto.genre!=undefined)&&(dto.countries!=undefined)&&(dto.ratingKp!=undefined)&&(dto.votesKp!=undefined)&&(dto.director===undefined)&&(dto.actor===undefined)){ ///// жанр, страна, рейтинг КП, голоса КП
-            const films = await this.getAllFilmsWithAllInfo()
-            let ArrFilms = []
-            let genre = false
-            let country = false
-            for(let q = 0 ; q <films.length;q++){
-                genre = false
-                country = false
-                    for(let e = 0 ; e< films[q].genres.length;e++){
-                        if((dto.genre.includes(films[q].genres[e].name)===true)||(dto.genre.includes(films[q].genres[e].enName)===true)){
-                            genre = true
-                        }
-                    }
-                    for(let e = 0 ; e< films[q].countries.length;e++){
-                        if((dto.countries.includes(films[q].countries[e].name)===true)){
-                            country = true
-                        }
-             
-                    }
-                    if((genre===true)&&(country===true)&&(dto.ratingKp<=films[q].film.ratingkp)&&(dto.votesKp<=films[q].film.voteskp)){
-                        ArrFilms.push(films[q])
-                    }
-            }
-            return ArrFilms
-        
-        }
+    async getGenresByMoviesId(moviesId:number[]){
+        const ob$ = await this.rabbitGenresFilmsService.send({
+            cmd: 'get-genres-by-moveies-id',
+          },
+          {moviesId:moviesId});
+          const genres = await firstValueFrom(ob$).catch((err) => console.error(err));
+          return genres;
+    }
+    async getCountriesByMoviesId(moviesid:number[]){
+        const ob$ = await this.rabbitCountriesFilmsService.send({
+            cmd: 'get-countriesofmovie-by-movies-id',
+          },
+          {moviesid:moviesid});
+          const countries = await firstValueFrom(ob$).catch((err) => console.error(err));
+          return countries;
+    }
 
-        if((dto.ratingKp!=undefined)&&(dto.director===undefined)&&(dto.genre===undefined)&&(dto.countries===undefined)&&(dto.votesKp===undefined)&&(dto.actor===undefined)){ ///// рейтинг КП
-            const films = await this.getAllFilmsWithAllInfo()
-            let ArrFilms = []
-            for(let q = 0 ;q< films.length;q++){
-                if((dto.ratingKp<=films[q].film.ratingkp)){
-                    ArrFilms.push(films[q])
+    async getNamesOfMoviesByMoviesId(moviesid:number[]){
+        const ob$ = await this.rabbitNamesOfFilmsService.send({
+            cmd: 'get-namesOfFilms-by-moviesid',
+          },
+          {moviesid:moviesid});
+          const namesofmovies = await firstValueFrom(ob$).catch((err) => console.error(err));
+          return namesofmovies;
+    }
+
+    async getPersonsOfMoviesByMoviesId(moviesid:number[]){
+        const ob$ = await this.rabbitPersonsFilmsService.send({
+            cmd: 'get-personsoffilms-by-movesid',
+          },
+          {moviesid:moviesid});
+          const persons = await firstValueFrom(ob$).catch((err) => console.error(err));
+          return persons;
+    }
+    async getVideosOfMoviesByMoviesId(moviesid:number[]){
+        const ob$ = await this.rabbitVideosService.send({
+            cmd: 'get-videos-by-movesid',
+          },
+          {moviesid:moviesid});
+          const persons = await firstValueFrom(ob$).catch((err) => console.error(err));
+          return persons;
+    }
+
+    async getFilmsUseFiltre(queryParams:any){
+        const ArrFilmId = []
+        const {sortField, sortOrder, genres, countries, ratingKp, type, votesKp, page, limit,director,actor} = queryParams; 
+        
+        
+        
+        if((queryParams.queryParams.countries!=undefined)&&(queryParams.queryParams.genres===undefined)){        /////////////////////////////////// Страны
+ 
+            const ArrFilmByCountries = [];
+
+            if((typeof(queryParams.queryParams.countries)==='object')){
+                const FilmByCountries = await this.getMoviesCountriesByNames(queryParams.queryParams.countries)
+                for(let q = 0 ; q <FilmByCountries.length;q++){
+                    ArrFilmByCountries.push(FilmByCountries[q].movieid)
                 }
-    
+                for(let q = 0 ; q < ArrFilmByCountries.length;q++){
+                    if(ArrFilmId.includes(ArrFilmByCountries[q])===false){
+                        ArrFilmId.push(ArrFilmByCountries[q])
+                    }
+                }
             }
-        return ArrFilms
-        }
 
-
-        if((dto.votesKp!=undefined)&&(dto.director===undefined)&&(dto.genre===undefined)&&(dto.countries===undefined)&&(dto.ratingKp===undefined)&&(dto.actor===undefined)){ ///// голоса КП
-        const films = await this.getAllFilmsWithAllInfo()
-        let ArrFilms = []
-        for(let q = 0 ;q< films.length;q++){
-            if((dto.votesKp<=films[q].film.voteskp)){
-                    ArrFilms.push(films[q])
-            }   
-        }
-        return ArrFilms
-        }
-
-
-        if((dto.director!=undefined)&&(dto.genre===undefined)&&(dto.countries===undefined)&&(dto.ratingKp===undefined)&&(dto.votesKp===undefined)&&(dto.actor!=undefined)){ //// директор, актер
-            let str = dto.director+'@'+dto.actor
-            return await this.getFilmsByDirectorActor(str)
-        }
-        if((dto.genre!=undefined)&&(dto.countries!=undefined)&&(dto.ratingKp!=undefined)&&(dto.votesKp!=undefined)&&(dto.director!=undefined)&&(dto.actor!=undefined)){ ///// директор, актер, жанр, страна, рейтинг КП, голоса КП 
-            let str = dto.director+'@'+dto.actor
-            const films = await this.getFilmsByDirectorActor(str)
-            let ArrFilms = []
-            let genre = false
-            let country = false
-            for(let q = 0 ; q <films.length;q++){
-                genre = false
-                country = false
-                    for(let e = 0 ; e< films[q].genres.length;e++){
-                        if((dto.genre.includes(films[q].genres[e].name)===true)||(dto.genre.includes(films[q].genres[e].enName)===true)){
-                            genre = true
-                        }
+            else if ((typeof(queryParams.queryParams.countries)==='string')){
+                queryParams.queryParams.countries = [queryParams.queryParams.countries]
+                const FilmByCountri = await this.getMoviesCountriesByNames(queryParams.queryParams.countries)
+                for(let q = 0 ; q <FilmByCountri.length;q++){
+                    ArrFilmByCountries.push(FilmByCountri[q].movieid)
+                }
+                for(let q = 0 ; q < ArrFilmByCountries.length;q++){
+                    if(ArrFilmId.includes(ArrFilmByCountries[q])===false){
+                        ArrFilmId.push(ArrFilmByCountries[q])
                     }
-                    for(let e = 0 ; e< films[q].countries.length;e++){
-                        if((dto.countries.includes(films[q].countries[e].name)===true)){
-                            country = true
-                        }
-             
-                    }
-                    if((genre===true)&&(country===true)&&(dto.ratingKp<=films[q].film.ratingkp)&&(dto.votesKp<=films[q].film.voteskp)){
-                        ArrFilms.push(films[q])
-                    }
+                }
             }
-            return ArrFilms
+
+        }
+
+
+        if((queryParams.queryParams.genres!=undefined)&&(queryParams.queryParams.countries===undefined)){ ///////////////////////////////// Жанры
+ 
+            let ArrGenreId = []
+            if((typeof(queryParams.queryParams.genres)==='object')){
+                const FilmByGenres = await this.getMoviesGenresByNames(queryParams.queryParams.genres)
+                
+                for(let q =0; q <FilmByGenres.length;q++){
+                    ArrGenreId.push(FilmByGenres[q].id)
+                }
+                const arrFilmByGenreId = await this.getFilmsByGenreId(ArrGenreId)
+                for(let q = 0 ;q <arrFilmByGenreId.length;q++){
+                    if(ArrFilmId.includes(arrFilmByGenreId[q].movieid)===false){
+                        ArrFilmId.push(arrFilmByGenreId[q].movieid )
+                    }
+                }
+            }
+            else if(typeof(queryParams.queryParams.genres)==='string'){
+                queryParams.queryParams.genres = [queryParams.queryParams.genres]
+                const FilmByGenres = await this.getMoviesGenresByNames(queryParams.queryParams.genres)
+                for(let q =0; q <FilmByGenres.length;q++){
+                    ArrGenreId.push(FilmByGenres[q].id)
+                }
+                const arrFilmByGenreId = await this.getFilmsByGenreId(ArrGenreId)
+                for(let q = 0 ;q <arrFilmByGenreId.length;q++){
+                    if(ArrFilmId.includes(arrFilmByGenreId[q].movieid)===false){
+                        ArrFilmId.push(arrFilmByGenreId[q].movieid)
+                    }
+                }
+            }
+        }
+        if((queryParams.queryParams.genres!=undefined)&&(queryParams.queryParams.countries!=undefined)){  ////////////////////////////////// Страны, жанры
+
+            let ArrGenres = []
+            let ArrGenreId = []
+            if((typeof(queryParams.queryParams.genres)==='object')){
+                const FilmByGenres = await this.getMoviesGenresByNames(queryParams.queryParams.genres)
+                
+                for(let q =0; q <FilmByGenres.length;q++){
+                    ArrGenreId.push(FilmByGenres[q].id)
+                }
+                const arrFilmByGenreId = await this.getFilmsByGenreId(ArrGenreId)
+                for(let q = 0 ;q <arrFilmByGenreId.length;q++){
+                    if(ArrFilmId.includes(arrFilmByGenreId[q].movieid)===false){
+                        ArrGenres.push(arrFilmByGenreId[q].movieid )
+                    }
+                }
+            }
+            else if(typeof(queryParams.queryParams.genres)==='string'){
+                queryParams.queryParams.genres = [queryParams.queryParams.genres]
+                const FilmByGenres = await this.getMoviesGenresByNames(queryParams.queryParams.genres)
+                for(let q =0; q <FilmByGenres.length;q++){
+                    ArrGenreId.push(FilmByGenres[q].id)
+                }
+                const arrFilmByGenreId = await this.getFilmsByGenreId(ArrGenreId)
+                for(let q = 0 ;q <arrFilmByGenreId.length;q++){
+                    if(ArrFilmId.includes(arrFilmByGenreId[q].movieid)===false){
+                        ArrGenres.push(arrFilmByGenreId[q].movieid)
+                    }
+                }
+            }
+            let ArrCountries = []
+            let ArrFilmByCountries = [];
+            if((typeof(queryParams.queryParams.countries)==='object')){
+                const FilmByCountries = await this.getMoviesCountriesByNames(queryParams.queryParams.countries)
+                for(let q = 0 ; q <FilmByCountries.length;q++){
+                    ArrFilmByCountries.push(FilmByCountries[q].movieid)
+                }
+                for(let q = 0 ; q < ArrFilmByCountries.length;q++){
+                    if(ArrFilmId.includes(ArrFilmByCountries[q])===false){
+                        ArrCountries.push(ArrFilmByCountries[q])
+                    }
+                }
+            }
+
+            else if ((typeof(queryParams.queryParams.countries)==='string')){
+                queryParams.queryParams.countries = [queryParams.queryParams.countries]
+                const FilmByCountri = await this.getMoviesCountriesByNames(queryParams.queryParams.countries)
+                for(let q = 0 ; q <FilmByCountri.length;q++){
+                    ArrFilmByCountries.push(FilmByCountri[q].movieid)
+                }
+                for(let q = 0 ; q < ArrFilmByCountries.length;q++){
+                    if(ArrFilmId.includes(ArrFilmByCountries[q])===false){
+                        ArrCountries.push(ArrFilmByCountries[q])
+                    }
+                }
+            }
+            for(let q = 0 ; q <ArrFilmByCountries.length;q++){
+                for(let w = 0 ; w<ArrGenres.length;w++){
+                    if(ArrFilmByCountries[q]===ArrGenres[w]){
+                        ArrFilmId.push(ArrFilmByCountries[q])
+                        q++
+                    }
+                }
+            }
         
-        }
-   
-    
-        if((dto.director!=undefined)&&(dto.genre===undefined)&&(dto.countries===undefined)&&(dto.ratingKp===undefined)&&(dto.votesKp===undefined)&&(dto.actor===undefined)){ ///// директор
-            return await this.getFilmsByDirector(dto.director)
-           
-        }
-        if((dto.genre!=undefined)&&(dto.countries!=undefined)&&(dto.ratingKp!=undefined)&&(dto.votesKp!=undefined)&&(dto.director!=undefined)&&(dto.actor===undefined)){ ///// директор, жанр, страна, рейтинг КП, голоса КП 
-            const films = await this.getFilmsByDirector(dto.director)
-            let ArrFilms = []
-            let genre = false
-            let country = false
-            for(let q = 0 ; q <films.length;q++){
-                genre = false
-                country = false
-                    for(let e = 0 ; e< films[q].genres.length;e++){
-                        if((dto.genre.includes(films[q].genres[e].name)===true)||(dto.genre.includes(films[q].genres[e].enName)===true)){
-                            genre = true
-                        }
-                    }
-                    for(let e = 0 ; e< films[q].countries.length;e++){
-                        if((dto.countries.includes(films[q].countries[e].name)===true)){
-                            country = true
-                        }
-             
-                    }
-                    if((genre===true)&&(country===true)&&(dto.ratingKp<=films[q].film.ratingkp)&&(dto.votesKp<=films[q].film.voteskp)){
-                        ArrFilms.push(films[q])
-                    }
+    }
+
+    let ArrFilms = []
+    let films = []
+    if(((queryParams.queryParams.countries!=undefined)||(queryParams.queryParams.genres!=undefined))&& ///// жанры или фильмы , рейтиг КП, голоса КП
+    (queryParams.queryParams.director===undefined)&&(queryParams.queryParams.actor===undefined)){
+        if((queryParams.queryParams.ratingKp===undefined)&&(queryParams.queryParams.votesKp===undefined)){
+            const Flilms = await this.filmRepository.findAll({where:{id:{[Op.in]:ArrFilmId}}})
+            for(let q = 0 ; q <Flilms.length;q++){
+            films.push(Flilms[q])
             }
-            return ArrFilms
-        
         }
+        else if((queryParams.queryParams.ratingKp!=undefined)&&(queryParams.queryParams.votesKp===undefined)){
+            const Flilms = await this.filmRepository.findAll({where:{
+                [Op.and]:[{id:{[Op.in]:ArrFilmId}},{ratingkp:{[Op.gte]:queryParams.queryParams.ratingKp}}]
+            }})
+            for(let q = 0 ; q <Flilms.length;q++){
+            films.push(Flilms[q])
+            }
+        }
+        else if((queryParams.queryParams.ratingKp!=undefined)&&(queryParams.queryParams.votesKp!=undefined)){
+            const Flilms = await this.filmRepository.findAll({where:{
+                [Op.and]:[{id:{[Op.in]:ArrFilmId}},{ratingkp:{[Op.gte]:queryParams.queryParams.ratingKp}},{voteskp:{[Op.gte]:queryParams.queryParams.votesKp}}]
+            }})
+            for(let q = 0 ; q <Flilms.length;q++){
+            films.push(Flilms[q])
+            }
+        }
+    }
+    else if(((queryParams.queryParams.countries!=undefined)||(queryParams.queryParams.genres!=undefined))&& ///// жанры или фильмы и режисер, рейтиг КП, голоса КП
+    (queryParams.queryParams.director!=undefined)&&(queryParams.queryParams.actor===undefined)){
+        const persons = await this.getAllMoviesByDirector(queryParams.queryParams.director)
+            let ArrFilmswithDirectorId = []
+            for(let q = 0 ; q <persons.length;q++ ){
+                if(ArrFilmId.includes(persons[q].movieid)){
+                    ArrFilmswithDirectorId.push(persons[q].movieid)
+                }
+            }
+        if((queryParams.queryParams.ratingKp===undefined)&&(queryParams.queryParams.votesKp===undefined)){
+            const Flilms = await this.filmRepository.findAll({where:{id:{[Op.in]:ArrFilmswithDirectorId}}})
+            for(let q = 0 ; q <Flilms.length;q++){
+                films.push(Flilms[q])
+            }
+        }
+        else if((queryParams.queryParams.ratingKp!=undefined)&&(queryParams.queryParams.votesKp===undefined)){
+            const Flilms = await this.filmRepository.findAll({where:{
+            [Op.and]:[{id:{[Op.in]:ArrFilmswithDirectorId}},{ratingkp:{[Op.gte]:queryParams.queryParams.ratingKp}}]
+            }
+            })
+            for(let q = 0 ; q <Flilms.length;q++){
+                films.push(Flilms[q])
+            }
+        }
+        else if((queryParams.queryParams.ratingKp!=undefined)&&(queryParams.queryParams.votesKp!=undefined)){
+            const Flilms = await this.filmRepository.findAll({where:{
+            [Op.and]:[{id:{[Op.in]:ArrFilmswithDirectorId}},{ratingkp:{[Op.gte]:queryParams.queryParams.ratingKp}},{voteskp:{[Op.gte]:queryParams.queryParams.votesKp}}]
+            }
+            })
+            for(let q = 0 ; q <Flilms.length;q++){
+                films.push(Flilms[q])
+            }
+        }
+        
+    }
+    else if(((queryParams.queryParams.countries!=undefined)||(queryParams.queryParams.genres!=undefined))&& ///// жанры или фильмы и актер , рейтиг КП, голоса КП
+    (queryParams.queryParams.director===undefined)&&(queryParams.queryParams.actor!=undefined)){
+        const persons = await this.getMoviesByActor(queryParams.queryParams.actor)
+        let ArrFilmswithActor = []
+        for(let q = 0 ; q <persons.length;q++ ){
+            if(ArrFilmId.includes(persons[q].movieid)){
+                ArrFilmswithActor.push(persons[q].movieid)
+            }
+        }
+        if((queryParams.queryParams.ratingKp===undefined)&&(queryParams.queryParams.votesKp===undefined)){
+            const Flilms = await this.filmRepository.findAll({where:{id:{[Op.in]:ArrFilmswithActor}}})
+            for(let q = 0 ; q <Flilms.length;q++){
+                films.push(Flilms[q])
+            }
+        }
+        else if((queryParams.queryParams.ratingKp!=undefined)&&(queryParams.queryParams.votesKp===undefined)){
+            const Flilms = await this.filmRepository.findAll({where:{
+                [Op.and]:[{id:{[Op.in]:ArrFilmswithActor}},{ratingkp:{[Op.gte]:queryParams.queryParams.ratingKp}}]
+                }
+                })
+                for(let q = 0 ; q <Flilms.length;q++){
+                    films.push(Flilms[q])
+                }
+        }
+        else if((queryParams.queryParams.ratingKp!=undefined)&&(queryParams.queryParams.votesKp!=undefined)){
+            const Flilms = await this.filmRepository.findAll({where:{
+            [Op.and]:[{id:{[Op.in]:ArrFilmswithActor}},{ratingkp:{[Op.gte]:queryParams.queryParams.ratingKp}},{voteskp:{[Op.gte]:queryParams.queryParams.votesKp}}]
+            }
+            })
+            for(let q = 0 ; q <Flilms.length;q++){
+                films.push(Flilms[q])
+            }
+        }
+
+
+        
+        
+    }
+    else if ((queryParams.queryParams.director!=undefined)&&(queryParams.queryParams.actor===undefined)&&  ///// режисер , рейтиг КП, голоса КП
+    (queryParams.queryParams.countries===undefined)&&(queryParams.queryParams.genres===undefined)){
+        const persons = await this.getAllMoviesByDirector(queryParams.queryParams.director)
+        let ArrMoviesId = []
+        for(let q = 0 ; q <persons.length;q++){
+            ArrMoviesId.push(persons[q].movieid)
+        }
+        if((queryParams.queryParams.ratingKp===undefined)&&(queryParams.queryParams.votesKp===undefined)){
+            const Flilms = await this.filmRepository.findAll({where:{id:{[Op.in]:ArrMoviesId}}})
+            for(let q = 0 ; q <Flilms.length;q++){
+                films.push(Flilms[q])
+            }
+        }
+        else if((queryParams.queryParams.ratingKp!=undefined)&&(queryParams.queryParams.votesKp===undefined)){
+            const Flilms = await this.filmRepository.findAll({where:{
+                [Op.and]:[{id:{[Op.in]:ArrMoviesId}},{ratingkp:{[Op.gte]:queryParams.queryParams.ratingKp}}]
+                }
+                })
+                for(let q = 0 ; q <Flilms.length;q++){
+                    films.push(Flilms[q])
+                }
+        }
+        else if((queryParams.queryParams.ratingKp!=undefined)&&(queryParams.queryParams.votesKp!=undefined)){
+            const Flilms = await this.filmRepository.findAll({where:{
+            [Op.and]:[{id:{[Op.in]:ArrMoviesId}},{ratingkp:{[Op.gte]:queryParams.queryParams.ratingKp}},{voteskp:{[Op.gte]:queryParams.queryParams.votesKp}}]
+            }
+            })
+            for(let q = 0 ; q <Flilms.length;q++){
+                films.push(Flilms[q])
+            }
+        }
+    }
+    else if ((queryParams.queryParams.director===undefined)&&(queryParams.queryParams.actor!=undefined)&& //// актер , рейтиг КП, голоса КП
+    (queryParams.queryParams.countries===undefined)&&(queryParams.queryParams.genres===undefined)){
+        const persons = await this.getMoviesByActor(queryParams.queryParams.actor)
+        let ArrMoviesId = []
+        for(let q = 0 ; q <persons.length;q++){
+            ArrMoviesId.push(persons[q].movieid)
+        }
+        if((queryParams.queryParams.ratingKp===undefined)&&(queryParams.queryParams.votesKp===undefined)){
+            const Flilms = await this.filmRepository.findAll({where:{id:{[Op.in]:ArrMoviesId}}})
+            for(let q = 0 ; q <Flilms.length;q++){
+                films.push(Flilms[q])
+            }
+        }
+        else if((queryParams.queryParams.ratingKp!=undefined)&&(queryParams.queryParams.votesKp===undefined)){
+            const Flilms = await this.filmRepository.findAll({where:{
+                [Op.and]:[{id:{[Op.in]:ArrMoviesId}},{ratingkp:{[Op.gte]:queryParams.queryParams.ratingKp}}]
+                }
+                })
+                for(let q = 0 ; q <Flilms.length;q++){
+                    films.push(Flilms[q])
+                }
+        }
+        else if((queryParams.queryParams.ratingKp!=undefined)&&(queryParams.queryParams.votesKp!=undefined)){
+            const Flilms = await this.filmRepository.findAll({where:{
+            [Op.and]:[{id:{[Op.in]:ArrMoviesId}},{ratingkp:{[Op.gte]:queryParams.queryParams.ratingKp}},{voteskp:{[Op.gte]:queryParams.queryParams.votesKp}}]
+            }
+            })
+            for(let q = 0 ; q <Flilms.length;q++){
+                films.push(Flilms[q])
+            }
+        }
+        
+
+    }
+    else if(((queryParams.queryParams.countries!=undefined)||(queryParams.queryParams.genres!=undefined))&& ///// жанры или фильмы и режисер и актер , рейтиг КП, голоса КП
+    (queryParams.queryParams.director!=undefined)&&(queryParams.queryParams.actor!=undefined)){
+        let str = queryParams.queryParams.director+'@'+queryParams.queryParams.actor
+        const persons = await this.getAllMoviesByDirectorAndActor(str)
+        let ArrFilmswithDirectorIdActor = []
+        for(let q = 0 ; q <persons.length;q++ ){
+            if(ArrFilmId.includes(persons[q].movieid)){
+                ArrFilmswithDirectorIdActor.push(persons[q].movieid)
+            }
+        }
+        if((queryParams.queryParams.ratingKp===undefined)&&(queryParams.queryParams.votesKp===undefined)){
+            const Flilms = await this.filmRepository.findAll({where:{id:{[Op.in]:ArrFilmswithDirectorIdActor}}})
+            for(let q = 0 ; q <Flilms.length;q++){
+                films.push(Flilms[q])
+            }
+        }
+        else if((queryParams.queryParams.ratingKp!=undefined)&&(queryParams.queryParams.votesKp===undefined)){
+            const Flilms = await this.filmRepository.findAll({where:{
+                [Op.and]:[{id:{[Op.in]:ArrFilmswithDirectorIdActor}},{ratingkp:{[Op.gte]:queryParams.queryParams.ratingKp}}]
+                }
+                })
+                for(let q = 0 ; q <Flilms.length;q++){
+                    films.push(Flilms[q])
+                }
+        }
+        else if((queryParams.queryParams.ratingKp!=undefined)&&(queryParams.queryParams.votesKp!=undefined)){
+            const Flilms = await this.filmRepository.findAll({where:{
+            [Op.and]:[{id:{[Op.in]:ArrFilmswithDirectorIdActor}},{ratingkp:{[Op.gte]:queryParams.queryParams.ratingKp}},{voteskp:{[Op.gte]:queryParams.queryParams.votesKp}}]
+            }
+            })
+            for(let q = 0 ; q <Flilms.length;q++){
+                films.push(Flilms[q])
+            }
+        }
+        
+        
+    }
+    else if ((queryParams.queryParams.director!=undefined)&&(queryParams.queryParams.actor!=undefined)&& //// актер и режисер, рейтиг КП, голоса КП
+    (queryParams.queryParams.countries===undefined)&&(queryParams.queryParams.genres===undefined)){
+        let str = queryParams.queryParams.director+'@'+queryParams.queryParams.actor
+        const persons = await this.getAllMoviesByDirectorAndActor(str)
+        let ArrMoviesId = []
+        for(let q = 0 ; q <persons.length;q++){
+            ArrMoviesId.push(persons[q].movieid)
+        }
+        if((queryParams.queryParams.ratingKp===undefined)&&(queryParams.queryParams.votesKp===undefined)){
+            const Flilms = await this.filmRepository.findAll({where:{id:{[Op.in]:ArrMoviesId}}})
+            for(let q = 0 ; q <Flilms.length;q++){
+                films.push(Flilms[q])
+            }
+        }
+        else if((queryParams.queryParams.ratingKp!=undefined)&&(queryParams.queryParams.votesKp===undefined)){
+            const Flilms = await this.filmRepository.findAll({where:{
+                [Op.and]:[{id:{[Op.in]:ArrMoviesId}},{ratingkp:{[Op.gte]:queryParams.queryParams.ratingKp}}]
+                }
+                })
+                for(let q = 0 ; q <Flilms.length;q++){
+                    films.push(Flilms[q])
+                }
+        }
+        else if((queryParams.queryParams.ratingKp!=undefined)&&(queryParams.queryParams.votesKp!=undefined)){
+            const Flilms = await this.filmRepository.findAll({where:{
+            [Op.and]:[{id:{[Op.in]:ArrMoviesId}},{ratingkp:{[Op.gte]:queryParams.queryParams.ratingKp}},{voteskp:{[Op.gte]:queryParams.queryParams.votesKp}}]
+            }
+            })
+            for(let q = 0 ; q <Flilms.length;q++){
+                films.push(Flilms[q])
+            }
+        }
+        
+    }
+        const genresInfo = await this.getGenresByMoviesId(ArrFilmId)
+        const namesofgenres = await this.getAllNamesOfGenres()
+        const countriesInfo = await this.getCountriesByMoviesId(ArrFilmId)
+        const namesofmovies = await this.getNamesOfMoviesByMoviesId(ArrFilmId)
+        const persons = await this.getPersonsOfMoviesByMoviesId(ArrFilmId)
+        const videos = await this.getVideosOfMoviesByMoviesId(ArrFilmId)
+        
+        for(let q = 0 ; q < films.length;q++){
+            let ArrGenresId = []
+            for(let w = 0 ; w < genresInfo.length;w++){
+                if(genresInfo[w].movieid===films[q].id){
+                    ArrGenresId.push(genresInfo[w].genreid)
+                }
+            }
+            let ArrNamesOfGenres = []
+            for(let w = 0 ; w < namesofgenres.length;w++){
+                for(let e = 0 ; e < ArrGenresId.length;e++){
+                    if(namesofgenres[w].id===ArrGenresId[e]){
+                        ArrNamesOfGenres.push(
+                            {
+                                name:namesofgenres[w].genre,
+                                enName:namesofgenres[w].enName
+                            }
+                            )
+                    }
+                }
+            }
+            let ArrCountries = []
+            for(let w = 0 ;w<countriesInfo.length;w++){
+                if(countriesInfo[w].movieid===films[q].id){
+                    ArrCountries.push({name:countriesInfo[w].country})
+                }
+            }
+            let ArrNamesofFilms = []
+            for(let w = 0 ;w<namesofmovies.length;w++){
+                if(namesofmovies[w].movieid===films[q].id){
+                    ArrNamesofFilms.push(
+                        {
+                            name:namesofmovies[w].name,
+                            language:namesofmovies[w].language,
+                            type:namesofmovies[w].type
+                        }
+                        )
+                }
+            }
+            
+        
+            let ArrPersonsOfMovies = []
+            for(let w = 0 ;w<persons.length;w++){
+                if(persons[w].movieid===films[q].id){
+                    ArrPersonsOfMovies.push(
+                        {
+                            personid:persons[w].personid,
+                            name:persons[w].name,
+                            enName:persons[w].enName,
+                            photo:persons[w].photo,
+                            profession:persons[w].profession,
+                            enProfession:persons[w].enProfession,
+                        }
+                        )
+                }
+            }
+            let ArrVideos = []
+            for(let w = 0 ;w<videos.length;w++){
+                if(videos[w].movieid===films[q].id){
+                    ArrVideos.push(
+                        {
+                            url:videos[w].url,
+                            name:videos[w].name,
+                            site:videos[w].site,
+                            type:videos[w].type,
+                        }
+                        )
+                }
+            }
      
-       
-        if((dto.actor!=undefined)&&(dto.genre===undefined)&&(dto.countries===undefined)&&(dto.ratingKp===undefined)&&(dto.votesKp===undefined)&&(dto.director===undefined)){ ///// актер
-            return await this.getFilmsByActor(dto.actor)
+            ArrFilms.push(
+                {
+                    film:films[q],
+                    genres:ArrNamesOfGenres,
+                    countries:ArrCountries,
+                    namesoffilm:ArrNamesofFilms,
+                    persons:ArrPersonsOfMovies,
+                    videos:ArrVideos, 
+                }
+                )
+            
         }
-        if((dto.genre!=undefined)&&(dto.countries!=undefined)&&(dto.ratingKp!=undefined)&&(dto.votesKp!=undefined)&&(dto.director===undefined)&&(dto.actor!=undefined)){ ///// актер, жанр, страна, рейтинг КП, голоса КП 
-            const films = await this.getFilmsByActor(dto.actor)
-            let ArrFilms = []
-            let genre = false
-            let country = false
-            for(let q = 0 ; q <films.length;q++){
-                genre = false
-                country = false
-                    for(let e = 0 ; e< films[q].genres.length;e++){
-                        if((dto.genre.includes(films[q].genres[e].name)===true)||(dto.genre.includes(films[q].genres[e].enName)===true)){
-                            genre = true
-                        }
-                    }
-                    for(let e = 0 ; e< films[q].countries.length;e++){
-                        if((dto.countries.includes(films[q].countries[e].name)===true)){
-                            country = true
-                        }
-             
-                    }
-                    if((genre===true)&&(country===true)&&(dto.ratingKp<=films[q].film.ratingkp)&&(dto.votesKp<=films[q].film.voteskp)){
-                        ArrFilms.push(films[q])
-                    }
-            }
-            return ArrFilms
+    
+    
+
+
+        return ArrFilms
+
+
         
-        }
+        
+
+     
+            
+        
         
 
     }
@@ -766,7 +1083,7 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
 /////// Если вам понравился этот фильм /////////////////////////////////////////////////
         async eSLIWamPonravilsaEtotFilm(id:number){
         const film = await this.getFilmById(id)
-             
+            
         }
 
 

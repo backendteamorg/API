@@ -36,7 +36,36 @@ export class GenresnamesController {
     return this.genresnamesService.updateGenre(genre);
   }
 
-  
+  @MessagePattern({ cmd: 'get-genres-by-names' })
+  async getGenresByNames(
+    @Ctx() context: RmqContext,
+    @Payload() genre: { ArrGenres: string[] },) {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return await this.genresnamesService.getGenresByNames(genre.ArrGenres);
+  }
+  @MessagePattern({ cmd: 'get-genres-by-genres-id' })
+  async getGenresByGenresId(
+    @Ctx() context: RmqContext,
+    @Payload() genre: { ArrGenresId: number[] },) {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return await this.genresnamesService.getGenresNamesByGenresId(genre.ArrGenresId);
+  }
+  @MessagePattern({ cmd: 'get-genres-by-name' })
+  async getGenresByName(
+    @Ctx() context: RmqContext,
+    @Payload() genre: { genre: string },) {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return await this.genresnamesService.getGenreByName(genre.genre);
+  }
 
   @MessagePattern({ cmd: 'delete-genre-by-id' })
   async deleteGenreById(

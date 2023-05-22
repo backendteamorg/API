@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/sequelize';
 import { CountriesOfFilms } from './counties.model';
 import { ClientProxy } from '@nestjs/microservices';
 import { asyncScheduler, firstValueFrom } from 'rxjs';
+import { Op } from 'sequelize';
 @Injectable()
 export class CountriesService {
     constructor(@InjectModel(CountriesOfFilms) private countriesRepository: typeof CountriesOfFilms,
@@ -61,9 +62,24 @@ export class CountriesService {
     async getAllCountries(){
       return await this.countriesRepository.findAll()
     }
+
+    async getMoviesByCountriesNames(ArrCountries:string[]){
+      return await this.countriesRepository.findAll({
+        where:{ 
+        country:{[Op.in]:ArrCountries}
+        }
+
+      })
+    }
+    async getMoviesByCountryName(country:string){
+      return await this.countriesRepository.findAll({where:{country:country}})
+    }
     async getCountriesByMovieId(idC:number){
       return await this.countriesRepository.findAll({where:{movieid:idC}})
     }
 
+  async getCountriesByMoviesid(moviesid:number[]){
+    return await this.countriesRepository.findAll({where:{movieid:{[Op.in]:moviesid}}})
+  }
     
 }
