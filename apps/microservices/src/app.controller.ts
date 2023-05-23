@@ -315,7 +315,7 @@ async getRole(
 
 
 
-@ApiOperation({summary: 'Получить сохраненные данные о фильмах используя фильтры {"genre":["семейный"],"countries":["Венгрия"],"ratingKp":5,"votesKp":5,"director":"Э","actor":"Доро"'})
+@ApiOperation({summary: 'Получить сохраненные данные о фильмах используя фильтры. Доступные поля {sortField, sortOrder, limit, type, page ,genres, countries, ratingKp, votesKp, director,actor}. Пример ввода :localhost:6125/movies?genres=драма&genres=фантастика'})
 @ApiTags('(Фильры) Данные с сайта kinopoisk')
 
 @Get('movies')

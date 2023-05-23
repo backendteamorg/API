@@ -122,6 +122,9 @@ export class GenresService {
     return ArrGenres
 
   }
+  async getAll(){
+    return await this.genresRepository.findAll()
+  }
 
   async getMoviesByGenreId(genreid:number[]){
     return await this.genresRepository.findAll({attributes: [

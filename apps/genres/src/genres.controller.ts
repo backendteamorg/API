@@ -21,7 +21,7 @@ export class GenresController {
     const message = context.getMessage();
     channel.ack(message);
 
-    return this.genresService.getAllGenres()
+    return this.genresService.getAll()
   }
 
   @MessagePattern({ cmd: 'get-genres-by-moveid' })
