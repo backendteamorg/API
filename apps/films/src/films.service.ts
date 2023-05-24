@@ -606,15 +606,12 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
         const ArrFilmId = []
         const {sortField, sortOrder, limit, type, page ,genres, countries, ratingKp, votesKp, director,actor} = queryParams; 
 
-
+  
 
         if ((queryParams.queryParams.limit===undefined)&&(queryParams.queryParams.page!=undefined)){
             return 'Введите поле limit чтобы указать количество фильмов на странице'
         }
-        if((queryParams.queryParams.sortField!=undefined)&&(queryParams.queryParams.sortOrder===undefined)){
-            return 'Введите sortOrder чтобы использовать sortField'
-
-        }
+     
         if((queryParams.queryParams.sortField===undefined)&&(queryParams.queryParams.sortOrder!=undefined)){
             return 'Введите sortField чтобы использовать sortOrder'
         }
