@@ -567,7 +567,12 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
         if((queryParams.queryParams.sortField===undefined)&&(queryParams.queryParams.sortOrder!=undefined)){
             return 'Введите sortField чтобы использовать sortOrder'
         }
-        
+        if(((queryParams.queryParams.countries===undefined)&&(queryParams.queryParams.genres===undefined))
+        &&(queryParams.queryParams.director===undefined)&&(queryParams.queryParams.actor===undefined)&&(queryParams.queryParams.sortField===undefined)
+        &&(queryParams.queryParams.sortOrder===undefined)&&(queryParams.queryParams.limit===undefined)&&(queryParams.queryParams.page===undefined)
+        &&(queryParams.queryParams.type===undefined)&&(queryParams.queryParams.ratingKp===undefined)&&(queryParams.queryParams.votesKp===undefined)){
+            return await this.getAllFilmsWithAllInfo()   
+        }
         
 
         if(((queryParams.queryParams.countries===undefined)&&(queryParams.queryParams.genres===undefined))
