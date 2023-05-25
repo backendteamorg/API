@@ -6,7 +6,6 @@ import { Films } from '../../films/src/films.model';
 import { FilmsService } from './films.service';
 import { JwtModule } from '@nestjs/jwt';
 import { ClientProxyFactory, Transport } from '@nestjs/microservices';
-import { ReviewsModule } from './reviews/reviews.module';
 
 
 @Module({
@@ -32,7 +31,7 @@ import { ReviewsModule } from './reviews/reviews.module';
       autoLoadModels: true
     }),
     SequelizeModule.forFeature([Films]),
-    ReviewsModule,
+    ,
   ],
   controllers: [FilmsController],
   providers: [FilmsService,
@@ -102,28 +101,6 @@ import { ReviewsModule } from './reviews/reviews.module';
         },
         inject:[ConfigService]
     },
-    {
-      provide: 'NAMESOFFILMS_SERVICE',
-        useFactory:(configService:ConfigService)=> {
-          const USER = configService.get('RABBITMQ_DEFAULT_USER');
-          const PASSWORD =  configService.get('RABBITMQ_DEFAULT_PASS');
-          const HOST = configService.get('RABBITMQ_HOST');
-          const QUEUE = configService.get('RABBITMQ_NAMESOFFILMS_QUEUE');
-    
-          return ClientProxyFactory.create({
-            transport: Transport.RMQ,
-            options: {
-              urls:[`amqp://${USER}:${PASSWORD}@${HOST}`],
-              noAck:false,
-              queue: QUEUE,
-              queueOptions: {
-                durable: true
-              }
-            }
-          })
-        },
-        inject:[ConfigService]
-    },
     
     {
       provide: 'VIDEOS_SERVICE',
@@ -132,28 +109,6 @@ import { ReviewsModule } from './reviews/reviews.module';
           const PASSWORD =  configService.get('RABBITMQ_DEFAULT_PASS');
           const HOST = configService.get('RABBITMQ_HOST');
           const QUEUE = configService.get('RABBITMQ_VIDEOS_QUEUE');
-    
-          return ClientProxyFactory.create({
-            transport: Transport.RMQ,
-            options: {
-              urls:[`amqp://${USER}:${PASSWORD}@${HOST}`],
-              noAck:false,
-              queue: QUEUE,
-              queueOptions: {
-                durable: true
-              }
-            }
-          })
-        },
-        inject:[ConfigService]
-    },
-    {
-      provide: 'SEQUEILANDPRIQUELS_SERVICE',
-        useFactory:(configService:ConfigService)=> {
-          const USER = configService.get('RABBITMQ_DEFAULT_USER');
-          const PASSWORD =  configService.get('RABBITMQ_DEFAULT_PASS');
-          const HOST = configService.get('RABBITMQ_HOST');
-          const QUEUE = configService.get('RABBITMQ_SEQUEILANDPRIQUELS_QUEUE');
     
           return ClientProxyFactory.create({
             transport: Transport.RMQ,

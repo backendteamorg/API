@@ -4,7 +4,7 @@ export class GenresNamesDto{
     @IsNumber({},{message:'Должно быть числом'})
     readonly id: number;
     @IsString({message: 'Должно быть строкой'})
-    readonly genre:string;
+    readonly name:string;
     @IsString({message: 'Должно быть строкой'})
     readonly enName:string;
     

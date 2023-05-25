@@ -1,11 +1,10 @@
 import { Controller, Get,Inject,Post,Body, UseGuards, Put,Param ,Delete, Patch, Req,Query} from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { JwtAuthGuard } from './jwt-auth.guard';
+
 import { ApiCreatedResponse, ApiOperation, ApiProperty, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { RolesGuard } from './roles.guard';
-import { Roles } from './roles-auth.decorator';
+
 import { IsEmail, IsString } from 'class-validator';
-import { GoogleAuthGuard } from './gooogle.guard';
+
 import { FilteDto } from 'apps/films/src/dto/filtre.dto';
 
 
@@ -13,206 +12,17 @@ import { FilteDto } from 'apps/films/src/dto/filtre.dto';
 @Controller()
 export class AppController {
   constructor(
-  @Inject('AUTH_SERVICE') private rabbitAuthService: ClientProxy,
-  @Inject('PROFILE_SERVICE') private rabbitProfileService: ClientProxy,
   @Inject('FILM_SERVICE') private rabbitFilmsService: ClientProxy,
   @Inject('PERSONS_SERVICE') private rabbitPersonsFilmsService: ClientProxy,
   @Inject('GENRES_SERVICE') private rabbitGenresFilmsService: ClientProxy,
   @Inject('COUNTRIES_SERVICE') private rabbitCountriesFilmsService: ClientProxy,
-  @Inject('NAMESOFFILMS_SERVICE') private rabbitNamesOfFilmsService: ClientProxy,
-  @Inject('WHATCHABILITY_SERVICE') private rabbitwatchabilityService: ClientProxy,
-  @Inject('FACTSOFFILMS_SERVICE') private rabbitfactsoffilmsService: ClientProxy,
-  @Inject('PRODUCRCOMPANIES_SERVICE') private rabbitProductionCompaniesFilmsService: ClientProxy,
-  @Inject('SPOKENLANGUAGE_SERVICE') private rabbitSpokenLanguageService: ClientProxy,
   @Inject('VIDEOS_SERVICE') private rabbitVideosService: ClientProxy,
-  @Inject('SEQUEILANDPRIQUELS_SERVICE') private rabbitequelsandprequelsService: ClientProxy,
-  @Inject('PERSONQWE_SERVICE') private rabbitePersonService: ClientProxy,
-  @Inject('SPOSES_OF_PERSONQWE_SERVICE') private rabbitesSpousesPersonService: ClientProxy,
-  @Inject('ROLES_SERVICE') private rabbitesRoleService: ClientProxy,
   @Inject('REVIEWS_SERVICE') private rabbitesReviewsOfFilmsService: ClientProxy,
   @Inject('NAMESOFGENRES_SERVICE') private rabbitnamesofGenresService: ClientProxy,) {}
 
 
-  @ApiTags('Роли')
-  @Post('createrole')
-  @ApiOperation({summary: 'Создать роль {"value":"ADMIN","description":"Администратор"}'})
-  async createRole(
-   
-    @Body('value') value: string,
-    @Body('description') description: string,
-    ) {
-      return await this.rabbitesRoleService.send(
-          {
-            cmd: 'create-role',
-          },
-          {
-            value,
-            description,
-          },
-        );
-      }
-@ApiTags('Роли')
-@Get('role/:value')
-async getRole(
-  @Param('value') value: string) {
-    return await this.rabbitesRoleService.send(
-        {
-         cmd: 'get-role',
-        },
-        {value:value},
-        );
-  }
-  @ApiTags('Регистрация и вход')
-  @Post('registration')
-  @ApiOperation({summary: 'Регистрация {"email":"ADMIN@mail.ru","password":"Администратор"}'})
-  async register(
-  @Body('email') email: string,
-  @Body('password') password: string,
-  ) {
-    return await this.rabbitAuthService.send(
-        {
-          cmd: 'registration',
-        },
-        {
-          email,
-          password,
-        },
-      );
-    }
-    @ApiTags('Регистрация и вход')
-    @ApiOperation({summary: 'Вход {"email":"ADMIN@mail.ru","password":"Администратор"}'})
-    @Post('login')
-    async login(
-      @Body('email') email: string,
-      @Body('password') password: string,
-    ) {
-      return await this.rabbitAuthService.send(
-        {
-          cmd: 'login',
-        },
-        {
-          email,
-          password,
-        },
-      );
-    }
-  @ApiTags('Пользователи')
-  @ApiOperation({summary: 'TITLE_USERS'})
-  @Get('title_users')
-  async getUser() {
-      return await this.rabbitAuthService.send({
-        cmd: 'get-title',
-      },
-      {});
-
-    }
-  @ApiTags('Пользователи')
-  @ApiOperation({summary: 'Получить всех пользователей'})
-  @Get('users')
-    async getUsers() {
-      return await this.rabbitAuthService.send({
-        cmd: 'get-users',
-      },
-      {});
-
-  }
-  @ApiTags('(Отключено) Профиль')
-  @ApiOperation({summary: 'TITLE_PROFILE'})
-  @Get('title_profile')
-  async getPorifle() {
-      return this.rabbitProfileService.send({
-      cmd: 'get-title',
-    },
-   {});
-
-  } 
-  @ApiOperation({summary: 'Получить все профили'})
-  @ApiTags('(Отключено) Профиль')
-  @Get('profiles')
-    async getProfiles() {
-      return await this.rabbitProfileService.send({
-        cmd: 'get-profiles',
-      },
-      {}
-      );
-
-    }
-  @ApiTags('(Отключено) Профиль')
-  @ApiOperation({summary: 'Получить профиль по ИН пользователя'})
-  @Get('profile/:id')
-  async getProfile(@Param('id') id:number) {
-    return await this.rabbitProfileService.send({
-      cmd: 'get-profile',
-    },
-    {id}
-    );
-
-  }
-  @ApiOperation({summary: 'Создать профиль'})
-  @ApiTags('(Отключено) Профиль')
-  @UseGuards(JwtAuthGuard)
-  @Post('profile')
-  async createProfile(
-    @Body('userId') userId: number,
-    @Body('fisrt_name') fisrt_name: string,
-    @Body('second_name') second_name: string,
-    @Body('phonenumber') phonenumber: string,
-  ) {
-    return await this.rabbitProfileService.send(
-      {
-        cmd: 'create-profile',
-      },
-      {
-        userId,
-        fisrt_name,
-        second_name,
-        phonenumber
-      },
-    );
-  }
-  @ApiOperation({summary: 'Обновить профиль'})
-  @ApiTags('(Отключено) Профиль')
-  @UseGuards(JwtAuthGuard)
-  @Patch('profile')
-  async updateProfile(
-    @Body('userId') userId: number,
-    @Body('fisrt_name') fisrt_name: string,
-    @Body('second_name') second_name: string,
-    @Body('phonenumber') phonenumber: string,) {
-    return await this.rabbitProfileService.send(
-      {
-        cmd: 'update-profile',
-      },
-      {
-        userId,
-        fisrt_name,
-        second_name,
-        phonenumber
-      },
-    );
-  }
-  @UseGuards(JwtAuthGuard)
-  @ApiOperation({summary: 'Удалить профиль'})
-  @ApiTags('(Отключено) Профиль')
-  @Delete('profile/:id')
-    async deletePorfile(@Param('id') id:number) {
-      return await this.rabbitProfileService.send({
-        cmd: 'delete-profile',
-      },
-      {id}
-      );
-
-  }
-  @ApiOperation({summary: 'TITLE_FILM'})
-  @ApiTags('Данные с сайта kinopoisk')
-  @Get('films-title')
-  async getFilmsTitle() {
-    return await this.rabbitFilmsService.send({
-      cmd: 'get-films-title',
-    },
-    {});
-
-  }
+  
+ 
   
   @ApiOperation({summary: 'Сделать запрос к api на информацию о фильмах с сайта "Кинопоиск"'})
   @ApiTags('Данные с api kinopoisk')
@@ -247,17 +57,7 @@ async getRole(
 
   }
  
-  @ApiTags('Данные с api kinopoisk')
-  @ApiOperation({summary: 'Сделать запрос к api на информацию о названиях фильмов данные о которых были получены ранее'})
-  @Get('admin/namesoffilms/parsing')
-  async parsingnamesOfFilms() {
-    return await this.rabbitNamesOfFilmsService.send({
-      cmd: 'parser-namesoffilms',
-    },
-    {});
 
-  }
- 
   
   
  
@@ -301,16 +101,6 @@ async getRole(
 
 
 
-@ApiOperation({summary: 'Сделать запрос к api чтобы получить тех кто снимался в фильмах данные о которых были получены ранее'})
-  @ApiTags('Данные с api kinopoisk')
-  @Get('admin/person/parsing')
-  async personParser() {
-    return await this.rabbitePersonService.send({
-      cmd: 'parser-person',
-    },
-    {});
-
-}
 
 
 
@@ -399,16 +189,7 @@ async getFilm(
 }
 
 
-@ApiOperation({summary: 'Получить все  сохраненные профили тех кто учавcтвовал в сьемках фильмов данные о которых были сохранены ранее'})
-  @ApiTags('Данные с сайта kinopoisk')
-  @Get('personsprofile')
-  async getpersonProfile() {
-    return await this.rabbitePersonService.send({
-      cmd: 'get-all-person-profile',
-    },
-    {});
 
-}
 @ApiOperation({summary: 'Получить сохраненную информацию о жанрах фильмов данные о которых были получены ранее'})
   @ApiTags('Данные с сайта kinopoisk')
   @Get('namesgenres')
@@ -429,16 +210,7 @@ async getFilm(
     {});
 
   }
-  @ApiOperation({summary: 'Получить сохраненную информацию о названиях фильмов данные о которых были получены ранее'})
-  @ApiTags('Данные с сайта kinopoisk')
-  @Get('allnamesOfFilm')
-  async GetNamesOfFilms() {
-    return await this.rabbitNamesOfFilmsService.send({
-      cmd: 'get-all-namesoffilms',
-    },
-    {});
 
-  }
   @ApiOperation({summary: 'Получить все сохраненные данные о тех кто учавтсовал в сьемках фильмов данные о которых были получены ранее'})
   @ApiTags('Данные с сайта kinopoisk')
   @Get('persons')
@@ -473,18 +245,7 @@ async getFilm(
   }
  
   
-  @ApiOperation({summary: 'Получить сохраненные данные о фактах фильма'})
-  @ApiTags('Данные с сайта kinopoisk')
-  @Get('namesOfFilm/:id')
-  async getNamesOfFilmsByMovieId(
-    @Param('id') id: number) {
-      return await this.rabbitNamesOfFilmsService.send(
-          {
-           cmd: 'get-namesOfFilms-by-moveid',
-          },
-          {id:id},
-          );
-  }
+
   @ApiOperation({summary: 'Получить сохраненные данные о сьемочной группе'})
   @ApiTags('Данные с сайта kinopoisk')
   @Get('personsfMovie/:id')
@@ -493,18 +254,6 @@ async getFilm(
       return await this.rabbitPersonsFilmsService.send(
           {
            cmd: 'get-personsoffilms-by-moveid',
-          },
-          {id:id},
-          );
-  }
-  @ApiOperation({summary: 'Получить сохраненный профиль человека учествовавшего в сьемках фильма сохраненного в бд'})
-  @ApiTags('Данные с сайта kinopoisk')
-  @Get('person/:id')
-  async getPersonById(
-    @Param('id') id: number) {
-      return await this.rabbitePersonService.send(
-          {
-           cmd: 'get-person-by-id',
           },
           {id:id},
           );

@@ -3,7 +3,7 @@ import { Table, Model, Column, DataType} from "sequelize-typescript";
 
 interface namesGenresOfFilmsCreationAttr {
     id: number;
-    genre:string;
+    name:string;
     enName:string;
 }
 
@@ -13,7 +13,7 @@ export class namesGenresOfFilms extends Model<namesGenresOfFilms, namesGenresOfF
     @Column({type: DataType.INTEGER,autoIncrement: true, unique: true, primaryKey: true})
     id: number;
     @Column({type: DataType.STRING})
-    genre:string;
+    name:string;
     @Column({type: DataType.STRING})
     enName:string;
     

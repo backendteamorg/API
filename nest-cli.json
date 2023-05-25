@@ -19,24 +19,6 @@
         "tsConfigPath": "apps/microservices/tsconfig.app.json"
       }
     },
-    "auth": {
-      "type": "application",
-      "root": "apps/auth",
-      "entryFile": "main",
-      "sourceRoot": "apps/auth/src",
-      "compilerOptions": {
-        "tsConfigPath": "apps/auth/tsconfig.app.json"
-      }
-    },
-    "profile": {
-      "type": "application",
-      "root": "apps/profile",
-      "entryFile": "main",
-      "sourceRoot": "apps/profile/src",
-      "compilerOptions": {
-        "tsConfigPath": "apps/profile/tsconfig.app.json"
-      }
-    },
     "films": {
       "type": "application",
       "root": "apps/films",
@@ -64,6 +46,15 @@
         "tsConfigPath": "apps/genres/tsconfig.app.json"
       }
     },
+    "genresnames": {
+      "type": "application",
+      "root": "apps/genresnames",
+      "entryFile": "main",
+      "sourceRoot": "apps/genresnames/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/genresnames/tsconfig.app.json"
+      }
+    },
     "countries": {
       "type": "application",
       "root": "apps/countries",
@@ -73,42 +64,6 @@
         "tsConfigPath": "apps/countries/tsconfig.app.json"
       }
     },
-    "facts": {
-      "type": "application",
-      "root": "apps/facts",
-      "entryFile": "main",
-      "sourceRoot": "apps/facts/src",
-      "compilerOptions": {
-        "tsConfigPath": "apps/facts/tsconfig.app.json"
-      }
-    },
-    "watchability": {
-      "type": "application",
-      "root": "apps/watchability",
-      "entryFile": "main",
-      "sourceRoot": "apps/watchability/src",
-      "compilerOptions": {
-        "tsConfigPath": "apps/watchability/tsconfig.app.json"
-      }
-    },
-    "namesoffilms": {
-      "type": "application",
-      "root": "apps/namesoffilms",
-      "entryFile": "main",
-      "sourceRoot": "apps/namesoffilms/src",
-      "compilerOptions": {
-        "tsConfigPath": "apps/namesoffilms/tsconfig.app.json"
-      }
-    },
-    "production-companies": {
-      "type": "application",
-      "root": "apps/production-companies",
-      "entryFile": "main",
-      "sourceRoot": "apps/production-companies/src",
-      "compilerOptions": {
-        "tsConfigPath": "apps/production-companies/tsconfig.app.json"
-      }
-    },
     "videos": {
       "type": "application",
       "root": "apps/videos",
@@ -116,87 +71,6 @@
       "sourceRoot": "apps/videos/src",
       "compilerOptions": {
         "tsConfigPath": "apps/videos/tsconfig.app.json"
-      }
-    },
-    "spoken-languages": {
-      "type": "application",
-      "root": "apps/spoken-languages",
-      "entryFile": "main",
-      "sourceRoot": "apps/spoken-languages/src",
-      "compilerOptions": {
-        "tsConfigPath": "apps/spoken-languages/tsconfig.app.json"
-      }
-    },
-    "sequels-and-prequels": {
-      "type": "application",
-      "root": "apps/sequels-and-prequels",
-      "entryFile": "main",
-      "sourceRoot": "apps/sequels-and-prequels/src",
-      "compilerOptions": {
-        "tsConfigPath": "apps/sequels-and-prequels/tsconfig.app.json"
-      }
-    },
-    "person": {
-      "type": "application",
-      "root": "apps/person",
-      "entryFile": "main",
-      "sourceRoot": "apps/person/src",
-      "compilerOptions": {
-        "tsConfigPath": "apps/person/tsconfig.app.json"
-      }
-    },
-    "reviews": {
-      "type": "application",
-      "root": "apps/reviews",
-      "entryFile": "main",
-      "sourceRoot": "apps/reviews/src",
-      "compilerOptions": {
-        "tsConfigPath": "apps/reviews/tsconfig.app.json"
-      }
-    },
-    "spousesofpersons": {
-      "type": "application",
-      "root": "apps/spousesofpersons",
-      "entryFile": "main",
-      "sourceRoot": "apps/spousesofpersons/src",
-      "compilerOptions": {
-        "tsConfigPath": "apps/spousesofpersons/tsconfig.app.json"
-      }
-    },
-    "roles": {
-      "type": "application",
-      "root": "apps/roles",
-      "entryFile": "main",
-      "sourceRoot": "apps/roles/src",
-      "compilerOptions": {
-        "tsConfigPath": "apps/roles/tsconfig.app.json"
-      }
-    },
-    "google_auth": {
-      "type": "application",
-      "root": "apps/google_auth",
-      "entryFile": "main",
-      "sourceRoot": "apps/google_auth/src",
-      "compilerOptions": {
-        "tsConfigPath": "apps/google_auth/tsconfig.app.json"
-      }
-    },
-    "vk_auth": {
-      "type": "application",
-      "root": "apps/vk_auth",
-      "entryFile": "main",
-      "sourceRoot": "apps/vk_auth/src",
-      "compilerOptions": {
-        "tsConfigPath": "apps/vk_auth/tsconfig.app.json"
-      }
-    },
-    "genresnames": {
-      "type": "application",
-      "root": "apps/genresnames",
-      "entryFile": "main",
-      "sourceRoot": "apps/genresnames/src",
-      "compilerOptions": {
-        "tsConfigPath": "apps/genresnames/tsconfig.app.json"
       }
     }
   }

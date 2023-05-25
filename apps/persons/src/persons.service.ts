@@ -9,8 +9,7 @@ import { Op } from 'sequelize';
 @Injectable()
 export class PersonsService {
   constructor(@InjectModel(Persons) private personsRepository:typeof Persons,
-  @Inject('FILM_SERVICE') private rabbitFilmsService: ClientProxy,
-  @Inject('PERSONQWE_SERVICE') private rabbitePersonService: ClientProxy,){}
+  @Inject('FILM_SERVICE') private rabbitFilmsService: ClientProxy,){}
 
 
   async getAllFilms() {
@@ -21,76 +20,18 @@ export class PersonsService {
     const films = await firstValueFrom(ob$).catch((err) => console.error(err));
     return films;
   }
-  async getPerson() {
-    const ob$ = await this.rabbitePersonService.send({
-      cmd: 'get-all-person-profile',
-    },
-    {});
-    const person = await firstValueFrom(ob$).catch((err) => console.error(err));
-    return person;
-  }
 
   
   async getAllPersonsWithAllInfo(){
-    const persnsoffilms = await this.personsRepository.findAll()
-    const person = await  this.getPerson()
-    let ArrPersons = []
-    for(let q = 0 ; q<person.length;q++ ){
-      let ArrPersonsFIlms = []
-      for(let w = 0 ; w <persnsoffilms.length;w++){
-        if(person[q].id===persnsoffilms[w].personid){
-          ArrPersonsFIlms.push({
-            movieid:persnsoffilms[w].movieid,
-            profession:persnsoffilms[w].profession,
-            enProfession:persnsoffilms[w].enProfession,
-
-          })
-        }
-      }
-
-      
-      
-      
-      ArrPersons.push({
-        person:person[q],
-        movies:ArrPersonsFIlms,
-        
-
-      })
-    }
-
-    return ArrPersons
+    return await this.personsRepository.findAll()
+    
+    
   }
-
-  async getPersonById(id:number){
-    const ob$ = await this.rabbitePersonService.send({
-      cmd: 'get-person-by-id',
-    },
-    {id:id});
-    const person = await firstValueFrom(ob$).catch((err) => console.error(err));
-    return person;
-}
 
 
   async getAllInfoOfPersonsByPersonId(idP:number){
-    const persnsoffilms = await this.personsRepository.findAll({where:{personid:idP}})
-    const person = await this.getPersonById(idP)
+    return await this.personsRepository.findAll({where:{personid:idP}})
     
-    let ArrMovies =[]
-    for(let q =0 ; q <persnsoffilms.length;q++){
-      ArrMovies.push({
-        movieid:persnsoffilms[q].movieid,
-        profession:persnsoffilms[q].profession,
-        enProfession:persnsoffilms[q].enProfession,
-      })
-    }
-    
-    let ArrPerson = []
-    ArrPerson.push({
-      person:person,
-      movies:ArrMovies,
-    })
-    return ArrPerson
   }
 
 
@@ -131,7 +72,6 @@ persons.id%20persons.photo%20persons.name%20persons.enName%20persons.profession%
     if(personsREQ.ok){
       let json = await personsREQ.json();
       let arrPersons = []
-      let arrPersonsId = []
       for(let i = 0 ;i < json.docs.length;i++){
           for(let j = 0 ;j<json.docs[i].persons.length;j++){
             if(ArrPersonsRep.includes(json.docs[i].id+'@'+json.docs[i].persons[j].id)===false){
@@ -174,12 +114,12 @@ persons.id%20persons.photo%20persons.name%20persons.enName%20persons.profession%
       [Op.and]:[  {[Op.or]:[{profession:'режиссеры'},{enProfession:'director'}]},  {[Op.or]:[{name:{[Op.like]:director+'%'}},{enName:{[Op.like]:director+'%'}}]}],
     }});
     const ArrActor = await this.personsRepository.findAll({where:{
-      [Op.and]: [   {[Op.or]:[{profession:'актеры'},{enProfession:'actor'}]},   {[Op.or]:[{name:{[Op.like]:actor+'%'}},{enName:{[Op.like]:actor+'%'}}]}],
+      [Op.and]: [   {[Op.or]:[{profession:'актеры'},{enProfession:'actor'}]},   {[Op.or]:[{name:{[Op.like]:actor+'%'}},{enName:{[Op.like]:actor+'%'}}]}   ],
     }}
     );
     
     let ArrDirecrotAndActor = []
-    let ArrMovieId = []
+    
     if((ArrDirector.length!=0)&&(ArrActor.length!=0)){
       for(let q = 0 ; q < ArrDirector.length;q++){
         for(let w = 0 ; w <ArrActor.length;w++){

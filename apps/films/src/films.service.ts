@@ -13,7 +13,6 @@ export class FilmsService {
     constructor(@InjectModel(Films) private filmRepository: typeof Films,
     @Inject('GENRES_SERVICE') private rabbitGenresFilmsService: ClientProxy,
     @Inject('COUNTRIES_SERVICE') private rabbitCountriesFilmsService: ClientProxy,
-    @Inject('NAMESOFFILMS_SERVICE') private rabbitNamesOfFilmsService: ClientProxy,
     @Inject('VIDEOS_SERVICE') private rabbitVideosService: ClientProxy,
     @Inject('NAMESOFGENRES_SERVICE') private rabbitnamesofGenresService: ClientProxy,
     @Inject('PERSONS_SERVICE') private rabbitPersonsFilmsService: ClientProxy) {}
@@ -55,15 +54,7 @@ export class FilmsService {
           return countries;
     }
 
-    async getAllNamesOfFilms(){
-        const ob$ = await this.rabbitNamesOfFilmsService.send({
-            cmd: 'get-all-namesoffilms',
-          },
-          {});
-          const namesoffilms = await firstValueFrom(ob$).catch((err) => console.error(err));
-          return namesoffilms;
-    }
-
+  
    
 
    
@@ -85,7 +76,7 @@ export class FilmsService {
         const genres = await this.getAllGenresOfMovies()
         const namesofgenres = await this.getAllNamesOfGenres()
         const countries = await this.getAllCountriesOfMovies()
-        const namesofmovies = await this.getAllNamesOfFilms()
+        
         
         
         const persons = await this.getAllPersonsOfMovies()
@@ -117,18 +108,6 @@ export class FilmsService {
             for(let w = 0 ;w<countries.length;w++){
                 if(countries[w].movieid===films[q].id){
                     ArrCountries.push({name:countries[w].country})
-                }
-            }
-            let ArrNamesofFilms = []
-            for(let w = 0 ;w<namesofmovies.length;w++){
-                if(namesofmovies[w].movieid===films[q].id){
-                    ArrNamesofFilms.push(
-                        {
-                            name:namesofmovies[w].name,
-                            language:namesofmovies[w].language,
-                            type:namesofmovies[w].type
-                        }
-                        )
                 }
             }
             
@@ -167,7 +146,6 @@ export class FilmsService {
                     film:films[q],
                     genres:ArrNamesOfGenres,
                     countries:ArrCountries,
-                    namesoffilm:ArrNamesofFilms,
                     persons:ArrPersonsOfMovies,
                     videos:ArrVideos, 
                 }
@@ -291,15 +269,7 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
         const countries = await firstValueFrom(ob$).catch((err) => console.error(err));
         return countries;
     }
-    async getNamesOfFilmsByMovieId(id:number){
-        const ob$ = await this.rabbitNamesOfFilmsService.send({
-          cmd: 'get-namesOfFilms-by-moveid',
-        },
-        {id:id});
-        const namesofmovies = await firstValueFrom(ob$).catch((err) => console.error(err));
-        return namesofmovies;
-    }
-
+   
  
 
     async getPersonsByMovieId(id:number){
@@ -325,7 +295,7 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
         const genres = await this.getGenresByMovieId(idF)
         const namesofgenres = await this.getAllNamesOfGenres()
         const countries = await this.getCountriesByMovieId(idF)
-        const namesofmovies = await this.getNamesOfFilmsByMovieId(idF)
+        
         const persons = await this.getPersonsByMovieId(idF)
         const videos = await this.getVideosByMovieId(idF)   
         
@@ -352,17 +322,7 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
         
         }
 
-        let ArrNamesofFilms = []
-        for(let w = 0 ; w< namesofmovies.length; w++){
-            ArrNamesofFilms.push(
-                {
-                    name:namesofmovies[w].name,
-                    language:namesofmovies[w].language,
-                    type:namesofmovies[w].type
-                }
-                )
-            
-        }
+        
         
        
         
@@ -397,7 +357,6 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
             film:film,
             genres:ArrNamesOfGenres,
             countries:ArrCountries,
-            namesOfFilms:ArrNamesofFilms,
             persons:ArrPersonsOfMovies,
             videos:ArrVideos,
             
@@ -576,14 +535,7 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
           return countries;
     }
 
-    async getNamesOfMoviesByMoviesId(moviesid:number[]){
-        const ob$ = await this.rabbitNamesOfFilmsService.send({
-            cmd: 'get-namesOfFilms-by-moviesid',
-          },
-          {moviesid:moviesid});
-          const namesofmovies = await firstValueFrom(ob$).catch((err) => console.error(err));
-          return namesofmovies;
-    }
+
 
     async getPersonsOfMoviesByMoviesId(moviesid:number[]){
         const ob$ = await this.rabbitPersonsFilmsService.send({
@@ -839,7 +791,7 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
                 }
             }
             else if((queryParams.queryParams.ratingKp!=undefined)&&(queryParams.queryParams.votesKp===undefined)){
-                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmId}},{type:{[Op.eq]:queryParams.queryParams.type}},{ratingkp:{[Op.gte]:queryParams.queryParams.ratingKp}}]},
+                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmId}},{type:{[Op.eq]:queryParams.queryParams.type}},{ratingKp:{[Op.gte]:queryParams.queryParams.ratingKp}}]},
                 order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]
             })
                 for(let q = 0 ; q <Flilms.length;q++){
@@ -847,7 +799,7 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
                 }
             }
             else if((queryParams.queryParams.ratingKp!=undefined)&&(queryParams.queryParams.votesKp!=undefined)){
-                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmId}},{type:{[Op.eq]:queryParams.queryParams.type}},{ratingkp:{[Op.gte]:queryParams.queryParams.ratingKp}},{voteskp:{[Op.gte]:queryParams.queryParams.votesKp}}]},
+                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmId}},{type:{[Op.eq]:queryParams.queryParams.type}},{ratingKp:{[Op.gte]:queryParams.queryParams.ratingKp}},{votesKp:{[Op.gte]:queryParams.queryParams.votesKp}}]},
                 order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]
             })
                 for(let q = 0 ; q <Flilms.length;q++){
@@ -865,7 +817,7 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
                 }
             }
             else if((queryParams.queryParams.ratingKp!=undefined)&&(queryParams.queryParams.votesKp===undefined)){
-                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmId}},{ratingkp:{[Op.gte]:queryParams.queryParams.ratingKp}}]},
+                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmId}},{ratingKp:{[Op.gte]:queryParams.queryParams.ratingKp}}]},
                 order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]
             })
                 for(let q = 0 ; q <Flilms.length;q++){
@@ -873,7 +825,7 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
                 }
             }
             else if((queryParams.queryParams.ratingKp!=undefined)&&(queryParams.queryParams.votesKp!=undefined)){
-                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmId}},{ratingkp:{[Op.gte]:queryParams.queryParams.ratingKp}},{voteskp:{[Op.gte]:queryParams.queryParams.votesKp}}]},
+                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmId}},{ratingKp:{[Op.gte]:queryParams.queryParams.ratingKp}},{votesKp:{[Op.gte]:queryParams.queryParams.votesKp}}]},
                 order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]
             })
                 for(let q = 0 ; q <Flilms.length;q++){
@@ -902,7 +854,7 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
                 }
             }
             else if((queryParams.queryParams.ratingKp!=undefined)&&(queryParams.queryParams.votesKp===undefined)){
-                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmswithDirectorId}},{type:{[Op.eq]:queryParams.queryParams.type}},{ratingkp:{[Op.gte]:queryParams.queryParams.ratingKp}}]},
+                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmswithDirectorId}},{type:{[Op.eq]:queryParams.queryParams.type}},{ratingKp:{[Op.gte]:queryParams.queryParams.ratingKp}}]},
                     order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]
                 })
                 for(let q = 0 ; q <Flilms.length;q++){
@@ -910,7 +862,7 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
                 }
             }
             else if((queryParams.queryParams.ratingKp!=undefined)&&(queryParams.queryParams.votesKp!=undefined)){
-                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmswithDirectorId}},{type:{[Op.eq]:queryParams.queryParams.type}},{ratingkp:{[Op.gte]:queryParams.queryParams.ratingKp}},{voteskp:{[Op.gte]:queryParams.queryParams.votesKp}}]},
+                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmswithDirectorId}},{type:{[Op.eq]:queryParams.queryParams.type}},{ratingKp:{[Op.gte]:queryParams.queryParams.ratingKp}},{votesKp:{[Op.gte]:queryParams.queryParams.votesKp}}]},
                 order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]
             })
                 for(let q = 0 ; q <Flilms.length;q++){
@@ -928,7 +880,7 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
                 }
             }
             else if((queryParams.queryParams.ratingKp!=undefined)&&(queryParams.queryParams.votesKp===undefined)){
-                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmswithDirectorId}},{ratingkp:{[Op.gte]:queryParams.queryParams.ratingKp}}]},
+                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmswithDirectorId}},{ratingKp:{[Op.gte]:queryParams.queryParams.ratingKp}}]},
                     order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]
                 })
                 for(let q = 0 ; q <Flilms.length;q++){
@@ -936,7 +888,7 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
                 }
             }
             else if((queryParams.queryParams.ratingKp!=undefined)&&(queryParams.queryParams.votesKp!=undefined)){
-                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmswithDirectorId}},{ratingkp:{[Op.gte]:queryParams.queryParams.ratingKp}},{voteskp:{[Op.gte]:queryParams.queryParams.votesKp}}]},
+                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmswithDirectorId}},{ratingKp:{[Op.gte]:queryParams.queryParams.ratingKp}},{votesKp:{[Op.gte]:queryParams.queryParams.votesKp}}]},
                 order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]
             })
                 for(let q = 0 ; q <Flilms.length;q++){
@@ -965,7 +917,7 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
                 }
             }
             else if((queryParams.queryParams.ratingKp!=undefined)&&(queryParams.queryParams.votesKp===undefined)){
-                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmswithActor}},{type:{[Op.eq]:queryParams.queryParams.type}},{ratingkp:{[Op.gte]:queryParams.queryParams.ratingKp}}]},
+                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmswithActor}},{type:{[Op.eq]:queryParams.queryParams.type}},{ratingKp:{[Op.gte]:queryParams.queryParams.ratingKp}}]},
                 order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]
                     })
                     for(let q = 0 ; q <Flilms.length;q++){
@@ -973,7 +925,7 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
                     }
             }
             else if((queryParams.queryParams.ratingKp!=undefined)&&(queryParams.queryParams.votesKp!=undefined)){
-                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmswithActor}},{type:{[Op.eq]:queryParams.queryParams.type}},{ratingkp:{[Op.gte]:queryParams.queryParams.ratingKp}},{voteskp:{[Op.gte]:queryParams.queryParams.votesKp}}]},
+                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmswithActor}},{type:{[Op.eq]:queryParams.queryParams.type}},{ratingKp:{[Op.gte]:queryParams.queryParams.ratingKp}},{votesKp:{[Op.gte]:queryParams.queryParams.votesKp}}]},
                 order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]
                 })
                 for(let q = 0 ; q <Flilms.length;q++){
@@ -991,7 +943,7 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
                 }
             }
             else if((queryParams.queryParams.ratingKp!=undefined)&&(queryParams.queryParams.votesKp===undefined)){
-                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmswithActor}},{ratingkp:{[Op.gte]:queryParams.queryParams.ratingKp}}]},
+                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmswithActor}},{ratingKp:{[Op.gte]:queryParams.queryParams.ratingKp}}]},
                 order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]
                     })
                     for(let q = 0 ; q <Flilms.length;q++){
@@ -999,7 +951,7 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
                     }
             }
             else if((queryParams.queryParams.ratingKp!=undefined)&&(queryParams.queryParams.votesKp!=undefined)){
-                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmswithActor}},{ratingkp:{[Op.gte]:queryParams.queryParams.ratingKp}},{voteskp:{[Op.gte]:queryParams.queryParams.votesKp}}]},
+                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmswithActor}},{ratingKp:{[Op.gte]:queryParams.queryParams.ratingKp}},{votesKp:{[Op.gte]:queryParams.queryParams.votesKp}}]},
                 order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]
                 })
                 for(let q = 0 ; q <Flilms.length;q++){
@@ -1025,7 +977,7 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
                 }
             }
             else if((queryParams.queryParams.ratingKp!=undefined)&&(queryParams.queryParams.votesKp===undefined)){
-                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmId}},{type:{[Op.eq]:queryParams.queryParams.type}},{ratingkp:{[Op.gte]:queryParams.queryParams.ratingKp}}]},
+                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmId}},{type:{[Op.eq]:queryParams.queryParams.type}},{ratingKp:{[Op.gte]:queryParams.queryParams.ratingKp}}]},
                 order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]
                     })
                     for(let q = 0 ; q <Flilms.length;q++){
@@ -1033,7 +985,7 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
                     }
             }
             else if((queryParams.queryParams.ratingKp!=undefined)&&(queryParams.queryParams.votesKp!=undefined)){
-                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmId}},{type:{[Op.eq]:queryParams.queryParams.type}},{ratingkp:{[Op.gte]:queryParams.queryParams.ratingKp}},{voteskp:{[Op.gte]:queryParams.queryParams.votesKp}}]},
+                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmId}},{type:{[Op.eq]:queryParams.queryParams.type}},{ratingKp:{[Op.gte]:queryParams.queryParams.ratingKp}},{votesKp:{[Op.gte]:queryParams.queryParams.votesKp}}]},
                 order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]
                 })
                 for(let q = 0 ; q <Flilms.length;q++){
@@ -1051,7 +1003,7 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
                 }
             }
             else if((queryParams.queryParams.ratingKp!=undefined)&&(queryParams.queryParams.votesKp===undefined)){
-                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmId}},{ratingkp:{[Op.gte]:queryParams.queryParams.ratingKp}}]},
+                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmId}},{ratingKp:{[Op.gte]:queryParams.queryParams.ratingKp}}]},
                 order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]
                     })
                     for(let q = 0 ; q <Flilms.length;q++){
@@ -1059,7 +1011,7 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
                     }
             }
             else if((queryParams.queryParams.ratingKp!=undefined)&&(queryParams.queryParams.votesKp!=undefined)){
-                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmId}},{ratingkp:{[Op.gte]:queryParams.queryParams.ratingKp}},{voteskp:{[Op.gte]:queryParams.queryParams.votesKp}}]},
+                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmId}},{ratingKp:{[Op.gte]:queryParams.queryParams.ratingKp}},{votesKp:{[Op.gte]:queryParams.queryParams.votesKp}}]},
                 order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]
                 })
                 for(let q = 0 ; q <Flilms.length;q++){
@@ -1084,7 +1036,7 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
                 }
             }
             else if((queryParams.queryParams.ratingKp!=undefined)&&(queryParams.queryParams.votesKp===undefined)){
-                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmId}},{type:{[Op.eq]:queryParams.queryParams.type}},{ratingkp:{[Op.gte]:queryParams.queryParams.ratingKp}}]},
+                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmId}},{type:{[Op.eq]:queryParams.queryParams.type}},{ratingKp:{[Op.gte]:queryParams.queryParams.ratingKp}}]},
                 order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]
                 })
                 for(let q = 0 ; q <Flilms.length;q++){
@@ -1092,7 +1044,7 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
                 }
             }
             else if((queryParams.queryParams.ratingKp!=undefined)&&(queryParams.queryParams.votesKp!=undefined)){
-                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmId}},{ratingkp:{[Op.gte]:queryParams.queryParams.ratingKp}},{type:{[Op.eq]:queryParams.queryParams.type}},{voteskp:{[Op.gte]:queryParams.queryParams.votesKp}}]},
+                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmId}},{ratingKp:{[Op.gte]:queryParams.queryParams.ratingKp}},{type:{[Op.eq]:queryParams.queryParams.type}},{votesKp:{[Op.gte]:queryParams.queryParams.votesKp}}]},
                 order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]
                 })
                 for(let q = 0 ; q <Flilms.length;q++){
@@ -1110,7 +1062,7 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
                 }
             }
             else if((queryParams.queryParams.ratingKp!=undefined)&&(queryParams.queryParams.votesKp===undefined)){
-                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmId}},{ratingkp:{[Op.gte]:queryParams.queryParams.ratingKp}}]},
+                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmId}},{ratingKp:{[Op.gte]:queryParams.queryParams.ratingKp}}]},
                 order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]
                 })
                 for(let q = 0 ; q <Flilms.length;q++){
@@ -1118,7 +1070,7 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
                 }
             }
             else if((queryParams.queryParams.ratingKp!=undefined)&&(queryParams.queryParams.votesKp!=undefined)){
-                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmId}},{ratingkp:{[Op.gte]:queryParams.queryParams.ratingKp}},{voteskp:{[Op.gte]:queryParams.queryParams.votesKp}}]},
+                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmId}},{ratingKp:{[Op.gte]:queryParams.queryParams.ratingKp}},{votesKp:{[Op.gte]:queryParams.queryParams.votesKp}}]},
                 order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]
                 })
                 for(let q = 0 ; q <Flilms.length;q++){
@@ -1151,7 +1103,7 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
             }
         }
         else if((queryParams.queryParams.ratingKp!=undefined)&&(queryParams.queryParams.votesKp===undefined)){
-            const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmswithDirectorIdActor}},{type:{[Op.eq]:queryParams.queryParams.type}},{ratingkp:{[Op.gte]:queryParams.queryParams.ratingKp}}]},
+            const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmswithDirectorIdActor}},{type:{[Op.eq]:queryParams.queryParams.type}},{ratingKp:{[Op.gte]:queryParams.queryParams.ratingKp}}]},
                 order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]
                 })
                 for(let q = 0 ; q <Flilms.length;q++){
@@ -1159,7 +1111,7 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
                 }
         }
         else if((queryParams.queryParams.ratingKp!=undefined)&&(queryParams.queryParams.votesKp!=undefined)){
-            const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmswithDirectorIdActor}},{type:{[Op.eq]:queryParams.queryParams.type}},{ratingkp:{[Op.gte]:queryParams.queryParams.ratingKp}},{voteskp:{[Op.gte]:queryParams.queryParams.votesKp}}]},
+            const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmswithDirectorIdActor}},{type:{[Op.eq]:queryParams.queryParams.type}},{ratingKp:{[Op.gte]:queryParams.queryParams.ratingKp}},{votesKp:{[Op.gte]:queryParams.queryParams.votesKp}}]},
                 order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]
             })
             for(let q = 0 ; q <Flilms.length;q++){
@@ -1177,7 +1129,7 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
                 }
             }
             else if((queryParams.queryParams.ratingKp!=undefined)&&(queryParams.queryParams.votesKp===undefined)){
-                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmswithDirectorIdActor}},{ratingkp:{[Op.gte]:queryParams.queryParams.ratingKp}}]},
+                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmswithDirectorIdActor}},{ratingKp:{[Op.gte]:queryParams.queryParams.ratingKp}}]},
                     order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]
                     })
                     for(let q = 0 ; q <Flilms.length;q++){
@@ -1185,7 +1137,7 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
                     }
             }
             else if((queryParams.queryParams.ratingKp!=undefined)&&(queryParams.queryParams.votesKp!=undefined)){
-                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmswithDirectorIdActor}},{ratingkp:{[Op.gte]:queryParams.queryParams.ratingKp}},{voteskp:{[Op.gte]:queryParams.queryParams.votesKp}}]},
+                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmswithDirectorIdActor}},{ratingKp:{[Op.gte]:queryParams.queryParams.ratingKp}},{votesKp:{[Op.gte]:queryParams.queryParams.votesKp}}]},
                      order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]
                 })
                 for(let q = 0 ; q <Flilms.length;q++){
@@ -1215,7 +1167,7 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
                 }
             }
             else if((queryParams.queryParams.ratingKp!=undefined)&&(queryParams.queryParams.votesKp===undefined)){
-                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrMoviesId}},{type:{[Op.eq]:queryParams.queryParams.type}},{ratingkp:{[Op.gte]:queryParams.queryParams.ratingKp}}]},
+                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrMoviesId}},{type:{[Op.eq]:queryParams.queryParams.type}},{ratingKp:{[Op.gte]:queryParams.queryParams.ratingKp}}]},
                      order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]
                     })
                     for(let q = 0 ; q <Flilms.length;q++){
@@ -1223,7 +1175,7 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
                     }
             }
             else if((queryParams.queryParams.ratingKp!=undefined)&&(queryParams.queryParams.votesKp!=undefined)){
-                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrMoviesId}},{type:{[Op.eq]:queryParams.queryParams.type}},{ratingkp:{[Op.gte]:queryParams.queryParams.ratingKp}},{voteskp:{[Op.gte]:queryParams.queryParams.votesKp}}]},
+                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrMoviesId}},{type:{[Op.eq]:queryParams.queryParams.type}},{ratingKp:{[Op.gte]:queryParams.queryParams.ratingKp}},{votesKp:{[Op.gte]:queryParams.queryParams.votesKp}}]},
                  order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]
                 })
                 for(let q = 0 ; q <Flilms.length;q++){
@@ -1241,7 +1193,7 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
                 }
             }
             else if((queryParams.queryParams.ratingKp!=undefined)&&(queryParams.queryParams.votesKp===undefined)){
-                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrMoviesId}},{ratingkp:{[Op.gte]:queryParams.queryParams.ratingKp}}]},
+                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrMoviesId}},{ratingKp:{[Op.gte]:queryParams.queryParams.ratingKp}}]},
                      order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]
                     })
                     for(let q = 0 ; q <Flilms.length;q++){
@@ -1249,7 +1201,7 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
                     }
             }
             else if((queryParams.queryParams.ratingKp!=undefined)&&(queryParams.queryParams.votesKp!=undefined)){
-                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrMoviesId}},{ratingkp:{[Op.gte]:queryParams.queryParams.ratingKp}},{voteskp:{[Op.gte]:queryParams.queryParams.votesKp}}]},
+                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrMoviesId}},{ratingKp:{[Op.gte]:queryParams.queryParams.ratingKp}},{votesKp:{[Op.gte]:queryParams.queryParams.votesKp}}]},
                  order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]
                 })
                 for(let q = 0 ; q <Flilms.length;q++){
@@ -1270,7 +1222,6 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
         const genresInfo = await this.getGenresByMoviesId(ArrFilmId)
         const namesofgenres = await this.getAllNamesOfGenres()
         const countriesInfo = await this.getCountriesByMoviesId(ArrFilmId)
-        const namesofmovies = await this.getNamesOfMoviesByMoviesId(ArrFilmId)
         const persons = await this.getPersonsOfMoviesByMoviesId(ArrFilmId)
         const videos = await this.getVideosOfMoviesByMoviesId(ArrFilmId)
         let ArrFilms = []
@@ -1308,18 +1259,7 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
                             ArrCountries.push({name:countriesInfo[w].country})
                         }
                     }
-                    let ArrNamesofFilms = []
-                    for(let w = 0 ;w<namesofmovies.length;w++){
-                        if(namesofmovies[w].movieid===films[q].id){
-                            ArrNamesofFilms.push(
-                                {
-                                    name:namesofmovies[w].name,
-                                    language:namesofmovies[w].language,
-                                    type:namesofmovies[w].type
-                                }
-                                )
-                        }
-                    }
+             
                     
                 
                     let ArrPersonsOfMovies = []
@@ -1356,7 +1296,6 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
                             film:films[q],
                             genres:ArrNamesOfGenres,
                             countries:ArrCountries,
-                            namesoffilm:ArrNamesofFilms,
                             persons:ArrPersonsOfMovies,
                             videos:ArrVideos, 
                         }
@@ -1392,18 +1331,7 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
                             ArrCountries.push({name:countriesInfo[w].country})
                         }
                     }
-                    let ArrNamesofFilms = []
-                    for(let w = 0 ;w<namesofmovies.length;w++){
-                        if(namesofmovies[w].movieid===films[q].id){
-                            ArrNamesofFilms.push(
-                                {
-                                    name:namesofmovies[w].name,
-                                    language:namesofmovies[w].language,
-                                    type:namesofmovies[w].type
-                                }
-                                )
-                        }
-                    }
+           
                     
                 
                     let ArrPersonsOfMovies = []
@@ -1440,7 +1368,6 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
                             film:films[q],
                             genres:ArrNamesOfGenres,
                             countries:ArrCountries,
-                            namesoffilm:ArrNamesofFilms,
                             persons:ArrPersonsOfMovies,
                             videos:ArrVideos, 
                         }
@@ -1490,19 +1417,7 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
                     ArrCountries.push({name:countriesInfo[w].country})
                 }
             }
-            let ArrNamesofFilms = []
-            for(let w = 0 ;w<namesofmovies.length;w++){
-                if(namesofmovies[w].movieid===films[q].id){
-                    ArrNamesofFilms.push(
-                        {
-                            name:namesofmovies[w].name,
-                            language:namesofmovies[w].language,
-                            type:namesofmovies[w].type
-                        }
-                        )
-                }
-            }
-            
+  
         
             let ArrPersonsOfMovies = []
             for(let w = 0 ;w<persons.length;w++){
@@ -1538,7 +1453,6 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
                     film:films[q],
                     genres:ArrNamesOfGenres,
                     countries:ArrCountries,
-                    namesoffilm:ArrNamesofFilms,
                     persons:ArrPersonsOfMovies,
                     videos:ArrVideos, 
                 }
@@ -1584,18 +1498,6 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
                     ArrCountries.push({name:countriesInfo[w].country})
                 }
             }
-            let ArrNamesofFilms = []
-            for(let w = 0 ;w<namesofmovies.length;w++){
-                if(namesofmovies[w].movieid===films[q].id){
-                    ArrNamesofFilms.push(
-                        {
-                            name:namesofmovies[w].name,
-                            language:namesofmovies[w].language,
-                            type:namesofmovies[w].type
-                        }
-                        )
-                }
-            }
             
         
             let ArrPersonsOfMovies = []
@@ -1632,7 +1534,6 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
                     film:films[q],
                     genres:ArrNamesOfGenres,
                     countries:ArrCountries,
-                    namesoffilm:ArrNamesofFilms,
                     persons:ArrPersonsOfMovies,
                     videos:ArrVideos, 
                 }
@@ -1676,18 +1577,6 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
                         ArrCountries.push({name:countriesInfo[w].country})
                     }
                 }
-                let ArrNamesofFilms = []
-                for(let w = 0 ;w<namesofmovies.length;w++){
-                    if(namesofmovies[w].movieid===films[q].id){
-                        ArrNamesofFilms.push(
-                            {
-                                name:namesofmovies[w].name,
-                                language:namesofmovies[w].language,
-                                type:namesofmovies[w].type
-                            }
-                            )
-                    }
-                }
                 
             
                 let ArrPersonsOfMovies = []
@@ -1724,7 +1613,6 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
                         film:films[q],
                         genres:ArrNamesOfGenres,
                         countries:ArrCountries,
-                        namesoffilm:ArrNamesofFilms,
                         persons:ArrPersonsOfMovies,
                         videos:ArrVideos, 
                     }

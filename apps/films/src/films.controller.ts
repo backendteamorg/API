@@ -9,14 +9,7 @@ export class FilmsController {
   constructor(private readonly filmsService: FilmsService) {}
 
   
-  @MessagePattern({ cmd: 'get-films-title'})
-  async getFilmsTitle(@Ctx() context: RmqContext){
-    const channel = context.getChannelRef();
-    const message = context.getMessage();
-    channel.ack(message);
-
-    return 'FilmsService'
-  }
+  
 
   @MessagePattern({ cmd: 'parser-films'})
   async getFilms(@Ctx() context: RmqContext){

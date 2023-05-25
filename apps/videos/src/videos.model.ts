@@ -16,10 +16,4 @@ export class Videos extends Model<Videos, VideosCreationAttr> {
     movieid: number;
     @Column({type: DataType.TEXT})
     url:string;
-    @Column({type: DataType.STRING})
-    name:string;
-    @Column({type: DataType.TEXT})
-    site:string;
-    @Column({type: DataType.STRING})
-    type:string;
 }

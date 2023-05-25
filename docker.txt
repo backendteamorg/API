@@ -1,4 +1,20 @@
- microservices:
+version: '3.0'
+services:
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    hostname: rabbitmq
+    volumes:
+      - /var/lib/rabbitmq
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+    env_file:
+      - apps/microservices/.development.env
+    restart: always
+    container_name: rabbitmq
+
+  microservices:
     build:
       context: ./
       dockerfile: ./apps/microservices/Dockerfile
@@ -45,108 +61,6 @@
       - pgdatafilm:/var/lib/postgresql/data
     restart: always
 
-  reviews:
-    build:
-      context: ./
-      dockerfile: ./apps/reviews/Dockerfile
-    env_file:
-      - apps/reviews/.development.env
-    depends_on:
-      - rabbitmq
-      - reviews_postgres
-    ports:
-      - 6142:6142
-    volumes:
-      - .:/usr/src/app 
-      - /usr/src/app/node_modules
-    command: npm run start:dev reviews 
-    restart: always
-    container_name: reviews
-
-    
-  reviews_postgres:
-    container_name: reviews_postgres
-    image: postgres:12
-    env_file:
-      - apps/reviews/.development.env
-    environment:
-      PG_DATA: /var/lib/postgresql/data
-    ports:
-      - 5448:5432
-    volumes:
-      - pgdatarevies:/var/lib/postgresql/data
-    restart: always
-
-
-  roles:
-    build:
-      context: ./
-      dockerfile: ./apps/roles/Dockerfile
-    env_file:
-      - apps/roles/.development.env
-    depends_on:
-      - rabbitmq
-      - roles_postgres
-      - films
-    ports:
-      - 6128:6128
-    volumes:
-      - .:/usr/src/app 
-      - /usr/src/app/node_modules
-    command: npm run start:dev roles 
-    restart: always
-    container_name: roles
-
-    
-  roles_postgres:
-    container_name: roles_postgres
-    image: postgres:12
-    env_file:
-      - apps/roles/.development.env
-    environment:
-      PG_DATA: /var/lib/postgresql/data
-    depends_on:
-      - films_postgres
-    ports:
-      - 5434:5432
-    volumes:
-      - pgdataroles:/var/lib/postgresql/data
-    restart: always
-
-  auth:
-    build:
-      context: ./
-      dockerfile: ./apps/auth/Dockerfile
-    env_file:
-      - apps/auth/.development.env
-    depends_on:
-      - rabbitmq
-      - auth_postgres
-      - roles
-    ports:
-      - 6127:6127
-    volumes:
-      - .:/usr/src/app 
-      - /usr/src/app/node_modules
-    command: npm run start:dev auth 
-    restart: always
-    container_name: auth
-
-    
-  auth_postgres:
-    container_name: auth_postgres
-    image: postgres:12
-    env_file:
-      - apps/auth/.development.env
-    environment:
-      PG_DATA: /var/lib/postgresql/data
-    ports:
-      - 5433:5432
-    depends_on:
-      - roles_postgres
-    volumes:
-      - pgdataauth:/var/lib/postgresql/data
-    restart: always
 
   
   countries:
@@ -184,40 +98,7 @@
       - pgdatacountries:/var/lib/postgresql/data
     restart: always
 
-  facts:
-    build:
-      context: ./
-      dockerfile: ./apps/facts/Dockerfile
-    env_file:
-      - apps/facts/.development.env
-    depends_on:
-      - rabbitmq
-      - facts_postgres
-      - films
-    ports:
-      - 6130:6130
-    volumes:
-      - .:/usr/src/app 
-      - /usr/src/app/node_modules
-    command: npm run start:dev facts 
-    restart: always
-    container_name: facts
-
-    
-  facts_postgres:
-    container_name: facts_postgres
-    image: postgres:12
-    env_file:
-      - apps/facts/.development.env
-    environment:
-      PG_DATA: /var/lib/postgresql/data
-    ports:
-      - 5436:5432
-    depends_on:
-      - films_postgres
-    volumes:
-      - pgdatafacts:/var/lib/postgresql/data
-    restart: always
+  
   
   genresnames:
     build:
@@ -290,40 +171,6 @@
       - pgdatagenres:/var/lib/postgresql/data
     restart: always
 
-  namesoffilms:
-    build:
-      context: ./
-      dockerfile: ./apps/namesoffilms/Dockerfile
-    env_file:
-      - apps/namesoffilms/.development.env
-    depends_on:
-      - rabbitmq
-      - namesoffilms_postgres
-      - films
-    ports:
-      - 6132:6132
-    volumes:
-      - .:/usr/src/app 
-      - /usr/src/app/node_modules
-    command: npm run start:dev namesoffilms 
-    restart: always
-    container_name: namesoffilms
-
-    
-  namesoffilms_postgres:
-    container_name: namesoffilms_postgres
-    image: postgres:12
-    env_file:
-      - apps/namesoffilms/.development.env
-    environment:
-      PG_DATA: /var/lib/postgresql/data
-    ports:
-      - 5438:5432
-    depends_on:
-      - films_postgres
-    volumes:
-      - pgdatanamesoffilms:/var/lib/postgresql/data
-    restart: always
 
   persons:
     build:
@@ -396,145 +243,7 @@
     restart: always
 
 
-  production-companies:
-    build:
-      context: ./
-      dockerfile: ./apps/production-companies/Dockerfile
-    env_file:
-      - apps/production-companies/.development.env
-    depends_on:
-      - rabbitmq
-      - production-companies_postgres
-      - films
-    ports:
-      - 6135:6135
-    volumes:
-      - .:/usr/src/app 
-      - /usr/src/app/node_modules
-    command: npm run start:dev production-companies 
-    restart: always
-    container_name: production-companies
 
-    
-  production-companies_postgres:
-    container_name: production-companies_postgres
-    image: postgres:12
-    env_file:
-      - apps/production-companies/.development.env
-    environment:
-      PG_DATA: /var/lib/postgresql/data
-    ports:
-      - 5441:5432
-    depends_on:
-      - films_postgres
-    volumes:
-      - pgdataproduction-companies:/var/lib/postgresql/data
-    restart: always
-  
-  sequels-and-prequels:
-    build:
-      context: ./
-      dockerfile: ./apps/sequels-and-prequels/Dockerfile
-    env_file:
-      - apps/sequels-and-prequels/.development.env
-    depends_on:
-      - rabbitmq
-      - sequels-and-prequels_postgres
-      - films
-    ports:
-      - 6136:6136
-    volumes:
-      - .:/usr/src/app 
-      - /usr/src/app/node_modules
-    command: npm run start:dev sequels-and-prequels 
-    restart: always
-    container_name: sequels-and-prequels
-
-    
-  sequels-and-prequels_postgres:
-    container_name: sequels-and-prequels_postgres
-    image: postgres:12
-    env_file:
-      - apps/sequels-and-prequels/.development.env
-    environment:
-      PG_DATA: /var/lib/postgresql/data
-    ports:
-      - 5442:5432
-    depends_on:
-      - films_postgres
-    volumes:
-      - pgdatasequels-and-prequels:/var/lib/postgresql/data
-    restart: always
-
-  spoken-languages:
-    build:
-      context: ./
-      dockerfile: ./apps/spoken-languages/Dockerfile
-    env_file:
-      - apps/spoken-languages/.development.env
-    depends_on:
-      - rabbitmq
-      - spoken-languages_postgres
-      - films
-    ports:
-      - 6137:6137
-    volumes:
-      - .:/usr/src/app 
-      - /usr/src/app/node_modules
-    command: npm run start:dev spoken-languages
-    restart: always
-    container_name: spoken-languages
-
-    
-  spoken-languages_postgres:
-    container_name: spoken-languages_postgres
-    image: postgres:12
-    env_file:
-      - apps/spoken-languages/.development.env
-    environment:
-      PG_DATA: /var/lib/postgresql/data
-    ports:
-      - 5443:5432
-    depends_on:
-      - films_postgres
-    volumes:
-      - pgdataspoken-languages:/var/lib/postgresql/data
-    restart: always
-
-  spousesofpersons:
-    build:
-      context: ./
-      dockerfile: ./apps/spousesofpersons/Dockerfile
-    env_file:
-      - apps/spousesofpersons/.development.env
-    depends_on:
-      - rabbitmq
-      - spousesofpersons_postgres
-      - person
-    ports:
-      - 6138:6138
-    volumes:
-      - .:/usr/src/app 
-      - /usr/src/app/node_modules
-    command: npm run start:dev spousesofpersons 
-    restart: always
-    container_name: spousesofpersons
-
-    
-  spousesofpersons_postgres:
-    container_name: spousesofpersons_postgres
-    image: postgres:12
-    env_file:
-      - apps/spousesofpersons/.development.env
-    environment:
-      PG_DATA: /var/lib/postgresql/data
-    ports:
-      - 5444:5432
-    depends_on:
-      - films_postgres
-    volumes:
-      - pgdataspousesofpersons:/var/lib/postgresql/data
-    restart: always
   
   videos:
     build:
@@ -569,43 +278,6 @@
       - pgdatavideos:/var/lib/postgresql/data
     depends_on:
       - films_postgres
-      - spousesofpersons_postgres
-    restart: always
-
-  watchability:
-    build:
-      context: ./
-      dockerfile: ./apps/watchability/Dockerfile
-    env_file:
-      - apps/watchability/.development.env
-    depends_on:
-      - rabbitmq
-      - watchability_postgres
-      - films
-    ports:
-      - 6140:6140
-    volumes:
-      - .:/usr/src/app 
-      - /usr/src/app/node_modules
-    command: npm run start:dev watchability 
-    restart: always
-    container_name: watchability
-
-    
-  watchability_postgres:
-    container_name: watchability_postgres
-    image: postgres:12
-    env_file:
-      - apps/watchability/.development.env
-    environment:
-      PG_DATA: /var/lib/postgresql/data
-    ports:
-      - 5446:5432
-    volumes:
-      - pgdatawatchability:/var/lib/postgresql/data
-    depends_on:
-      - films_postgres
-      - videos_postgres
     restart: always
 
   adminer:
@@ -617,19 +289,10 @@
 
 volumes:
   pgdatafilm:
-  pgdataauth:
-  pgdataroles:
   pgdatacountries:
-  pgdatafacts:
   pgdatagenres:
-  pgdatanamesoffilms:
   pgdataperson:
   pgdatapersons:
-  pgdataproduction-companies:
-  pgdatasequels-and-prequels:
-  pgdataspoken-languages:
-  pgdataspousesofpersons:
   pgdatavideos:
-  pgdatawatchability:
   pgdatagenresnames:
-  pgdatarevies:
+  

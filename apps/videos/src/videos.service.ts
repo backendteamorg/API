@@ -38,7 +38,7 @@ export class VideosService {
     let VideosRep = await this.videosRepository.findAll()
     let ArrVideos = []
     for(let i = 0; i<VideosRep.length;i++){
-      ArrVideos.push(VideosRep[i].name+' '+VideosRep[i].site);
+      ArrVideos.push(VideosRep[i].url);
     }
     if(filmIdArr.length!=0){
       const genresREQ =  await fetch(`https://api.kinopoisk.dev/v1/movie?id=${filmIdArr.join('&id=')}&selectFields=id%20videos&\
@@ -55,14 +55,11 @@ export class VideosService {
       for(let i = 0;i<json.docs.length;i++){
         if(json.docs[i].videos){
           for(let j = 0;j<json.docs[i].videos.trailers.length;j++){
-            if((ArrVideos.includes(json.docs[i].videos.trailers[j]?.name+' '+json.docs[i].videos.trailers[j]?.site))===false)
+            if((ArrVideos.includes(json.docs[i].videos.trailers[j].url))===false)
             await arrVidesBulc.push(
               {
                 movieid: json.docs[i].id,
-                url: json.docs[i].videos.trailers[j]?.url,
-                name: json.docs[i].videos.trailers[j]?.name,
-                site:json.docs[i].videos.trailers[j]?.site,
-                type:json.docs[i].videos.trailers[j]?.type
+                url: json.docs[i].videos.trailers[j].url
               }
               )
           }

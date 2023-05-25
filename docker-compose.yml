@@ -171,40 +171,6 @@ services:
       - pgdatagenres:/var/lib/postgresql/data
     restart: always
 
-  namesoffilms:
-    build:
-      context: ./
-      dockerfile: ./apps/namesoffilms/Dockerfile
-    env_file:
-      - apps/namesoffilms/.development.env
-    depends_on:
-      - rabbitmq
-      - namesoffilms_postgres
-      - films
-    ports:
-      - 6132:6132
-    volumes:
-      - .:/usr/src/app 
-      - /usr/src/app/node_modules
-    command: npm run start:dev namesoffilms 
-    restart: always
-    container_name: namesoffilms
-
-    
-  namesoffilms_postgres:
-    container_name: namesoffilms_postgres
-    image: postgres:12
-    env_file:
-      - apps/namesoffilms/.development.env
-    environment:
-      PG_DATA: /var/lib/postgresql/data
-    ports:
-      - 5438:5432
-    depends_on:
-      - films_postgres
-    volumes:
-      - pgdatanamesoffilms:/var/lib/postgresql/data
-    restart: always
 
   persons:
     build:
@@ -325,7 +291,6 @@ volumes:
   pgdatafilm:
   pgdatacountries:
   pgdatagenres:
-  pgdatanamesoffilms:
   pgdataperson:
   pgdatapersons:
   pgdatavideos:

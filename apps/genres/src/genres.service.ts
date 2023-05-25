@@ -11,9 +11,7 @@ export class GenresService {
   @Inject('FILM_SERVICE') private rabbitFilmsService: ClientProxy,
   @Inject('NAMESGENRES_SERVICE') private rabbitnamesGenresService: ClientProxy){}
 
-  async getGenresByMovieId(idM:number){
-    return await this.genresRepository.findAll({where:{movieid:idM}})
-  }
+
 
   async getAllFilms() {
     const ob$ = await this.rabbitFilmsService.send({
@@ -33,7 +31,9 @@ export class GenresService {
     return namesgenres;
   }
  
-
+  async getGenresByMovieId(id:number){
+    return await this.genresRepository.findAll({where:{movieid:id}})
+  }
 
   async getAllnamesGenres() {
     const ob$ = await this.rabbitnamesGenresService.send({

@@ -67,7 +67,7 @@ export class GenresnamesService {
           }
           let arrGenresObj = []
           for(let i = 0 ; i < arrGenres.length;i++){
-            arrGenresObj.push({genre:arrGenres[i]})
+            arrGenresObj.push({name:arrGenres[i]})
           }
           return await this.namesofgenresmoviesRepository.bulkCreate(arrGenresObj)
         }
@@ -84,7 +84,7 @@ export class GenresnamesService {
     
     async updateGenre(dto:GenresNamesDto){
       const genre = await this.namesofgenresmoviesRepository.findOne({where:{id:dto.id}})
-      genre.genre = dto.genre
+      genre.name = dto.name
       genre.enName = dto.enName
       genre.save()
       return genre
@@ -95,13 +95,13 @@ export class GenresnamesService {
     
     async getGenresByNames(ArrGenres:string[]){
       return await this.namesofgenresmoviesRepository.findAll({where:{
-            [Op.or]:[{genre:{[Op.in]:ArrGenres}},{enName:{[Op.in]:ArrGenres}}]
+            [Op.or]:[{name:{[Op.in]:ArrGenres}},{enName:{[Op.in]:ArrGenres}}]
             }})
     }
 
     async getGenreByName(genre:string){
       return await this.namesofgenresmoviesRepository.findAll({where:{
-        [Op.or]:[{genre:genre},{enName:genre}]
+        [Op.or]:[{name:genre},{enName:genre}]
 
       }})
     }
