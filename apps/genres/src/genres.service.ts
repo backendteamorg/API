@@ -64,7 +64,7 @@ export class GenresService {
     }
 
     if((filmIdArr.length!=0)&&(arrnamesGenres.length!=0)){
-      const genresREQ =  await fetch(`https://api.kinopoisk.dev/v1/movie?id=${filmIdArr.join('&id=')}&selectFields=genres%20id&limit=1000)`, {
+      const genresREQ =  await fetch(`https://api.kinopoisk.dev/v1/movie?id=${filmIdArr.join('&id=')}&selectFields=genres%20id&limit=1000`, {
         method: 'GET',
         headers:{
                   'X-API-KEY': 'QTD9VCR-EW8M0Y4-QR6W0Y1-Y8J1BFT',
@@ -77,7 +77,7 @@ export class GenresService {
       for(let i =0; i< json.docs.length;i++){
         for(let j =0; j<json.docs[i].genres.length;j++){
           for(let n = 0 ; n<arrnamesGenres.length;n++ ){
-            if((arrnamesGenres[n].genre === json.docs[i].genres[j].name)&&(genreRepArr.includes('genreid: '+(arrnamesGenres[n].id)+' : '+'movieid: '+json.docs[i].id)===false)){
+            if((arrnamesGenres[n].name === json.docs[i].genres[j].name)&&(genreRepArr.includes('genreid: '+(arrnamesGenres[n].id)+' : '+'movieid: '+json.docs[i].id)===false)){
                 arrGenres.push(
                     {
                       movieid:json.docs[i].id,

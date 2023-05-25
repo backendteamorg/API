@@ -42,7 +42,7 @@ export class VideosService {
     }
     if(filmIdArr.length!=0){
       const genresREQ =  await fetch(`https://api.kinopoisk.dev/v1/movie?id=${filmIdArr.join('&id=')}&selectFields=id%20videos&\
-&limit=1000)`, {
+&limit=1000`, {
         method: 'GET',
         headers:{
                   'X-API-KEY': 'QTD9VCR-EW8M0Y4-QR6W0Y1-Y8J1BFT',

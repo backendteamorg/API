@@ -11,12 +11,6 @@ import { JwtModule } from '@nestjs/jwt';
       envFilePath: `./apps/microservices/.${process.env.NODE_ENV}.env`,
       isGlobal:true
     }),
-    JwtModule.register({
-      secret: process.env.JWT_SECRET || 'SECRET',
-      signOptions: {
-        expiresIn: '24h'
-      }
-    }),
   ],
   controllers: [AppController],
   providers: [

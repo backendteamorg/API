@@ -77,11 +77,6 @@ export class FilmsService {
         const namesofgenres = await this.getAllNamesOfGenres()
         const countries = await this.getAllCountriesOfMovies()
         
-        
-        
-        const persons = await this.getAllPersonsOfMovies()
-        const videos = await this.getAllVideosOfFilms()
-        
         let ArrFilms = []
         
         for(let q = 0 ; q < films.length;q++){
@@ -97,7 +92,7 @@ export class FilmsService {
                     if(namesofgenres[w].id===ArrGenresId[e]){
                         ArrNamesOfGenres.push(
                             {
-                                name:namesofgenres[w].genre,
+                                name:namesofgenres[w].name,
                                 enName:namesofgenres[w].enName
                             }
                             )
@@ -112,42 +107,12 @@ export class FilmsService {
             }
             
         
-            let ArrPersonsOfMovies = []
-            for(let w = 0 ;w<persons.length;w++){
-                if(persons[w].movieid===films[q].id){
-                    ArrPersonsOfMovies.push(
-                        {
-                            personid:persons[w].personid,
-                            name:persons[w].name,
-                            enName:persons[w].enName,
-                            photo:persons[w].photo,
-                            profession:persons[w].profession,
-                            enProfession:persons[w].enProfession,
-                        }
-                        )
-                }
-            }
-            let ArrVideos = []
-            for(let w = 0 ;w<videos.length;w++){
-                if(videos[w].movieid===films[q].id){
-                    ArrVideos.push(
-                        {
-                            url:videos[w].url,
-                            name:videos[w].name,
-                            site:videos[w].site,
-                            type:videos[w].type,
-                        }
-                        )
-                }
-            }
-     
+  
             ArrFilms.push(
                 {
                     film:films[q],
                     genres:ArrNamesOfGenres,
-                    countries:ArrCountries,
-                    persons:ArrPersonsOfMovies,
-                    videos:ArrVideos, 
+                    countries:ArrCountries
                 }
                 )
             
@@ -164,10 +129,10 @@ export class FilmsService {
 
   async formDatabase() {
     const movieREQ =  await fetch(`https://api.kinopoisk.dev/v1/movie?type=movie&type=cartoon&selectFields=\
-fees%20status%20externalId%20rating%20votes%20backdrop%20movieLength%20images%20id%20type%20\
-name%20description%20distributors%20\
-premiere%20slogan%20year%20budget%20poster%20lists%20typeNumber%20alternativeName%20enName%20ageRating%20\
-ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20ticketsOnSale%20updatedAt%20imagesInfo%20audience%20logo%20top10%20top250&sortField=votes.kp&sortType=-1&page=1&limit=1000)`, {
+rating%20votes%20movieLength%20images%20id%20type%20\
+name%20description%20\
+premiere%20year%20poster%20alternativeName%20ageRating%20\
+shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1&limit=1000`, {
         method: 'GET',
         headers: {
             'X-API-KEY': 'QTD9VCR-EW8M0Y4-QR6W0Y1-Y8J1BFT',
@@ -185,56 +150,22 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
         for(let i = 0; i <json.docs.length;i++){
             if((FilmArr.includes(json.docs[i].id))===false){
                 await arrMovies.push(
-                {
-                    feesworld: ''+json.docs[i].fees.world?.value+' '+json.docs[i].fees.world?.currency,
-                    feesusa: ''+json.docs[i].fees.usa?.value+' '+json.docs[i].fees.usa?.currency,
-                    audience: ''+json.docs[i].audience?.count+' '+json.docs[i].audience?.count,
-                    status: json.docs[i].status,
-                    externalIdkpHD: json.docs[i].externalId?.kpHD,
-                    externalIdimdb: json.docs[i].externalId?.imdb,
-                    externalIdtmdb: json.docs[i].externalId?.tmdb,
-                    ratingkp: json.docs[i].rating?.kp,
-                    ratingimdb: json.docs[i].rating?.imdb,
-                    ratingfilmCritics: json.docs[i].rating?.filmCritics,
-                    ratingrussianFilmCritics: json.docs[i].rating?.russianFilmCritics,
-                    voteskp: json.docs[i].votes?.kp,
-                    votesimdb: json.docs[i].votes?.imdb,
-                    votesfilmCritics: json.docs[i].votes?.filmCritics,
-                    votesrussianFilmCritics: json.docs[i].votes?.russianFilmCritics,
-                    backdropurl: json.docs[i].backdrop?.url,
-                    backdroppreviewUrl: json.docs[i].backdrop?.previewUrl,
-                    movieLength: json.docs[i].movieLength,
-                    imagespostersCount: json.docs[i].images?.postersCount,
-                    imagesbackdropsCount: json.docs[i].images?.backdropsCount,
-                    imagesframesCount: json.docs[i].images?.framesCount,
-                    id: json.docs[i].id,
-                    type: json.docs[i].type,
-                    name: json.docs[i].name,
-                    description: json.docs[i].description,
-                    distributor: json.docs[i].distributors?.distributor,
-                    distributorRelease: json.docs[i].distributors?.distributorRelease,
-                    premiereworld: json.docs[i].premiere?.world,
-                    premiererussia: json.docs[i].premiere?.russia,
-                    premierebluray: json.docs[i].premiere?.bluray,
-                    slogan: json.docs[i].slogan,
-                    year: json.docs[i].year,
-                    budget: ''+json.docs[i].budget?.value + json.docs[i].budget?.currency,
-                    posterurl: json.docs[i].poster?.url,
-                    posterpreviewUrl: json.docs[i].poster?.previewUrl,
-                    typeNumber: json.docs[i].typeNumber,
-                    alternativeName: json.docs[i].alternativeName,
-                    enName: json.docs[i].enName,
-                    ageRating: json.docs[i].ageRating,
-                    ratingMpaa: json.docs[i].ratingMpaa,
-                    shortDescription: json.docs[i].shortDescription,
-                    hasImax: json.docs[i].technology?.hasImax,
-                    has3D: json.docs[i].technology?.has3D,
-                    ticketsOnSale: json.docs[i].ticketsOnSale,
-                    updatedAt: json.docs[i].updatedAt,
-                    top10: json.docs[i].top10,
-                    top250: json.docs[i].top250,
+                {   id:json.docs[i].id,
+                    type:json.docs[i].type,
+                    name:json.docs[i].name,
+                    enName:json.docs[i].alternativeName,
+                    posterUrl:json.docs[i].poster?.url, 		
+                    posterPreviewURL:json.docs[i].poster?.previewUrl,	
+                    premiereRussia:json.docs[i].premiere?.russia, 		
+                    hasIMAX:json.docs[i].technology?.hasImax,
+                    year:json.docs[i].year,
+                    description:json.docs[i].description,
+                    shortDescription:json.docs[i].shortDescription,
+                    ageRating:json.docs[i].ageRating,
+                    ratingKp:json.docs[i].rating?.kp,	
+                    votesKp:json.docs[i].votes?.kp,		
+                    movieLength:json.docs[i].movieLength
 
-                    
                 }
                 )
 
@@ -295,7 +226,6 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
         const genres = await this.getGenresByMovieId(idF)
         const namesofgenres = await this.getAllNamesOfGenres()
         const countries = await this.getCountriesByMovieId(idF)
-        
         const persons = await this.getPersonsByMovieId(idF)
         const videos = await this.getVideosByMovieId(idF)   
         
@@ -307,7 +237,7 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
                 if(namesofgenres[w].id===genres[e].genreid){
                     ArrNamesOfGenres.push(
                         {
-                            name:namesofgenres[w].genre,
+                            name:namesofgenres[w].name,
                             enName:namesofgenres[w].enName
                         }
                         )
@@ -322,15 +252,13 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
         
         }
 
-        
-        
        
         
         let ArrPersonsOfMovies = []
             for(let w = 0 ;w<persons.length;w++){
                 ArrPersonsOfMovies.push(
                         {
-                            personid:persons[w].personid,
+                            id:persons[w].personid,
                             name:persons[w].name,
                             enName:persons[w].enName,
                             photo:persons[w].photo,
@@ -352,13 +280,12 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
                         )
                 
             }
-         
         return {
             film:film,
             genres:ArrNamesOfGenres,
             countries:ArrCountries,
             persons:ArrPersonsOfMovies,
-            videos:ArrVideos,
+            trailer :ArrVideos
             
             
             
@@ -384,8 +311,9 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
 
     async updateNameMovie(dto:FilmDto){
         const film =  await this.filmRepository.findOne({where: {id: dto.id}})
-        film.name = dto.name
-        film.save()
+        film.name = dto.name;
+        film.enName = dto.enName;
+        film.save();
         return film
 
     }
@@ -554,51 +482,35 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
           return persons;
     }
 
+    async getAllCountriesNames(){
+        const ob$ = await this.rabbitCountriesFilmsService.send({
+            cmd: 'get-all-names-of-countries',
+          },
+          {});
+          const countries = await firstValueFrom(ob$).catch((err) => console.error(err));
+          return countries;
+    }
     async getFilmsUseFiltre(queryParams:any){
         const ArrFilmId = []
         const {sortField, sortOrder, limit, type, page ,genres, countries, ratingKp, votesKp, director,actor} = queryParams; 
-
-  
-
-        if ((queryParams.queryParams.limit===undefined)&&(queryParams.queryParams.page!=undefined)){
-            return 'Введите поле limit чтобы указать количество фильмов на странице'
+       
+        if(queryParams.queryParams.sortField===undefined){
+            queryParams.queryParams.sortField = 'ratingKp'
+        }
+        if(queryParams.queryParams.sortOrder===undefined){
+            queryParams.queryParams.sortOrder = 'DESC'
+        }
+        if(queryParams.queryParams.limit===undefined){
+            queryParams.queryParams.limit = 10
+        }
+        if(queryParams.queryParams.page===undefined){
+            queryParams.queryParams.page = 1
         }
      
-        if((queryParams.queryParams.sortField===undefined)&&(queryParams.queryParams.sortOrder!=undefined)){
-            return 'Введите sortField чтобы использовать sortOrder'
-        }
-        if(((queryParams.queryParams.countries===undefined)&&(queryParams.queryParams.genres===undefined))
-        &&(queryParams.queryParams.director===undefined)&&(queryParams.queryParams.actor===undefined)&&(queryParams.queryParams.sortField===undefined)
-        &&(queryParams.queryParams.sortOrder===undefined)&&(queryParams.queryParams.limit===undefined)&&(queryParams.queryParams.page===undefined)
-        &&(queryParams.queryParams.type===undefined)&&(queryParams.queryParams.ratingKp===undefined)&&(queryParams.queryParams.votesKp===undefined)){
-            return await this.getAllFilmsWithAllInfo()   
-        }
         
 
-        if(((queryParams.queryParams.countries===undefined)&&(queryParams.queryParams.genres===undefined))
-        &&(queryParams.queryParams.director===undefined)&&(queryParams.queryParams.actor===undefined)&&(queryParams.queryParams.sortField===undefined)
-        &&(queryParams.queryParams.sortOrder===undefined)&&(queryParams.queryParams.limit===undefined)&&(queryParams.queryParams.page===undefined)
-        &&(queryParams.queryParams.type===undefined)&&(queryParams.queryParams.ratingKp===undefined)&&(queryParams.queryParams.votesKp===undefined)){
-            return await this.getAllFilmsWithAllInfo()   
-        }
-      
-        if(((queryParams.queryParams.countries===undefined)&&(queryParams.queryParams.genres===undefined))
-        &&(queryParams.queryParams.director===undefined)&&(queryParams.queryParams.actor===undefined)&&(queryParams.queryParams.sortField===undefined)
-        &&(queryParams.queryParams.sortOrder===undefined)&&(queryParams.queryParams.limit!=undefined)&&(queryParams.queryParams.page===undefined)
-        &&(queryParams.queryParams.type===undefined)&&(queryParams.queryParams.ratingKp===undefined)&&(queryParams.queryParams.votesKp===undefined)){
-            let ArrFilm = []
-            const Films = await this.getAllFilmsWithAllInfo() 
-            if(queryParams.queryParams.limit>=Films.length){
-                return {docs:Films,limit:queryParams.queryParams.limit}
-            }
-            else{
-                for(let q = 0 ; q<queryParams.queryParams.limit;q++){
-                    ArrFilm.push(Films[q])
-                }
-            }
-            return {docs:ArrFilm,limit:queryParams.queryParams.limit}
-
-        }
+    
+     
         if(((queryParams.queryParams.countries===undefined)&&(queryParams.queryParams.genres===undefined))
         &&(queryParams.queryParams.director===undefined)&&(queryParams.queryParams.actor===undefined)&&(queryParams.queryParams.sortField===undefined)
         &&(queryParams.queryParams.sortOrder===undefined)&&(queryParams.queryParams.limit!=undefined)&&(queryParams.queryParams.page!=undefined)
@@ -642,13 +554,6 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
 
         }
 
-        if(queryParams.queryParams.sortField===undefined){
-            queryParams.queryParams.sortField = 'ratingkp'
-        }
-        if(queryParams.queryParams.sortOrder===undefined){
-            queryParams.queryParams.sortOrder = 'DESC'
-        }
-     
 
        
         
@@ -1272,7 +1177,7 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
                         if(persons[w].movieid===films[q].id){
                             ArrPersonsOfMovies.push(
                                 {
-                                    personid:persons[w].personid,
+                                    id:persons[w].personid,
                                     name:persons[w].name,
                                     enName:persons[w].enName,
                                     photo:persons[w].photo,
@@ -1287,10 +1192,7 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
                         if(videos[w].movieid===films[q].id){
                             ArrVideos.push(
                                 {
-                                    url:videos[w].url,
-                                    name:videos[w].name,
-                                    site:videos[w].site,
-                                    type:videos[w].type,
+                                    url:videos[w].url
                                 }
                                 )
                         }
@@ -1444,10 +1346,7 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
                 if(videos[w].movieid===films[q].id){
                     ArrVideos.push(
                         {
-                            url:videos[w].url,
-                            name:videos[w].name,
-                            site:videos[w].site,
-                            type:videos[w].type,
+                            url:videos[w].url
                         }
                         )
                 }
@@ -1626,6 +1525,10 @@ ratingMpaa%20updateDates%20sequelsAndPrequels%20shortDescription%20technology%20
             }
             return {docs:ArrFilms,pages:1}
         }
+  
+
+       
+        
        
         
 

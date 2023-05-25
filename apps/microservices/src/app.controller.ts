@@ -17,7 +17,6 @@ export class AppController {
   @Inject('GENRES_SERVICE') private rabbitGenresFilmsService: ClientProxy,
   @Inject('COUNTRIES_SERVICE') private rabbitCountriesFilmsService: ClientProxy,
   @Inject('VIDEOS_SERVICE') private rabbitVideosService: ClientProxy,
-  @Inject('REVIEWS_SERVICE') private rabbitesReviewsOfFilmsService: ClientProxy,
   @Inject('NAMESOFGENRES_SERVICE') private rabbitnamesofGenresService: ClientProxy,) {}
 
 
@@ -131,7 +130,7 @@ async getAllFilmsWithInfo() {
 }
 @ApiOperation({summary: 'Получить все сохраненные данные о фильмах которые могут понравиться'})
   @ApiTags('(Редактирвоание данных) Данные с сайта kinopoisk')
-  @Delete('filmconoriymogutPonravitsa/:id')
+  @Get('filmconoriymogutPonravitsa/:id')
   async esliWavPonravilsa(
     @Param('id') id: number) {
     return await this.rabbitFilmsService.send(
@@ -166,7 +165,7 @@ async getFilm(
 
   @ApiOperation({summary: 'Получить всю инфомрацию о персоне по id'})
   @ApiTags('(Суммарные данные) с сайта kinopoisk')
-  @Get('personWithAllInfo/:id')
+  @Get('personswithinfo/:id')
   async getPersonWithAllInfo(
     @Param('id') id: number) {
     return await this.rabbitPersonsFilmsService.send(
@@ -297,62 +296,24 @@ async getFilm(
 
 
   
-  @ApiOperation({summary: 'Сделать отзыв к фильму данные о котором были получены ранее {"movieid":301,"title":"Лучший фильм","review":"Это лучший фильм который я смотрел","author":"asd"}'})
-  @ApiTags('Отзывы и комментарии')
-  @Post('postreview')
-  async getReviews(
-  @Body('movieid') movieid: number,
-  @Body('title') title: string,
-  @Body('review') review: string,
-  @Body('author') author: string
-  ) {
-    
-    return await this.rabbitesReviewsOfFilmsService.send({
-      cmd: 'post-review',
-    },
-    {
-      movieid,
-      title,
-      review,
-      author
-    });
+  
 
-  }
-  @ApiOperation({summary: 'Сделать коментарий к отзыву фильма данные о котором были получены ранее {"reviewid":1,"title":"Согласен","comment":"Аналогично","author":"asd"}'})
-  @ApiTags('Отзывы и комментарии')
-  @Post('postreviewcomment')
-  async getReviewsComment(
-  @Body('reviewid') reviewid: number,
-  @Body('title') title: string,
-  @Body('comment') comment: string,
-  @Body('author') author: string
-  ) {
-    
-    return await this.rabbitesReviewsOfFilmsService.send({
-      cmd: 'post-review-comment',
-    },
-    {
-      reviewid,
-      title,
-      comment,
-      author
-    });
-
-  }
   
   @ApiOperation({summary: 'Изменить название фильма (Пример: {"id":301, "name":"Matrix"})'})
   @ApiTags('(Редактирвоание данных) Данные с сайта kinopoisk')
   @Patch('film')
   async updateNameOfMovie(
     @Body('id') id: number,
-    @Body('name') name: string) {
+    @Body('name') name: string,
+    @Body('enName') enName: string) {
     return await this.rabbitFilmsService.send(
       {
         cmd: 'update-nameoffilm',
       },
       {
         id,
-        name
+        name,
+        enName
       },
     );
   }
@@ -385,6 +346,18 @@ async getFilm(
       {id:id},
     );
   }
+
+  @ApiOperation({summary: 'Получить все страны сохраненных фильмов'})
+  @ApiTags('Данные с сайта kinopoisk')
+  @Get('namesOfCountries')
+  async GetAllNamesOfCountries() {
+    return await this.rabbitCountriesFilmsService.send({
+      cmd: 'get-all-names-of-countries',
+    },
+    {});
+
+  }
+
 
 
   

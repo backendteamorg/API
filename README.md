@@ -43,20 +43,14 @@ $ docker-compose up
 # start microservices in watch mode 
 $ npm run start:dev microservices
 
-# start service auth in watch mode 
-$ npm run start:dev auth
-
-# start service roles in watch mode 
-$ npm run start:dev roles
-
-# start service profile in watch mode 
-$ npm run start:dev profile
-
 # start service films in watch mode 
 $ npm run start:dev films
 
 # start service persons in watch mode 
 $ npm run start:dev persons
+
+# start service genresnames in watch mode 
+$ npm run start:dev genresnames
 
 # start service genres in watch mode 
 $ npm run start:dev genres
@@ -64,26 +58,8 @@ $ npm run start:dev genres
 # start service countries in watch mode 
 $ npm run start:dev countries
 
-# start service watchability in watch mode 
-$ npm run start:dev watchability
 
-# start service spoken-languages in watch mode 
-$ npm run start:dev spoken-languages
 
-# start service sequels-and-prequels in watch mode 
-$ npm run start:dev sequels-and-prequels
-
-# start service production-companies in watch mode 
-$ npm run start:dev production-companies
-
-# start service person in watch mode 
-$ npm run start:dev person
-
-# start service namesoffilms in watch mode 
-$ npm run start:dev namesoffilms
-
-# start service reviews in watch mode 
-$ npm run start:dev reviews
 
 ```
 

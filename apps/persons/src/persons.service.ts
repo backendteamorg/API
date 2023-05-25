@@ -23,14 +23,70 @@ export class PersonsService {
 
   
   async getAllPersonsWithAllInfo(){
-    return await this.personsRepository.findAll()
+   const persons =  await this.personsRepository.findAll()
+   let ArrPersons = []
+  let ArrPeronsId = []
+    for(let q = 0; q < persons.length;q++){
+      if(ArrPeronsId.includes(persons[q].personid)===false){
+        ArrPersons.push(persons[q])
+        ArrPeronsId.push(persons[q].personid)
+      }
+    }
+    let ArrPersonWithMovies = []
+   for(let q=0;q<ArrPersons.length;q++ ){
+    let ArrPersonFilms = []
+    for(let w = 0; w <persons.length;w++){
+      if(ArrPersons[q].personid===persons[w].personid){
+        ArrPersonFilms.push(persons[w].movieid)
+      }
+    }
+    ArrPersonWithMovies.push({
+      id:ArrPersons[q].personid,
+      name:ArrPersons[q].name,
+      enName:ArrPersons[q].enName,
+      photo:ArrPersons[q].photo,
+      profession:ArrPersons[q].profession,
+      enProfession:ArrPersons[q].enProfession,
+      movies:ArrPersonFilms
+    })
+
+   }
+    return ArrPersonWithMovies
     
     
   }
 
 
   async getAllInfoOfPersonsByPersonId(idP:number){
-    return await this.personsRepository.findAll({where:{personid:idP}})
+    const persons = await this.personsRepository.findAll({where:{personid:idP}})
+    let ArrPersons = []
+    let ArrPeronsId = []
+    for(let q = 0; q < persons.length;q++){
+      if(ArrPeronsId.includes(persons[q].personid)===false){
+        ArrPersons.push(persons[q])
+        ArrPeronsId.push(persons[q].personid)
+      }
+    }
+    let ArrPersonWithMovies = []
+   for(let q=0;q<ArrPersons.length;q++ ){
+    let ArrPersonFilms = []
+    for(let w = 0; w <persons.length;w++){
+      if(ArrPersons[q].personid===persons[w].personid){
+        ArrPersonFilms.push(persons[w].movieid)
+      }
+    }
+    ArrPersonWithMovies.push({
+      id:ArrPersons[q].personid,
+      name:ArrPersons[q].name,
+      enName:ArrPersons[q].enName,
+      photo:ArrPersons[q].photo,
+      profession:ArrPersons[q].profession,
+      enProfession:ArrPersons[q].enProfession,
+      movies:ArrPersonFilms
+    })
+
+   }
+    return ArrPersonWithMovies
     
   }
 
@@ -62,7 +118,7 @@ export class PersonsService {
     }
     if(filmIdArr.length!=0){
       const personsREQ =  await fetch(`https://api.kinopoisk.dev/v1/movie?id=${filmIdArr.join('&id=')}&selectFields=\
-persons.id%20persons.photo%20persons.name%20persons.enName%20persons.profession%20persons.enProfession%20id&limit=100)`, {
+persons.id%20persons.photo%20persons.name%20persons.enName%20persons.profession%20persons.enProfession%20id&limit=100`, {
         method: 'GET',
         headers:{
                   'X-API-KEY': 'QTD9VCR-EW8M0Y4-QR6W0Y1-Y8J1BFT',
@@ -103,7 +159,31 @@ persons.id%20persons.photo%20persons.name%20persons.enName%20persons.profession%
       }
   }
   async getAllPersons(){
-    return await this.personsRepository.findAll()
+    const persnsoffilms = await this.personsRepository.findAll()
+    const person = await this.personsRepository.findAll()
+    let ArrPersons = []
+    for(let q = 0 ; q<person.length;q++ ){
+      let ArrPersonsFIlms = []
+      for(let w = 0 ; w <persnsoffilms.length;w++){
+        if(person[q].id===persnsoffilms[w].personid){
+          ArrPersonsFIlms.push({
+            movieid:persnsoffilms[w].movieid
+          })
+        }
+      }
+
+      
+      
+      
+      ArrPersons.push({
+        person:person[q],
+        movies:ArrPersonsFIlms,
+        
+
+      })
+    }
+
+    return ArrPersons
   }
 
 

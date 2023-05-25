@@ -207,41 +207,7 @@ services:
       - films_postgres
     restart: always
 
-  person:
-    build:
-      context: ./
-      dockerfile: ./apps/person/Dockerfile
-    env_file:
-      - apps/person/.development.env
-    depends_on:
-      - rabbitmq
-      - person_postgres
-      - persons
-    ports:
-      - 6133:6133
-    volumes:
-      - .:/usr/src/app 
-      - /usr/src/app/node_modules
-    command: npm run start:dev person 
-    restart: always
-    container_name: person
-
-    
-  person_postgres:
-    container_name: person_postgres
-    image: postgres:12
-    env_file:
-      - apps/person/.development.env
-    environment:
-      PG_DATA: /var/lib/postgresql/data
-    ports:
-      - 5439:5432
-    depends_on:
-      - films_postgres
-    volumes:
-      - pgdataperson:/var/lib/postgresql/data
-    restart: always
-
+  
 
 
   
@@ -291,7 +257,6 @@ volumes:
   pgdatafilm:
   pgdatacountries:
   pgdatagenres:
-  pgdataperson:
   pgdatapersons:
   pgdatavideos:
   pgdatagenresnames:

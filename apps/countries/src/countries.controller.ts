@@ -23,6 +23,14 @@ export class CountriesController {
 
     return this.countriesService.getAllCountries()
   }
+  @MessagePattern({ cmd: 'get-all-names-of-countries'})
+  async getAllNamesCountries(@Ctx() context: RmqContext){
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return this.countriesService.getAllNamesOfCountries()
+  }
 
   @MessagePattern({ cmd: 'get-countries-by-movieid' })
   async getUserById(

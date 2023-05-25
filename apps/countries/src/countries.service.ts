@@ -29,7 +29,7 @@ export class CountriesService {
           RepArrCountries.push(RepCountrues[i].movieid+' '+RepCountrues[i].country)
         }
         if(filmIdArr.length!=0){
-          const countriesREQ =  await fetch(`https://api.kinopoisk.dev/v1/movie?id=${filmIdArr.join('&id=')}&selectFields=countries%20id&limit=1000)`, {
+          const countriesREQ =  await fetch(`https://api.kinopoisk.dev/v1/movie?id=${filmIdArr.join('&id=')}&selectFields=countries%20id&limit=1000`, {
             method: 'GET',
             headers:{
                       'X-API-KEY': 'QTD9VCR-EW8M0Y4-QR6W0Y1-Y8J1BFT',
@@ -81,5 +81,16 @@ export class CountriesService {
   async getCountriesByMoviesid(moviesid:number[]){
     return await this.countriesRepository.findAll({where:{movieid:{[Op.in]:moviesid}}})
   }
-    
+  
+  async getAllNamesOfCountries(){
+  const countries = await this.countriesRepository.findAll()
+  let ArrCountriesNames = []
+  for(let q =0 ;q<countries.length;q++){
+    if(ArrCountriesNames.includes(countries[q].country)===false){
+      ArrCountriesNames.push(countries[q].country)
+    }
+  }
+  return ArrCountriesNames
+
+  }
 }
