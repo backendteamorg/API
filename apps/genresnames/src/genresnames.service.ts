@@ -105,11 +105,7 @@ export class GenresnamesService {
 
       }})
     }
-    async DeleteGenre(idG:number){
-      const genre = await this.namesofgenresmoviesRepository.findOne({where:{id:idG}})
-      genre.destroy()
-      return `Жанр с id ${idG} удален`
-    }
+   
     async getGenresNamesByGenresId(genresId:number[]){
       return await this.namesofgenresmoviesRepository.findAll({where:{id:{[Op.in]:genresId}}})
     }

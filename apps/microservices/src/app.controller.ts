@@ -104,7 +104,7 @@ export class AppController {
 
 
 
-@ApiOperation({summary: 'Получить сохраненные данные о фильмах используя фильтры. Доступные поля {sortField, sortOrder, limit, type, page ,genres, countries, ratingKp, votesKp, director,actor}. Пример ввода :localhost:6125/movies?genres=драма&genres=фантастика'})
+@ApiOperation({summary: 'Получить сохраненные данные о фильмах используя фильтры. Доступные поля {limit, type, page ,genres, countries, ratingKp, votesKp, director,actor}. Пример ввода :localhost:6125/movies?genres=драма&genres=фантастика'})
 @ApiTags('(Фильры) Данные с сайта kinopoisk')
 
 @Get('movies')
@@ -299,7 +299,7 @@ async getFilm(
   
 
   
-  @ApiOperation({summary: 'Изменить название фильма (Пример: {"id":301, "name":"Matrix"})'})
+  @ApiOperation({summary: 'Изменить название фильма (Пример: {"id":301, "name":"Матрица","enName":"Matrix"})'})
   @ApiTags('(Редактирвоание данных) Данные с сайта kinopoisk')
   @Patch('film')
   async updateNameOfMovie(
@@ -334,18 +334,7 @@ async getFilm(
       },
     );
   }
-  @ApiOperation({summary: 'Удалить название жанра по id'})
-  @ApiTags('(Редактирвоание данных) Данные с сайта kinopoisk')
-  @Delete('namesofgenre/:id')
-  async deleteGenreOfMovie(
-    @Param('id') id: number) {
-    return await this.rabbitnamesofGenresService.send(
-      {
-        cmd: 'delete-genre-by-id',
-      },
-      {id:id},
-    );
-  }
+
 
   @ApiOperation({summary: 'Получить все страны сохраненных фильмов'})
   @ApiTags('Данные с сайта kinopoisk')

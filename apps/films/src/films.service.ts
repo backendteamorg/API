@@ -491,7 +491,6 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
           return countries;
     }
     async getFilmsUseFiltre(queryParams:any){
-        const ArrFilmId = []
         const {sortField, sortOrder, limit, type, page ,genres, countries, ratingKp, votesKp, director,actor} = queryParams; 
        
         if(queryParams.queryParams.sortField===undefined){
@@ -507,56 +506,10 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
             queryParams.queryParams.page = 1
         }
      
-        
-
-    
      
-        if(((queryParams.queryParams.countries===undefined)&&(queryParams.queryParams.genres===undefined))
-        &&(queryParams.queryParams.director===undefined)&&(queryParams.queryParams.actor===undefined)&&(queryParams.queryParams.sortField===undefined)
-        &&(queryParams.queryParams.sortOrder===undefined)&&(queryParams.queryParams.limit!=undefined)&&(queryParams.queryParams.page!=undefined)
-        &&(queryParams.queryParams.type===undefined)&&(queryParams.queryParams.ratingKp===undefined)&&(queryParams.queryParams.votesKp===undefined)){
-            let FilmsLenth = queryParams.queryParams.limit*queryParams.queryParams.page
-            const Films = await this.getAllFilmsWithAllInfo() 
-            let ArrFilm = []
-            let ArrFilmPage = []
-            let Npage = 1
-            let count = 0
-            if(queryParams.queryParams.limit>Films.length){
-                queryParams.queryParams.limit = Films.length
-            }
-            if(FilmsLenth>=Films.length){
-                for(let q = 0 ; q<Films.length;q++){
-                    ArrFilmPage.push(Films[q])
-                    if(count==queryParams.queryParams.limit){
-                        ArrFilm.push({PageWithFilms:ArrFilmPage,page:Npage})
-                        ArrFilmPage=[]
-                        Npage+=1
-                        count=0
-                    }
-                    count+=1
-                    
-                }
-                return {docs:ArrFilm,limit:queryParams.queryParams.limit,pages:queryParams.queryParams.Npage}
-            }
-            else{
-                for(let q = 0 ; q<FilmsLenth;q++){
-                    ArrFilmPage.push(Films[q])
-                    if(count==queryParams.queryParams.limit){
-                        ArrFilm.push({PageWithFilms:ArrFilmPage,page:Npage})
-                        ArrFilmPage=[]
-                        Npage+=1
-                        count=0
-                    }
-                    count+=1
-                }
-                return {docs:ArrFilm,limit:queryParams.queryParams.limit,pages:queryParams.queryParams.page}
-            }
-
-        }
-
 
        
-        
+        let ArrFilmId =[]
         
         if((queryParams.queryParams.countries!=undefined)&&(queryParams.queryParams.genres===undefined)){        /////////////////////////////////// Страны
  
@@ -685,190 +638,73 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
                 }
             }
         
-    }
+        }
 
    
     let films = []
-    if(((queryParams.queryParams.countries!=undefined)||(queryParams.queryParams.genres!=undefined))&& ///// жанры или фильмы , рейтиг КП, голоса КП, тип
+    let ArrFilmswithDirectorIdOrActor = []
+
+    const filtre = {...({id:{[Op.in]:ArrFilmId}}),...(queryParams.queryParams.type && {type:{[Op.eq]:queryParams.queryParams.type}}),...(queryParams.queryParams.ratingKp && {ratingKp: {[Op.gte]: queryParams.queryParams.ratingKp}}),
+    ...(queryParams.queryParams.votesKp&&{votesKp:{[Op.gte]:queryParams.queryParams.votesKp}}),}
+    const FiltreType = {...(queryParams.queryParams.type && {type:{[Op.eq]:queryParams.queryParams.type}}),...(queryParams.queryParams.ratingKp && {ratingKp: {[Op.gte]: queryParams.queryParams.ratingKp}}),
+    ...(queryParams.queryParams.votesKp&&{votesKp:{[Op.gte]:queryParams.queryParams.votesKp}})}
+    const filtreWithActorOrDirecor = {...({id:{[Op.in]:ArrFilmswithDirectorIdOrActor}}),...(queryParams.queryParams.type && {type:{[Op.eq]:queryParams.queryParams.type}}),...(queryParams.queryParams.ratingKp && {ratingKp: {[Op.gte]: queryParams.queryParams.ratingKp}}),
+    ...(queryParams.queryParams.votesKp&&{votesKp:{[Op.gte]:queryParams.queryParams.votesKp}}),}
+    const FiltreRatingKPvotesKP = {...(queryParams.queryParams.ratingKp && {ratingKp: {[Op.gte]: queryParams.queryParams.ratingKp}}),
+    ...(queryParams.queryParams.votesKp&&{votesKp:{[Op.gte]:queryParams.queryParams.votesKp}})}
+    if(((queryParams.queryParams.countries!=undefined)||(queryParams.queryParams.genres!=undefined))&& ///// жанры или cтраны 
     (queryParams.queryParams.director===undefined)&&(queryParams.queryParams.actor===undefined)){
-        if((queryParams.queryParams.type!=undefined)){
-            if((queryParams.queryParams.ratingKp===undefined)&&(queryParams.queryParams.votesKp===undefined)){
-                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmId}},{type:{[Op.eq]:queryParams.queryParams.type}}]},
-                order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]
-                })
-                for(let q = 0 ; q <Flilms.length;q++){
-                films.push(Flilms[q])
-                }
-            }
-            else if((queryParams.queryParams.ratingKp!=undefined)&&(queryParams.queryParams.votesKp===undefined)){
-                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmId}},{type:{[Op.eq]:queryParams.queryParams.type}},{ratingKp:{[Op.gte]:queryParams.queryParams.ratingKp}}]},
-                order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]
+            const Flilms = await this.filmRepository.findAll({where:filtre
             })
-                for(let q = 0 ; q <Flilms.length;q++){
-                films.push(Flilms[q])
-                }
+            for(let q = 0 ; q <Flilms.length;q++){
+            films.push(Flilms[q])
             }
-            else if((queryParams.queryParams.ratingKp!=undefined)&&(queryParams.queryParams.votesKp!=undefined)){
-                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmId}},{type:{[Op.eq]:queryParams.queryParams.type}},{ratingKp:{[Op.gte]:queryParams.queryParams.ratingKp}},{votesKp:{[Op.gte]:queryParams.queryParams.votesKp}}]},
-                order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]
-            })
-                for(let q = 0 ; q <Flilms.length;q++){
-                films.push(Flilms[q])
-                }
-            }
-        }
-        if((queryParams.queryParams.type===undefined)){
-            if((queryParams.queryParams.ratingKp===undefined)&&(queryParams.queryParams.votesKp===undefined)){
-                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmId}}]},
-                order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]
-                })
-                for(let q = 0 ; q <Flilms.length;q++){
-                films.push(Flilms[q])
-                }
-            }
-            else if((queryParams.queryParams.ratingKp!=undefined)&&(queryParams.queryParams.votesKp===undefined)){
-                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmId}},{ratingKp:{[Op.gte]:queryParams.queryParams.ratingKp}}]},
-                order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]
-            })
-                for(let q = 0 ; q <Flilms.length;q++){
-                films.push(Flilms[q])
-                }
-            }
-            else if((queryParams.queryParams.ratingKp!=undefined)&&(queryParams.queryParams.votesKp!=undefined)){
-                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmId}},{ratingKp:{[Op.gte]:queryParams.queryParams.ratingKp}},{votesKp:{[Op.gte]:queryParams.queryParams.votesKp}}]},
-                order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]
-            })
-                for(let q = 0 ; q <Flilms.length;q++){
-                films.push(Flilms[q])
-                }
-            }
-        }
+            
+            
+          
         
+
     }
-    else if(((queryParams.queryParams.countries!=undefined)||(queryParams.queryParams.genres!=undefined))&& ///// жанры или фильмы и режисер, рейтиг КП, голоса КП
+
+    else if(((queryParams.queryParams.countries!=undefined)||(queryParams.queryParams.genres!=undefined))&& ///// жанры или фильмы и режисер
     (queryParams.queryParams.director!=undefined)&&(queryParams.queryParams.actor===undefined)){
         const persons = await this.getAllMoviesByDirector(queryParams.queryParams.director)
-            let ArrFilmswithDirectorId = []
+            
             for(let q = 0 ; q <persons.length;q++ ){
                 if(ArrFilmId.includes(persons[q].movieid)){
-                    ArrFilmswithDirectorId.push(persons[q].movieid)
+                    ArrFilmswithDirectorIdOrActor.push(persons[q].movieid)
                 }
             }
-        if((queryParams.queryParams.type!=undefined)){
-            if((queryParams.queryParams.ratingKp===undefined)&&(queryParams.queryParams.votesKp===undefined)){
-                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmId}},{type:{[Op.eq]:queryParams.queryParams.type}}]},
+    
+           
+                const Flilms = await this.filmRepository.findAll({where:filtreWithActorOrDirecor,
                 order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]
                 })
                 for(let q = 0 ; q <Flilms.length;q++){
                     films.push(Flilms[q])
                 }
-            }
-            else if((queryParams.queryParams.ratingKp!=undefined)&&(queryParams.queryParams.votesKp===undefined)){
-                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmswithDirectorId}},{type:{[Op.eq]:queryParams.queryParams.type}},{ratingKp:{[Op.gte]:queryParams.queryParams.ratingKp}}]},
-                    order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]
-                })
-                for(let q = 0 ; q <Flilms.length;q++){
-                    films.push(Flilms[q])
-                }
-            }
-            else if((queryParams.queryParams.ratingKp!=undefined)&&(queryParams.queryParams.votesKp!=undefined)){
-                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmswithDirectorId}},{type:{[Op.eq]:queryParams.queryParams.type}},{ratingKp:{[Op.gte]:queryParams.queryParams.ratingKp}},{votesKp:{[Op.gte]:queryParams.queryParams.votesKp}}]},
-                order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]
-            })
-                for(let q = 0 ; q <Flilms.length;q++){
-                    films.push(Flilms[q])
-                }
-            }
-        }
-        if((queryParams.queryParams.type===undefined)){
-            if((queryParams.queryParams.ratingKp===undefined)&&(queryParams.queryParams.votesKp===undefined)){
-                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmId}}]},
-                order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]
-                })
-                for(let q = 0 ; q <Flilms.length;q++){
-                    films.push(Flilms[q])
-                }
-            }
-            else if((queryParams.queryParams.ratingKp!=undefined)&&(queryParams.queryParams.votesKp===undefined)){
-                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmswithDirectorId}},{ratingKp:{[Op.gte]:queryParams.queryParams.ratingKp}}]},
-                    order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]
-                })
-                for(let q = 0 ; q <Flilms.length;q++){
-                    films.push(Flilms[q])
-                }
-            }
-            else if((queryParams.queryParams.ratingKp!=undefined)&&(queryParams.queryParams.votesKp!=undefined)){
-                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmswithDirectorId}},{ratingKp:{[Op.gte]:queryParams.queryParams.ratingKp}},{votesKp:{[Op.gte]:queryParams.queryParams.votesKp}}]},
-                order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]
-            })
-                for(let q = 0 ; q <Flilms.length;q++){
-                    films.push(Flilms[q])
-                }
-            }
-        }
+            
+        
+        
         
     }
-    else if(((queryParams.queryParams.countries!=undefined)||(queryParams.queryParams.genres!=undefined))&& ///// жанры или фильмы и актер , рейтиг КП, голоса КП
+    else if(((queryParams.queryParams.countries!=undefined)||(queryParams.queryParams.genres!=undefined))&& ///// жанры или  и актер 
     (queryParams.queryParams.director===undefined)&&(queryParams.queryParams.actor!=undefined)){
         const persons = await this.getMoviesByActor(queryParams.queryParams.actor)
-        let ArrFilmswithActor = []
         for(let q = 0 ; q <persons.length;q++ ){
             if(ArrFilmId.includes(persons[q].movieid)){
-                ArrFilmswithActor.push(persons[q].movieid)
+                ArrFilmswithDirectorIdOrActor.push(persons[q].movieid)
             }
         }
-        if((queryParams.queryParams.type!=undefined)){
-            if((queryParams.queryParams.ratingKp===undefined)&&(queryParams.queryParams.votesKp===undefined)){
-                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmId}},{type:{[Op.eq]:queryParams.queryParams.type}}]},
+       
+                const Flilms = await this.filmRepository.findAll({where:filtreWithActorOrDirecor,
                 order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]
                 })
                 for(let q = 0 ; q <Flilms.length;q++){
                     films.push(Flilms[q])
                 }
-            }
-            else if((queryParams.queryParams.ratingKp!=undefined)&&(queryParams.queryParams.votesKp===undefined)){
-                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmswithActor}},{type:{[Op.eq]:queryParams.queryParams.type}},{ratingKp:{[Op.gte]:queryParams.queryParams.ratingKp}}]},
-                order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]
-                    })
-                    for(let q = 0 ; q <Flilms.length;q++){
-                        films.push(Flilms[q])
-                    }
-            }
-            else if((queryParams.queryParams.ratingKp!=undefined)&&(queryParams.queryParams.votesKp!=undefined)){
-                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmswithActor}},{type:{[Op.eq]:queryParams.queryParams.type}},{ratingKp:{[Op.gte]:queryParams.queryParams.ratingKp}},{votesKp:{[Op.gte]:queryParams.queryParams.votesKp}}]},
-                order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]
-                })
-                for(let q = 0 ; q <Flilms.length;q++){
-                    films.push(Flilms[q])
-                }
-            }
-        }
-        if((queryParams.queryParams.type===undefined)){
-            if((queryParams.queryParams.ratingKp===undefined)&&(queryParams.queryParams.votesKp===undefined)){
-                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmId}}]},
-                order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]
-                })
-                for(let q = 0 ; q <Flilms.length;q++){
-                    films.push(Flilms[q])
-                }
-            }
-            else if((queryParams.queryParams.ratingKp!=undefined)&&(queryParams.queryParams.votesKp===undefined)){
-                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmswithActor}},{ratingKp:{[Op.gte]:queryParams.queryParams.ratingKp}}]},
-                order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]
-                    })
-                    for(let q = 0 ; q <Flilms.length;q++){
-                        films.push(Flilms[q])
-                    }
-            }
-            else if((queryParams.queryParams.ratingKp!=undefined)&&(queryParams.queryParams.votesKp!=undefined)){
-                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmswithActor}},{ratingKp:{[Op.gte]:queryParams.queryParams.ratingKp}},{votesKp:{[Op.gte]:queryParams.queryParams.votesKp}}]},
-                order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]
-                })
-                for(let q = 0 ; q <Flilms.length;q++){
-                    films.push(Flilms[q])
-                }
-            }
-        }
+            
+        
         
     }
     else if ((queryParams.queryParams.director!=undefined)&&(queryParams.queryParams.actor===undefined)&&  ///// режисер , рейтиг КП, голоса КП
@@ -877,58 +713,17 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
         for(let q = 0 ; q <persons.length;q++){
             ArrFilmId.push(persons[q].movieid)
         }
-        if((queryParams.queryParams.type!=undefined)){
-            if((queryParams.queryParams.ratingKp===undefined)&&(queryParams.queryParams.votesKp===undefined)){
-                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmId}},{type:{[Op.eq]:queryParams.queryParams.type}}]},
+        
+           
+                const Flilms = await this.filmRepository.findAll({where:filtre,
                 order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]
                 })
                 for(let q = 0 ; q <Flilms.length;q++){
                     films.push(Flilms[q])
                 }
-            }
-            else if((queryParams.queryParams.ratingKp!=undefined)&&(queryParams.queryParams.votesKp===undefined)){
-                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmId}},{type:{[Op.eq]:queryParams.queryParams.type}},{ratingKp:{[Op.gte]:queryParams.queryParams.ratingKp}}]},
-                order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]
-                    })
-                    for(let q = 0 ; q <Flilms.length;q++){
-                        films.push(Flilms[q])
-                    }
-            }
-            else if((queryParams.queryParams.ratingKp!=undefined)&&(queryParams.queryParams.votesKp!=undefined)){
-                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmId}},{type:{[Op.eq]:queryParams.queryParams.type}},{ratingKp:{[Op.gte]:queryParams.queryParams.ratingKp}},{votesKp:{[Op.gte]:queryParams.queryParams.votesKp}}]},
-                order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]
-                })
-                for(let q = 0 ; q <Flilms.length;q++){
-                    films.push(Flilms[q])
-                }
-            }
-        }
-        if((queryParams.queryParams.type===undefined)){
-            if((queryParams.queryParams.ratingKp===undefined)&&(queryParams.queryParams.votesKp===undefined)){
-                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmId}}]},
-                order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]
-                })
-                for(let q = 0 ; q <Flilms.length;q++){
-                    films.push(Flilms[q])
-                }
-            }
-            else if((queryParams.queryParams.ratingKp!=undefined)&&(queryParams.queryParams.votesKp===undefined)){
-                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmId}},{ratingKp:{[Op.gte]:queryParams.queryParams.ratingKp}}]},
-                order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]
-                    })
-                    for(let q = 0 ; q <Flilms.length;q++){
-                        films.push(Flilms[q])
-                    }
-            }
-            else if((queryParams.queryParams.ratingKp!=undefined)&&(queryParams.queryParams.votesKp!=undefined)){
-                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmId}},{ratingKp:{[Op.gte]:queryParams.queryParams.ratingKp}},{votesKp:{[Op.gte]:queryParams.queryParams.votesKp}}]},
-                order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]
-                })
-                for(let q = 0 ; q <Flilms.length;q++){
-                    films.push(Flilms[q])
-                }
-            }
-        }
+            
+            
+        
     }
     else if ((queryParams.queryParams.director===undefined)&&(queryParams.queryParams.actor!=undefined)&& //// актер , рейтиг КП, голоса КП
     (queryParams.queryParams.countries===undefined)&&(queryParams.queryParams.genres===undefined)){
@@ -936,59 +731,15 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
         for(let q = 0 ; q <persons.length;q++){
             ArrFilmId.push(persons[q].movieid)
         }
-        if((queryParams.queryParams.type!=undefined)){
-            if((queryParams.queryParams.ratingKp===undefined)&&(queryParams.queryParams.votesKp===undefined)){
-                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmId}},{type:{[Op.eq]:queryParams.queryParams.type}}]},
-                order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]
-                })
-                for(let q = 0 ; q <Flilms.length;q++){
-                    films.push(Flilms[q])
-                }
-            }
-            else if((queryParams.queryParams.ratingKp!=undefined)&&(queryParams.queryParams.votesKp===undefined)){
-                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmId}},{type:{[Op.eq]:queryParams.queryParams.type}},{ratingKp:{[Op.gte]:queryParams.queryParams.ratingKp}}]},
-                order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]
-                })
-                for(let q = 0 ; q <Flilms.length;q++){
-                    films.push(Flilms[q])
-                }
-            }
-            else if((queryParams.queryParams.ratingKp!=undefined)&&(queryParams.queryParams.votesKp!=undefined)){
-                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmId}},{ratingKp:{[Op.gte]:queryParams.queryParams.ratingKp}},{type:{[Op.eq]:queryParams.queryParams.type}},{votesKp:{[Op.gte]:queryParams.queryParams.votesKp}}]},
-                order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]
-                })
-                for(let q = 0 ; q <Flilms.length;q++){
-                    films.push(Flilms[q])
-                }
-            }
-        }
-        if((queryParams.queryParams.type===undefined)){
-            if((queryParams.queryParams.ratingKp===undefined)&&(queryParams.queryParams.votesKp===undefined)){
-                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmId}}]},
-                order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]
-                })
-                for(let q = 0 ; q <Flilms.length;q++){
-                    films.push(Flilms[q])
-                }
-            }
-            else if((queryParams.queryParams.ratingKp!=undefined)&&(queryParams.queryParams.votesKp===undefined)){
-                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmId}},{ratingKp:{[Op.gte]:queryParams.queryParams.ratingKp}}]},
-                order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]
-                })
-                for(let q = 0 ; q <Flilms.length;q++){
-                    films.push(Flilms[q])
-                }
-            }
-            else if((queryParams.queryParams.ratingKp!=undefined)&&(queryParams.queryParams.votesKp!=undefined)){
-                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmId}},{ratingKp:{[Op.gte]:queryParams.queryParams.ratingKp}},{votesKp:{[Op.gte]:queryParams.queryParams.votesKp}}]},
-                order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]
-                })
-                for(let q = 0 ; q <Flilms.length;q++){
-                    films.push(Flilms[q])
-                }
-            }
-        }
         
+                const Flilms = await this.filmRepository.findAll({where:filtre,
+                order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]
+                })
+                for(let q = 0 ; q <Flilms.length;q++){
+                    films.push(Flilms[q])
+                }
+           
+          
         
         
 
@@ -997,64 +748,20 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
     (queryParams.queryParams.director!=undefined)&&(queryParams.queryParams.actor!=undefined)){
         let str = queryParams.queryParams.director+'@'+queryParams.queryParams.actor
         const persons = await this.getAllMoviesByDirectorAndActor(str)
-        let ArrFilmswithDirectorIdActor = []
+      
         for(let q = 0 ; q <persons.length;q++ ){
             if(ArrFilmId.includes(persons[q].movieid)){
-                ArrFilmswithDirectorIdActor.push(persons[q].movieid)
+                ArrFilmswithDirectorIdOrActor.push(persons[q].movieid)
             }
         }
-        if((queryParams.queryParams.type!=undefined)){
-            if((queryParams.queryParams.ratingKp===undefined)&&(queryParams.queryParams.votesKp===undefined)){
-            const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmId}},{type:{[Op.eq]:queryParams.queryParams.type}}]},
+        
+            const Flilms = await this.filmRepository.findAll({where:filtreWithActorOrDirecor,
                 order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]
             })
             for(let q = 0 ; q <Flilms.length;q++){
                 films.push(Flilms[q])
             }
-        }
-        else if((queryParams.queryParams.ratingKp!=undefined)&&(queryParams.queryParams.votesKp===undefined)){
-            const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmswithDirectorIdActor}},{type:{[Op.eq]:queryParams.queryParams.type}},{ratingKp:{[Op.gte]:queryParams.queryParams.ratingKp}}]},
-                order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]
-                })
-                for(let q = 0 ; q <Flilms.length;q++){
-                    films.push(Flilms[q])
-                }
-        }
-        else if((queryParams.queryParams.ratingKp!=undefined)&&(queryParams.queryParams.votesKp!=undefined)){
-            const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmswithDirectorIdActor}},{type:{[Op.eq]:queryParams.queryParams.type}},{ratingKp:{[Op.gte]:queryParams.queryParams.ratingKp}},{votesKp:{[Op.gte]:queryParams.queryParams.votesKp}}]},
-                order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]
-            })
-            for(let q = 0 ; q <Flilms.length;q++){
-                films.push(Flilms[q])
-            }
-        }
-        }
-        else if((queryParams.queryParams.type===undefined)){
-            if((queryParams.queryParams.ratingKp===undefined)&&(queryParams.queryParams.votesKp===undefined)){
-                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmId}}]},
-                    order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]
-                })
-                for(let q = 0 ; q <Flilms.length;q++){
-                    films.push(Flilms[q])
-                }
-            }
-            else if((queryParams.queryParams.ratingKp!=undefined)&&(queryParams.queryParams.votesKp===undefined)){
-                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmswithDirectorIdActor}},{ratingKp:{[Op.gte]:queryParams.queryParams.ratingKp}}]},
-                    order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]
-                    })
-                    for(let q = 0 ; q <Flilms.length;q++){
-                        films.push(Flilms[q])
-                    }
-            }
-            else if((queryParams.queryParams.ratingKp!=undefined)&&(queryParams.queryParams.votesKp!=undefined)){
-                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmswithDirectorIdActor}},{ratingKp:{[Op.gte]:queryParams.queryParams.ratingKp}},{votesKp:{[Op.gte]:queryParams.queryParams.votesKp}}]},
-                     order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]
-                })
-                for(let q = 0 ; q <Flilms.length;q++){
-                    films.push(Flilms[q])
-                }
-            }
-        }
+        
 
         
         
@@ -1063,399 +770,60 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
     (queryParams.queryParams.countries===undefined)&&(queryParams.queryParams.genres===undefined)){
         let str = queryParams.queryParams.director+'@'+queryParams.queryParams.actor
         const persons = await this.getAllMoviesByDirectorAndActor(str)
-        let ArrMoviesId = []
         for(let q = 0 ; q <persons.length;q++){
-            ArrMoviesId.push(persons[q].movieid)
+            ArrFilmId.push(persons[q].movieid)
         }
-        if((queryParams.queryParams.type!=undefined)){
-            if((queryParams.queryParams.ratingKp===undefined)&&(queryParams.queryParams.votesKp===undefined)){
-                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmId}},{type:{[Op.eq]:queryParams.queryParams.type}}]},
+       
+        
+                const Flilms = await this.filmRepository.findAll({where:filtre,
                  order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]
                 })
                 for(let q = 0 ; q <Flilms.length;q++){
                     films.push(Flilms[q])
                 }
-            }
-            else if((queryParams.queryParams.ratingKp!=undefined)&&(queryParams.queryParams.votesKp===undefined)){
-                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrMoviesId}},{type:{[Op.eq]:queryParams.queryParams.type}},{ratingKp:{[Op.gte]:queryParams.queryParams.ratingKp}}]},
-                     order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]
-                    })
-                    for(let q = 0 ; q <Flilms.length;q++){
-                        films.push(Flilms[q])
-                    }
-            }
-            else if((queryParams.queryParams.ratingKp!=undefined)&&(queryParams.queryParams.votesKp!=undefined)){
-                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrMoviesId}},{type:{[Op.eq]:queryParams.queryParams.type}},{ratingKp:{[Op.gte]:queryParams.queryParams.ratingKp}},{votesKp:{[Op.gte]:queryParams.queryParams.votesKp}}]},
-                 order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]
-                })
-                for(let q = 0 ; q <Flilms.length;q++){
-                    films.push(Flilms[q])
-                }
-            }
-        }
-        else if((queryParams.queryParams.type===undefined)){
-            if((queryParams.queryParams.ratingKp===undefined)&&(queryParams.queryParams.votesKp===undefined)){
-                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrFilmId}}]},
-                 order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]
-                })
-                for(let q = 0 ; q <Flilms.length;q++){
-                    films.push(Flilms[q])
-                }
-            }
-            else if((queryParams.queryParams.ratingKp!=undefined)&&(queryParams.queryParams.votesKp===undefined)){
-                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrMoviesId}},{ratingKp:{[Op.gte]:queryParams.queryParams.ratingKp}}]},
-                     order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]
-                    })
-                    for(let q = 0 ; q <Flilms.length;q++){
-                        films.push(Flilms[q])
-                    }
-            }
-            else if((queryParams.queryParams.ratingKp!=undefined)&&(queryParams.queryParams.votesKp!=undefined)){
-                const Flilms = await this.filmRepository.findAll({where:{[Op.and]:[{id:{[Op.in]:ArrMoviesId}},{ratingKp:{[Op.gte]:queryParams.queryParams.ratingKp}},{votesKp:{[Op.gte]:queryParams.queryParams.votesKp}}]},
-                 order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]
-                })
-                for(let q = 0 ; q <Flilms.length;q++){
-                    films.push(Flilms[q])
-                }
-            }
-        }
+            
+            
         
     }
-    else if ((queryParams.queryParams.director===undefined)&&(queryParams.queryParams.actor===undefined)&& //// тип
-    (queryParams.queryParams.countries===undefined)&&(queryParams.queryParams.genres===undefined)&&(queryParams.queryParams.type!=undefined)){
-        const Films = await this.filmRepository.findAll({where:{type:{[Op.eq]:queryParams.queryParams.type}}})
+    else if ((queryParams.queryParams.director===undefined)&&(queryParams.queryParams.actor===undefined)&& //// тип, рейтинг КП, голоса КП
+    (queryParams.queryParams.countries===undefined)&&(queryParams.queryParams.genres===undefined)&&(queryParams.queryParams.type!=undefined)&&((queryParams.queryParams.ratingKp!=undefined)||queryParams.queryParams.votesKp!=undefined)){
+       const Films= await this.filmRepository.findAll({where:FiltreType,
+            order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]})
         for(let q = 0 ; q <Films.length;q++){
             films.push(Films[q])
-            ArrFilmId.push(Films[q].id)
+        }
+    }
+    else if ((queryParams.queryParams.director===undefined)&&(queryParams.queryParams.actor===undefined)&& //// рейтинг КП, голоса КП
+    (queryParams.queryParams.countries===undefined)&&(queryParams.queryParams.genres===undefined)&&(queryParams.queryParams.type===undefined)&&((queryParams.queryParams.ratingKp!=undefined)||queryParams.queryParams.votesKp!=undefined)){
+       const Films= await this.filmRepository.findAll({where:FiltreRatingKPvotesKP,
+            order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]})
+        for(let q = 0 ; q <Films.length;q++){
+            films.push(Films[q])
         }
     }
         const genresInfo = await this.getGenresByMoviesId(ArrFilmId)
         const namesofgenres = await this.getAllNamesOfGenres()
         const countriesInfo = await this.getCountriesByMoviesId(ArrFilmId)
-        const persons = await this.getPersonsOfMoviesByMoviesId(ArrFilmId)
-        const videos = await this.getVideosOfMoviesByMoviesId(ArrFilmId)
-        let ArrFilms = []
-
-
-
-        if((((queryParams.queryParams.countries!=undefined)||(queryParams.queryParams.genres!=undefined))||(queryParams.queryParams.type!=undefined)
-        ||(queryParams.queryParams.ratingKp!=undefined)||(queryParams.queryParams.votesKp!=undefined)
-        ||(queryParams.queryParams.director!=undefined)||(queryParams.queryParams.actor!=undefined)||(queryParams.queryParams.sortField!=undefined)
-        ||(queryParams.queryParams.sortOrder!=undefined))&&(queryParams.queryParams.limit!=undefined)&&(queryParams.queryParams.page===undefined)){
-            if(queryParams.queryParams.limit===films.length){
-                for(let q = 0 ; q < films.length;q++){
-                    let ArrGenresId = []
-                    for(let w = 0 ; w < genresInfo.length;w++){
-                        if(genresInfo[w].movieid===films[q].id){
-                            ArrGenresId.push(genresInfo[w].genreid)
-                        }
-                    }
-                    let ArrNamesOfGenres = []
-                    for(let w = 0 ; w < namesofgenres.length;w++){
-                        for(let e = 0 ; e < ArrGenresId.length;e++){
-                            if(namesofgenres[w].id===ArrGenresId[e]){
-                                ArrNamesOfGenres.push(
-                                    {
-                                        name:namesofgenres[w].genre,
-                                        enName:namesofgenres[w].enName
-                                    }
-                                    )
-                            }
-                        }
-                    }
-                    let ArrCountries = []
-                    for(let w = 0 ;w<countriesInfo.length;w++){
-                        if(countriesInfo[w].movieid===films[q].id){
-                            ArrCountries.push({name:countriesInfo[w].country})
-                        }
-                    }
-             
-                    
-                
-                    let ArrPersonsOfMovies = []
-                    for(let w = 0 ;w<persons.length;w++){
-                        if(persons[w].movieid===films[q].id){
-                            ArrPersonsOfMovies.push(
-                                {
-                                    id:persons[w].personid,
-                                    name:persons[w].name,
-                                    enName:persons[w].enName,
-                                    photo:persons[w].photo,
-                                    profession:persons[w].profession,
-                                    enProfession:persons[w].enProfession,
-                                }
-                                )
-                        }
-                    }
-                    let ArrVideos = []
-                    for(let w = 0 ;w<videos.length;w++){
-                        if(videos[w].movieid===films[q].id){
-                            ArrVideos.push(
-                                {
-                                    url:videos[w].url
-                                }
-                                )
-                        }
-                    }
-             
-                    ArrFilms.push(
-                        {
-                            film:films[q],
-                            genres:ArrNamesOfGenres,
-                            countries:ArrCountries,
-                            persons:ArrPersonsOfMovies,
-                            videos:ArrVideos, 
-                        }
-                        )
-                    
-                }
-                return {docs:ArrFilms,limit:films.length,pages:1}
-            }
-            else{
-                for(let q = 0 ; q < queryParams.queryParams.limit;q++){
-                    let ArrGenresId = []
-                    for(let w = 0 ; w < genresInfo.length;w++){
-                        if(genresInfo[w].movieid===films[q].id){
-                            ArrGenresId.push(genresInfo[w].genreid)
-                        }
-                    }
-                    let ArrNamesOfGenres = []
-                    for(let w = 0 ; w < namesofgenres.length;w++){
-                        for(let e = 0 ; e < ArrGenresId.length;e++){
-                            if(namesofgenres[w].id===ArrGenresId[e]){
-                                ArrNamesOfGenres.push(
-                                    {
-                                        name:namesofgenres[w].genre,
-                                        enName:namesofgenres[w].enName
-                                    }
-                                    )
-                            }
-                        }
-                    }
-                    let ArrCountries = []
-                    for(let w = 0 ;w<countriesInfo.length;w++){
-                        if(countriesInfo[w].movieid===films[q].id){
-                            ArrCountries.push({name:countriesInfo[w].country})
-                        }
-                    }
-           
-                    
-                
-                    let ArrPersonsOfMovies = []
-                    for(let w = 0 ;w<persons.length;w++){
-                        if(persons[w].movieid===films[q].id){
-                            ArrPersonsOfMovies.push(
-                                {
-                                    personid:persons[w].personid,
-                                    name:persons[w].name,
-                                    enName:persons[w].enName,
-                                    photo:persons[w].photo,
-                                    profession:persons[w].profession,
-                                    enProfession:persons[w].enProfession,
-                                }
-                                )
-                        }
-                    }
-                    let ArrVideos = []
-                    for(let w = 0 ;w<videos.length;w++){
-                        if(videos[w].movieid===films[q].id){
-                            ArrVideos.push(
-                                {
-                                    url:videos[w].url,
-                                    name:videos[w].name,
-                                    site:videos[w].site,
-                                    type:videos[w].type,
-                                }
-                                )
-                        }
-                    }
-             
-                    ArrFilms.push(
-                        {
-                            film:films[q],
-                            genres:ArrNamesOfGenres,
-                            countries:ArrCountries,
-                            persons:ArrPersonsOfMovies,
-                            videos:ArrVideos, 
-                        }
-                        )
-                    
-                }
-            }
-            return {docs:ArrFilms,limit:queryParams.queryParams.limit,pages:1}
-            
+       
+        let AllFilms = await this.filmRepository.findAll()
+        if(queryParams.queryParams.limit>AllFilms.length){
+            queryParams.queryParams.limit = AllFilms.length
         }
-        else if((((queryParams.queryParams.countries!=undefined)||(queryParams.queryParams.genres!=undefined))||(queryParams.queryParams.type!=undefined)
+
+
+        if(((queryParams.queryParams.countries!=undefined)||(queryParams.queryParams.genres!=undefined))||(queryParams.queryParams.type!=undefined)
         ||(queryParams.queryParams.ratingKp!=undefined)||(queryParams.queryParams.votesKp!=undefined)
         ||(queryParams.queryParams.director!=undefined)||(queryParams.queryParams.actor!=undefined)||(queryParams.queryParams.sortField!=undefined)
-        ||(queryParams.queryParams.sortOrder!=undefined))&&(queryParams.queryParams.limit!=undefined)&&(queryParams.queryParams.page!=undefined)){
+        ||(queryParams.queryParams.sortOrder!=undefined)){
             let FilmsLenth = queryParams.queryParams.limit*queryParams.queryParams.page
             let ArrFilm = []
             let ArrFilmPage = []
-            let Npage = 1
+            let Page = 1
             let count = 0
-            if(queryParams.queryParams.limit>films.length){
-                queryParams.queryParams.limit = films.length
+            if(films.length<FilmsLenth){
+                FilmsLenth =films.length
             }
-            if(FilmsLenth>=films.length){
-                for(let q = 0 ; q<films.length;q++){
-                    let ArrGenresId = []
-            for(let w = 0 ; w < genresInfo.length;w++){
-                if(genresInfo[w].movieid===films[q].id){
-                    ArrGenresId.push(genresInfo[w].genreid)
-                }
-            }
-            let ArrNamesOfGenres = []
-            for(let w = 0 ; w < namesofgenres.length;w++){
-                for(let e = 0 ; e < ArrGenresId.length;e++){
-                    if(namesofgenres[w].id===ArrGenresId[e]){
-                        ArrNamesOfGenres.push(
-                            {
-                                name:namesofgenres[w].genre,
-                                enName:namesofgenres[w].enName
-                            }
-                            )
-                    }
-                }
-            }
-            let ArrCountries = []
-            for(let w = 0 ;w<countriesInfo.length;w++){
-                if(countriesInfo[w].movieid===films[q].id){
-                    ArrCountries.push({name:countriesInfo[w].country})
-                }
-            }
-  
-        
-            let ArrPersonsOfMovies = []
-            for(let w = 0 ;w<persons.length;w++){
-                if(persons[w].movieid===films[q].id){
-                    ArrPersonsOfMovies.push(
-                        {
-                            personid:persons[w].personid,
-                            name:persons[w].name,
-                            enName:persons[w].enName,
-                            photo:persons[w].photo,
-                            profession:persons[w].profession,
-                            enProfession:persons[w].enProfession,
-                        }
-                        )
-                }
-            }
-            let ArrVideos = []
-            for(let w = 0 ;w<videos.length;w++){
-                if(videos[w].movieid===films[q].id){
-                    ArrVideos.push(
-                        {
-                            url:videos[w].url
-                        }
-                        )
-                }
-            }
-     
-            ArrFilmPage.push(
-                {
-                    film:films[q],
-                    genres:ArrNamesOfGenres,
-                    countries:ArrCountries,
-                    persons:ArrPersonsOfMovies,
-                    videos:ArrVideos, 
-                }
-                )
-                    if(count==queryParams.queryParams.limit){
-                        ArrFilm.push({PageWithFilms:ArrFilmPage,page:Npage})
-                        ArrFilmPage=[]
-                        Npage+=1
-                        count=0
-                    }
-                    count+=1
-                    
-                }
-                return {docs:ArrFilm,limit:queryParams.queryParams.limit,pages:queryParams.queryParams.Npage}
-                
-                
-            }
-            else{
-               
-                for(let q = 0 ; q<FilmsLenth;q++){
-                    let ArrGenresId = []
-            for(let w = 0 ; w < genresInfo.length;w++){
-                if(genresInfo[w].movieid===films[q].id){
-                    ArrGenresId.push(genresInfo[w].genreid)
-                }
-            }
-            let ArrNamesOfGenres = []
-            for(let w = 0 ; w < namesofgenres.length;w++){
-                for(let e = 0 ; e < ArrGenresId.length;e++){
-                    if(namesofgenres[w].id===ArrGenresId[e]){
-                        ArrNamesOfGenres.push(
-                            {
-                                name:namesofgenres[w].genre,
-                                enName:namesofgenres[w].enName
-                            }
-                            )
-                    }
-                }
-            }
-            let ArrCountries = []
-            for(let w = 0 ;w<countriesInfo.length;w++){
-                if(countriesInfo[w].movieid===films[q].id){
-                    ArrCountries.push({name:countriesInfo[w].country})
-                }
-            }
-            
-        
-            let ArrPersonsOfMovies = []
-            for(let w = 0 ;w<persons.length;w++){
-                if(persons[w].movieid===films[q].id){
-                    ArrPersonsOfMovies.push(
-                        {
-                            personid:persons[w].personid,
-                            name:persons[w].name,
-                            enName:persons[w].enName,
-                            photo:persons[w].photo,
-                            profession:persons[w].profession,
-                            enProfession:persons[w].enProfession,
-                        }
-                        )
-                }
-            }
-            let ArrVideos = []
-            for(let w = 0 ;w<videos.length;w++){
-                if(videos[w].movieid===films[q].id){
-                    ArrVideos.push(
-                        {
-                            url:videos[w].url,
-                            name:videos[w].name,
-                            site:videos[w].site,
-                            type:videos[w].type,
-                        }
-                        )
-                }
-            }
-     
-            ArrFilmPage.push(
-                {
-                    film:films[q],
-                    genres:ArrNamesOfGenres,
-                    countries:ArrCountries,
-                    persons:ArrPersonsOfMovies,
-                    videos:ArrVideos, 
-                }
-                )
-                    if(count==queryParams.queryParams.limit){
-                        ArrFilm.push({PageWithFilms:ArrFilmPage,page:Npage})
-                        ArrFilmPage=[]
-                        Npage+=1
-                        count=0
-                    }
-                    count+=1
-                }
-                return {docs:ArrFilm,limit:queryParams.queryParams.limit,pages:queryParams.queryParams.page}
-            }
-
-        }
-        else if((queryParams.queryParams.limit===undefined)&&(queryParams.queryParams.page===undefined)&&(films.length!=0)){
-            for(let q = 0 ; q < films.length;q++){
+            for(let q = 0 ; q<FilmsLenth;q++){
                 let ArrGenresId = []
                 for(let w = 0 ; w < genresInfo.length;w++){
                     if(genresInfo[w].movieid===films[q].id){
@@ -1468,7 +836,7 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
                         if(namesofgenres[w].id===ArrGenresId[e]){
                             ArrNamesOfGenres.push(
                                 {
-                                    name:namesofgenres[w].genre,
+                                    name:namesofgenres[w].name,
                                     enName:namesofgenres[w].enName
                                 }
                                 )
@@ -1481,64 +849,52 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
                         ArrCountries.push({name:countriesInfo[w].country})
                     }
                 }
-                
-            
-                let ArrPersonsOfMovies = []
-                for(let w = 0 ;w<persons.length;w++){
-                    if(persons[w].movieid===films[q].id){
-                        ArrPersonsOfMovies.push(
-                            {
-                                personid:persons[w].personid,
-                                name:persons[w].name,
-                                enName:persons[w].enName,
-                                photo:persons[w].photo,
-                                profession:persons[w].profession,
-                                enProfession:persons[w].enProfession,
-                            }
-                            )
-                    }
-                }
-                let ArrVideos = []
-                for(let w = 0 ;w<videos.length;w++){
-                    if(videos[w].movieid===films[q].id){
-                        ArrVideos.push(
-                            {
-                                url:videos[w].url,
-                                name:videos[w].name,
-                                site:videos[w].site,
-                                type:videos[w].type,
-                            }
-                            )
-                    }
-                }
-         
-                ArrFilms.push(
+                ArrFilmPage.push(
                     {
                         film:films[q],
                         genres:ArrNamesOfGenres,
                         countries:ArrCountries,
-                        persons:ArrPersonsOfMovies,
-                        videos:ArrVideos, 
+    
                     }
-                    )
+                )
+                count+=1
+                if((count==queryParams.queryParams.limit||count===FilmsLenth)){
+                    ArrFilm.push({
+                        page:ArrFilmPage,
+                        pageLenth:ArrFilmPage.length,
+                        Npage:Page,
+                    })
+                    Page+=1
+                    count=0
+                    ArrFilmPage=[]
+                }
                 
             }
-            return {docs:ArrFilms,pages:1}
+                
+            return {
+                docs:ArrFilm,
+                limit:queryParams.queryParams.limit,
+                page:queryParams.queryParams.page,
+                lenth:ArrFilm.length
+            }
+            
         }
-  
-
-       
         
-       
-        
-
-    
-        
-    
-        
-
 
     }
+     
+
+            
+       
+        
+
+    
+        
+    
+        
+
+
+    
                 
            
 /////// Если вам понравился этот фильм /////////////////////////////////////////////////
