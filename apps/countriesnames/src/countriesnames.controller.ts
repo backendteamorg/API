@@ -1,0 +1,36 @@
+import { Controller, Get } from '@nestjs/common';
+import { CountriesnamesService } from './countriesnames.service';
+import { Ctx, MessagePattern, Payload, RmqContext } from '@nestjs/microservices';
+
+@Controller()
+export class CountriesnamesController {
+  constructor(private readonly countriesnamesService: CountriesnamesService) {}
+
+  @MessagePattern({ cmd: 'parser-countries-names'})
+  async getCountries(@Ctx() context: RmqContext){
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return  await this.countriesnamesService.formDatabase()
+  }
+  @MessagePattern({ cmd: 'get-all-countries-names'})
+  async getAllCountries(@Ctx() context: RmqContext){
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return  await this.countriesnamesService.getAllCountriesNames()
+  }
+  @MessagePattern({ cmd: 'get-countries-by-names' })
+  async getGenresByNames(
+    @Ctx() context: RmqContext,
+    @Payload() genre: { ArrCountries: string[] },) {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return await this.countriesnamesService.getCountriesByNames(genre.ArrCountries);
+  }
+  
+}

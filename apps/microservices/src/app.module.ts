@@ -126,6 +126,28 @@ import { JwtModule } from '@nestjs/jwt';
         inject:[ConfigService]
     },
     {
+      provide: 'COUNTRIESNAMES_SERVICE',
+        useFactory:(configService:ConfigService)=> {
+          const USER = configService.get('RABBITMQ_DEFAULT_USER');
+          const PASSWORD =  configService.get('RABBITMQ_DEFAULT_PASS');
+          const HOST = configService.get('RABBITMQ_HOST');
+          const QUEUE = configService.get('RABBITMQ_COUNTRIESNAMES_QUEUE');
+    
+          return ClientProxyFactory.create({
+            transport: Transport.RMQ,
+            options: {
+              urls:[`amqp://${USER}:${PASSWORD}@${HOST}`],
+              noAck:false,
+              queue: QUEUE,
+              queueOptions: {
+                durable: true
+              }
+            }
+          })
+        },
+        inject:[ConfigService]
+    },
+    {
       provide: 'VIDEOS_SERVICE',
         useFactory:(configService:ConfigService)=> {
           const USER = configService.get('RABBITMQ_DEFAULT_USER');

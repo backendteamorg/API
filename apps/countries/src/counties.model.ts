@@ -5,7 +5,7 @@ import { Table, Model, Column, DataType, BelongsToMany} from "sequelize-typescri
 interface CountriesOfFilmsCreationAttr {
     id: number;
     movieid:number;
-    country:string;
+    countryid:number;
 }
 
 @Table({tableName: "countriesOfFilms", createdAt: false, updatedAt: false})
@@ -15,6 +15,6 @@ export class CountriesOfFilms extends Model<CountriesOfFilms, CountriesOfFilmsCr
     id: number;
     @Column({type: DataType.INTEGER})
     movieid:number; 
-    @Column({type: DataType.STRING})
-    country:string;   
+    @Column({type: DataType.INTEGER})
+    countryid:number;   
 }

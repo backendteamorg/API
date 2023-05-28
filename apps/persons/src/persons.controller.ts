@@ -102,4 +102,33 @@ export class PersonsController {
     return this.personsService.getAllMoviesByActor(actor.actor);
   
   }
+
+  @MessagePattern({ cmd: 'get-all-directors'})
+  async getAllDirectorso(@Ctx() context: RmqContext){
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return this.personsService.getAllDirectors()
+  }
+  @MessagePattern({ cmd: 'get-all-actors'})
+  async getAllActors(@Ctx() context: RmqContext){
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return this.personsService.getAllActors()
+  }
+
+  @MessagePattern({ cmd: 'get-persons-with-movies-by-persons-id' })
+  async getPersonsWithAllInfoByPersonsId(
+    @Ctx() context: RmqContext,
+    @Payload() movie: { personsId: number[] },) {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return this.personsService.getAllPersonsWithAllInfoByMoviesId(movie.personsId);
+  }
+
 }

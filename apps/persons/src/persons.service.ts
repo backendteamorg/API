@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/sequelize';
 import { Persons } from './personofmovie.model';
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
-import { Op } from 'sequelize';
+import { Op, where } from 'sequelize';
 
 
 @Injectable()
@@ -36,7 +36,7 @@ export class PersonsService {
    for(let q=0;q<ArrPersons.length;q++ ){
     let ArrPersonFilms = []
     for(let w = 0; w <persons.length;w++){
-      if(ArrPersons[q].personid===persons[w].personid){
+      if((ArrPersons[q].personid===persons[w].personid)&&(ArrPersonFilms.includes(persons[w].movieid)===false)){
         ArrPersonFilms.push(persons[w].movieid)
       }
     }
@@ -55,7 +55,39 @@ export class PersonsService {
     
     
   }
-
+  async getAllPersonsWithAllInfoByMoviesId(personsId:number[]){
+    const persons =  await this.personsRepository.findAll({where:{personid:{[Op.in]:personsId}}})
+    let ArrPersons = []
+   let ArrPeronsId = []
+     for(let q = 0; q < persons.length;q++){
+       if(ArrPeronsId.includes(persons[q].personid)===false){
+         ArrPersons.push(persons[q])
+         ArrPeronsId.push(persons[q].personid)
+       }
+     }
+     let ArrPersonWithMovies = []
+    for(let q=0;q<ArrPersons.length;q++ ){
+     let ArrPersonFilms = []
+     for(let w = 0; w <persons.length;w++){
+       if((ArrPersons[q].personid===persons[w].personid)&&(ArrPersonFilms.includes(persons[w].movieid)===false)){
+         ArrPersonFilms.push(persons[w].movieid)
+       }
+     }
+     ArrPersonWithMovies.push({
+       id:ArrPersons[q].personid,
+       name:ArrPersons[q].name,
+       enName:ArrPersons[q].enName,
+       photo:ArrPersons[q].photo,
+       profession:ArrPersons[q].profession,
+       enProfession:ArrPersons[q].enProfession,
+       movies:ArrPersonFilms
+     })
+ 
+    }
+     return ArrPersonWithMovies
+     
+     
+   }
 
   async getAllInfoOfPersonsByPersonId(idP:number){
     const persons = await this.personsRepository.findAll({where:{personid:idP}})
@@ -71,7 +103,7 @@ export class PersonsService {
    for(let q=0;q<ArrPersons.length;q++ ){
     let ArrPersonFilms = []
     for(let w = 0; w <persons.length;w++){
-      if(ArrPersons[q].personid===persons[w].personid){
+      if((ArrPersons[q].personid===persons[w].personid)&&(ArrPersonFilms.includes(persons[w].movieid)===false)){
         ArrPersonFilms.push(persons[w].movieid)
       }
     }
@@ -99,10 +131,71 @@ export class PersonsService {
   }
 
 
+async getAllDirectors(){
+  const persons = await this.personsRepository.findAll({where: {[Op.or]:[{profession:'режиссеры'},{enProfession:'director'}]}})
+  let ArrPersons = []
+    let ArrPeronsId = []
+    for(let q = 0; q < persons.length;q++){
+      if(ArrPeronsId.includes(persons[q].personid)===false){
+        ArrPersons.push(persons[q])
+        ArrPeronsId.push(persons[q].personid)
+      }
+    }
+    let ArrPersonWithMovies = []
+   for(let q=0;q<ArrPersons.length;q++ ){
+    let ArrPersonFilms = []
+    for(let w = 0; w <persons.length;w++){
+      if((ArrPersons[q].personid===persons[w].personid)&&(ArrPersonFilms.includes(persons[w].movieid)===false)){
+        ArrPersonFilms.push(persons[w].movieid)
+      }
+    }
+    ArrPersonWithMovies.push({
+      id:ArrPersons[q].personid,
+      name:ArrPersons[q].name,
+      enName:ArrPersons[q].enName,
+      photo:ArrPersons[q].photo,
+      profession:ArrPersons[q].profession,
+      enProfession:ArrPersons[q].enProfession,
+      movies:ArrPersonFilms
+    })
 
+   }
+    return ArrPersonWithMovies
+}
+async getAllActors(){
+  const persons = await this.personsRepository.findAll({where: {[Op.or]:[{profession:'актеры'},{enProfession:'actor'}]}})
+  let ArrPersons = []
+    let ArrPeronsId = []
+    for(let q = 0; q < persons.length;q++){
+      if(ArrPeronsId.includes(persons[q].personid)===false){
+        ArrPersons.push(persons[q])
+        ArrPeronsId.push(persons[q].personid)
+      }
+    }
+    let ArrPersonWithMovies = []
+   for(let q=0;q<ArrPersons.length;q++ ){
+    let ArrPersonFilms = []
+    for(let w = 0; w <persons.length;w++){
+      if((ArrPersons[q].personid===persons[w].personid)&&(ArrPersonFilms.includes(persons[w].movieid)===false)){
+        ArrPersonFilms.push(persons[w].movieid)
+      }
+    }
+    ArrPersonWithMovies.push({
+      id:ArrPersons[q].personid,
+      name:ArrPersons[q].name,
+      enName:ArrPersons[q].enName,
+      photo:ArrPersons[q].photo,
+      profession:ArrPersons[q].profession,
+      enProfession:ArrPersons[q].enProfession,
+      movies:ArrPersonFilms
+    })
 
-  async getPersonsOfMovieByMovieId(idP:number){
-    return await this.personsRepository.findAll({where:{movieid:idP}})
+   }
+    return ArrPersonWithMovies
+}
+
+  async getPersonsOfMovieByMovieId(id:number){
+    return await this.personsRepository.findAll({where:{movieid:id}})
   }
 
   async formDatabase() {
@@ -233,4 +326,5 @@ persons.id%20persons.photo%20persons.name%20persons.enName%20persons.profession%
     );
 
   }
+  
 }

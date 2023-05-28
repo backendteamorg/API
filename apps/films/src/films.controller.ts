@@ -106,15 +106,15 @@ export class FilmsController {
 
     return await this.filmsService.getMoviesByVotesKinopoisk(film.voteskp);
   }
-  @MessagePattern({ cmd: 'esli-vam-ponravilsa-film' })
-  async eSLIWamPonravilsaEtotFilm(
+  @MessagePattern({ cmd: 'get-all-persons-with-film-info' })
+  async getAllPersonsWithInfo(
     @Ctx() context: RmqContext,
     @Payload() film: { id: number },) {
     const channel = context.getChannelRef();
     const message = context.getMessage();
     channel.ack(message);
 
-    return await this.filmsService.eSLIWamPonravilsaEtotFilm(film.id);
+    return await this.filmsService.getAllPersonsWithInfo();
   }
   
 
@@ -130,7 +130,32 @@ export class FilmsController {
     return this.filmsService.getFilmsUseFiltre(queryParams);
   }
 
-  
+  @MessagePattern({ cmd: 'get-all-info-personsoffilms-by-personid' })
+  async getPersonsByPersonId(
+    @Ctx() context: RmqContext,
+    @Payload() person: { id: number },) {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
 
+    return await this.filmsService.getPersonInfoByiD(person.id);
+  }
+
+  @MessagePattern({ cmd: 'get-all-directors'})
+  async getAllDirectors(@Ctx() context: RmqContext){
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return await this.filmsService.getAllDirectors()
+  }
+  @MessagePattern({ cmd: 'get-all-actors'})
+  async getAllActors(@Ctx() context: RmqContext){
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return await this.filmsService.getAllActors()
+  }
  
 }

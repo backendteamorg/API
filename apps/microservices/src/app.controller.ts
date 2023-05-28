@@ -17,7 +17,8 @@ export class AppController {
   @Inject('GENRES_SERVICE') private rabbitGenresFilmsService: ClientProxy,
   @Inject('COUNTRIES_SERVICE') private rabbitCountriesFilmsService: ClientProxy,
   @Inject('VIDEOS_SERVICE') private rabbitVideosService: ClientProxy,
-  @Inject('NAMESOFGENRES_SERVICE') private rabbitnamesofGenresService: ClientProxy,) {}
+  @Inject('NAMESOFGENRES_SERVICE') private rabbitnamesofGenresService: ClientProxy,
+  @Inject('COUNTRIESNAMES_SERVICE') private rabbitnamesofCountriesService: ClientProxy,) {}
 
 
   
@@ -33,6 +34,16 @@ export class AppController {
     {});
 
   }
+  @ApiOperation({summary: 'Сделать запрос к api на информацию о странах фильмов данные о которых были получены ранее'})
+  @ApiTags('Данные с api kinopoisk')
+  @Get('admin/countriesNames/parsing')
+  async countriesNamesParser() {
+    return await this.rabbitnamesofCountriesService.send({
+      cmd: 'parser-countries-names',
+    },
+    {});
+
+  } 
   
   @ApiOperation({summary: 'Сделать запрос к api на информацию о странах фильмов данные о которых были получены ранее'})
   @ApiTags('Данные с api kinopoisk')
@@ -128,18 +139,7 @@ async getAllFilmsWithInfo() {
   {});
 
 }
-@ApiOperation({summary: 'Получить все сохраненные данные о фильмах которые могут понравиться'})
-  @ApiTags('(Редактирвоание данных) Данные с сайта kinopoisk')
-  @Get('filmconoriymogutPonravitsa/:id')
-  async esliWavPonravilsa(
-    @Param('id') id: number) {
-    return await this.rabbitFilmsService.send(
-      {
-        cmd: 'esli-vam-ponravilsa-film',
-      },
-      {id:id},
-    );
-  }
+
 @ApiOperation({summary: 'Получить сохраненный фильм по id'})
 @ApiTags('(Суммарные данные) с сайта kinopoisk')
 @Get('film/:id')
@@ -152,29 +152,9 @@ async getFilm(
         {id:id},
         );
 }
-@ApiOperation({summary: 'Получить все сохраненные данные о тех кто учавтсовал в сьемках фильмов данные о которых были получены ранее'})
-  @ApiTags('(Суммарные данные) с сайта kinopoisk')
-  @Get('personswithinfo')
-  async GetAllPersonWithInfo() {
-    return await this.rabbitPersonsFilmsService.send({
-      cmd: 'get-all-persons-with-info',
-    },
-    {});
 
-  }
 
-  @ApiOperation({summary: 'Получить всю инфомрацию о персоне по id'})
-  @ApiTags('(Суммарные данные) с сайта kinopoisk')
-  @Get('personswithinfo/:id')
-  async getPersonWithAllInfo(
-    @Param('id') id: number) {
-    return await this.rabbitPersonsFilmsService.send(
-      {
-        cmd: 'get-all-info-personsoffilms-by-personid',
-      },
-      {id:id},
-    );
-  }
+
 
 @ApiOperation({summary: 'Получить сохраненные данные о фильмах'})
   @ApiTags('Данные с сайта kinopoisk')
@@ -336,18 +316,58 @@ async getFilm(
   }
 
 
-  @ApiOperation({summary: 'Получить все страны сохраненных фильмов'})
+
+
+  @ApiOperation({summary: 'Получить все страны'})
   @ApiTags('Данные с сайта kinopoisk')
   @Get('namesOfCountries')
-  async GetAllNamesOfCountries() {
-    return await this.rabbitCountriesFilmsService.send({
-      cmd: 'get-all-names-of-countries',
+  async getCountriesNames() {
+    return await this.rabbitnamesofCountriesService.send({
+      cmd: 'get-all-countries-names',
     },
     {});
 
   }
+  @ApiOperation({summary: 'Получить все сохраненные данные о тех кто учавтсовал в сьемках фильмов данные о которых были получены ранее'})
+  @ApiTags('(Суммарные данные) с сайта kinopoisk')
+  @Get('personswithinfo')
+  async GetAllPersonWithInfo() {
+    return await this.rabbitFilmsService.send({
+      cmd: 'get-all-persons-with-film-info',
+    },
+    {});
 
+  } 
+  @ApiOperation({summary: 'Получить всю инфомрацию о персоне по id'})
+  @ApiTags('(Суммарные данные) с сайта kinopoisk')
+  @Get('personswithinfo/:id')
+  async getPersonWithAllInfo(
+    @Param('id') id: number) {
+    return await this.rabbitFilmsService.send(
+      {
+        cmd: 'get-all-info-personsoffilms-by-personid',
+      },
+      {id:id},
+    );
+  }
+  @ApiOperation({summary: 'Получить всех режисеров'})
+  @ApiTags('Данные с сайта kinopoisk')
+  @Get('getAllDirectors')
+  async getAllDirectors() {
+    return await this.rabbitFilmsService.send({
+      cmd: 'get-all-directors',
+    },
+    {});
 
+}
+@ApiOperation({summary: 'Получить всех актеров'})
+@ApiTags('Данные с сайта kinopoisk')
+@Get('getAllActors')
+async getAllActors() {
+  return await this.rabbitFilmsService.send({
+    cmd: 'get-all-actors',
+  },
+  {});
 
-  
+}
 }

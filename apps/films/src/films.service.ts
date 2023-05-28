@@ -13,10 +13,146 @@ export class FilmsService {
     constructor(@InjectModel(Films) private filmRepository: typeof Films,
     @Inject('GENRES_SERVICE') private rabbitGenresFilmsService: ClientProxy,
     @Inject('COUNTRIES_SERVICE') private rabbitCountriesFilmsService: ClientProxy,
+    @Inject('COUNTRIESNAMES_SERVICE') private rabbitCountriesNamesService: ClientProxy,
     @Inject('VIDEOS_SERVICE') private rabbitVideosService: ClientProxy,
     @Inject('NAMESOFGENRES_SERVICE') private rabbitnamesofGenresService: ClientProxy,
     @Inject('PERSONS_SERVICE') private rabbitPersonsFilmsService: ClientProxy) {}
 
+    async getAllPersonsWithMovies(){
+        const ob$ = await this.rabbitPersonsFilmsService.send({
+            cmd: 'get-all-persons-with-info',
+          },
+          {});
+          const persons = await firstValueFrom(ob$).catch((err) => console.error(err));
+          return persons;
+    }
+    async getPersonById(id:number){
+        const ob$ = await this.rabbitPersonsFilmsService.send({
+            cmd: 'get-all-info-personsoffilms-by-personid',
+          },
+          {id:id});
+          const persons = await firstValueFrom(ob$).catch((err) => console.error(err));
+          return persons;
+    }
+
+    async getPersonInfoByiD(id:number){
+        const person = await this.getPersonById(id)
+        const allFilmWithh = await this.getAllFilmsWithAllInfo()
+        
+        let ArrFilm = []
+        for(let q = 0 ;q< person[0].movies.length;q++){
+            for(let w = 0 ; w< allFilmWithh.length;w++){
+                if(person[0].movies[q]===allFilmWithh[w].id){
+                    ArrFilm.push(allFilmWithh[w])
+                }
+            }
+        }
+        return {
+            id:person[0].id,
+            name:person[0].name,
+            enName:person[0].enName,
+            photo:person[0].photo,
+            profession:person[0].profession,
+            enProfession:person[0].enProfession,
+            movies:ArrFilm,
+        }
+    }
+
+    async getalllDirectors(){
+        const ob$ = await this.rabbitPersonsFilmsService.send({
+            cmd: 'get-all-directors',
+          },
+          {});
+          const persons = await firstValueFrom(ob$).catch((err) => console.error(err));
+          return persons;
+    }
+  
+    async getAllDirectors(){
+        const allFilmWithh = await this.getAllFilmsWithAllInfo()
+       const directors = await this.getalllDirectors()
+       let ArrPersons = []
+        for(let q = 0 ; q<directors.length;q++){
+            let ArrMovies = []
+            for(let w =0 ;w<directors[q].movies.length;w++){
+             for(let e = 0 ; e<allFilmWithh.length;e++){
+                if(directors[q].movies[w]===allFilmWithh[e].id){
+                    ArrMovies.push(allFilmWithh[e])
+                }
+             }
+            }
+            ArrPersons.push({
+                id:directors[q].id,
+                name:directors[q].name,
+                enName:directors[q].enName,
+                photo:directors[q].photo,
+                profession:directors[q].profession,
+                enProfession:directors[q].enProfession,
+                movies:ArrMovies,
+            })
+        }
+        return ArrPersons
+    }
+
+    async getalllActors(){
+        const ob$ = await this.rabbitPersonsFilmsService.send({
+            cmd: 'get-all-actors',
+          },
+          {});
+          const persons = await firstValueFrom(ob$).catch((err) => console.error(err));
+          return persons;
+    }
+    
+    async getAllActors(){
+        const allFilmWithh = await this.getAllFilmsWithAllInfo()
+        const actors =  await this.getalllActors()
+        let ArrPersons = []
+        for(let q = 0 ; q<actors.length;q++){
+            let ArrMovies = []
+            for(let w =0 ;w<actors[q].movies.length;w++){
+             for(let e = 0 ; e<allFilmWithh.length;e++){
+                if(actors[q].movies[w]===allFilmWithh[e].id){
+                    ArrMovies.push(allFilmWithh[e])
+                }
+             }
+            }
+            ArrPersons.push({
+                id:actors[q].id,
+                name:actors[q].name,
+                enName:actors[q].enName,
+                photo:actors[q].photo,
+                profession:actors[q].profession,
+                enProfession:actors[q].enProfession,
+                movies:ArrMovies,
+            })
+        }
+        return ArrPersons
+    }
+
+    async getAllPersonsWithInfo(){
+        const allFilmWithh = await this.getAllFilmsWithAllInfo()
+        const personOfMovies =  await this.getAllPersonsWithMovies()
+        let ArrPersons = []
+        for(let q = 0 ; q<personOfMovies.length;q++){
+            let ArrMovies = []
+            for(let w =0 ;w<personOfMovies[q].movies.length;w++){
+             for(let e = 0 ; e<allFilmWithh.length;e++){
+                if(personOfMovies[q].movies[w]===allFilmWithh[e].id){
+                    ArrMovies.push(allFilmWithh[e])
+                }
+             }
+            }
+            ArrPersons.push({
+                id:personOfMovies[q].id,
+                name:personOfMovies[q].name,
+                enName:personOfMovies[q].enName,
+                photo:personOfMovies[q].photo,
+                profession:personOfMovies[q].profession,
+                enProfession:personOfMovies[q].enProfession,
+                movies:ArrMovies,
+            })
+        }
+        return ArrPersons
+    }
 
     async getAllGenresOfMovies(){
         const ob$ = await this.rabbitGenresFilmsService.send({
@@ -55,7 +191,14 @@ export class FilmsService {
     }
 
   
-   
+   async getAllCountriesNames() {
+        const ob$ = await this.rabbitCountriesNamesService.send({
+          cmd: 'get-all-countries-names',
+        },
+        {});
+        const countriesNames = await firstValueFrom(ob$).catch((err) => console.error(err));
+        return countriesNames;
+      }
 
    
 
@@ -76,44 +219,51 @@ export class FilmsService {
         const genres = await this.getAllGenresOfMovies()
         const namesofgenres = await this.getAllNamesOfGenres()
         const countries = await this.getAllCountriesOfMovies()
-        
+        const countriesNames = await this.getAllCountriesNames()
         let ArrFilms = []
         
         for(let q = 0 ; q < films.length;q++){
-            let ArrGenresId = []
-            for(let w = 0 ; w < genres.length;w++){
+            let ArrGenres = []
+            for(let w = 0 ; w<genres.length;w++){
                 if(genres[w].movieid===films[q].id){
-                    ArrGenresId.push(genres[w].genreid)
-                }
-            }
-            let ArrNamesOfGenres = []
-            for(let w = 0 ; w < namesofgenres.length;w++){
-                for(let e = 0 ; e < ArrGenresId.length;e++){
-                    if(namesofgenres[w].id===ArrGenresId[e]){
-                        ArrNamesOfGenres.push(
-                            {
-                                name:namesofgenres[w].name,
-                                enName:namesofgenres[w].enName
-                            }
-                            )
+                    for(let e = 0 ; e<namesofgenres.length;e++){
+                        if(namesofgenres[e].id===genres[w].genreid){
+                            ArrGenres.push({id:namesofgenres[e].id,name:namesofgenres[e].name,enName:namesofgenres[e].enName})
+                        }
                     }
                 }
             }
+
             let ArrCountries = []
             for(let w = 0 ;w<countries.length;w++){
                 if(countries[w].movieid===films[q].id){
-                    ArrCountries.push({name:countries[w].country})
+                    for(let e = 0 ; e<countriesNames.length;e++){
+                        if(countriesNames[e].id===countries[w].countryid){
+                            ArrCountries.push({id:countriesNames[e].id, name:countriesNames[e].name,enName:countriesNames[e].enName }) 
+                        }
+                    }
                 }
+                
             }
             
         
   
             ArrFilms.push(
-                {
-                    film:films[q],
-                    genres:ArrNamesOfGenres,
+                    {
+                    id:films[q].id,
+                    name:films[q].name,
+                    enName:films[q].enName,
+                    posterPreviewURL:films[q].posterPreviewURL,
+                    premiereRussia:films[q].premiereRussia,
+                    hasIMAX:films[q].hasIMAX,
+                    year:films[q].year,
+                    ageRating:films[q].ageRating,
+                    ratingKp:films[q].ratingKp,
+                    votesKp:films[q].votesKp,
+                    movieLength:films[q].movieLength,
+                    genres:ArrGenres,
                     countries:ArrCountries
-                }
+                    }
                 )
             
         }
@@ -122,6 +272,63 @@ export class FilmsService {
         return ArrFilms
     }   
 
+    async getAllFilmsWithAllInfoByMoviesId(moviesid:number[]){
+        const films = await this.filmRepository.findAll({where:{id:{[Op.in]:moviesid}}})
+        const genres = await this.getAllGenresOfMovies()
+        const namesofgenres = await this.getAllNamesOfGenres()
+        const countries = await this.getAllCountriesOfMovies()
+        const countriesNames = await this.getAllCountriesNames()
+        let ArrFilms = []
+        
+        for(let q = 0 ; q < films.length;q++){
+            let ArrGenres = []
+            for(let w = 0 ; w<genres.length;w++){
+                if(genres[w].movieid===films[q].id){
+                    for(let e = 0 ; e<namesofgenres.length;e++){
+                        if(namesofgenres[e].id===genres[w].genreid){
+                            ArrGenres.push({id:namesofgenres[e].id,name:namesofgenres[e].name,enName:namesofgenres[e].enName})
+                        }
+                    }
+                }
+            }
+
+            let ArrCountries = []
+            for(let w = 0 ;w<countries.length;w++){
+                if(countries[w].movieid===films[q].id){
+                    for(let e = 0 ; e<countriesNames.length;e++){
+                        if(countriesNames[e].id===countries[w].countryid){
+                            ArrCountries.push({id:countriesNames[e].id, name:countriesNames[e].name,enName:countriesNames[e].enName }) 
+                        }
+                    }
+                }
+                
+            }
+            
+        
+  
+            ArrFilms.push(
+                    {
+                    id:films[q].id,
+                    name:films[q].name,
+                    enName:films[q].enName,
+                    posterPreviewURL:films[q].posterPreviewURL,
+                    premiereRussia:films[q].premiereRussia,
+                    hasIMAX:films[q].hasIMAX,
+                    year:films[q].year,
+                    ageRating:films[q].ageRating,
+                    ratingKp:films[q].ratingKp,
+                    votesKp:films[q].votesKp,
+                    movieLength:films[q].movieLength,
+                    genres:ArrGenres,
+                    countries:ArrCountries
+                    }
+                )
+            
+        }
+
+
+        return ArrFilms
+    }  
 
 
 
@@ -150,7 +357,8 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
         for(let i = 0; i <json.docs.length;i++){
             if((FilmArr.includes(json.docs[i].id))===false){
                 await arrMovies.push(
-                {   id:json.docs[i].id,
+                {   
+                    id:json.docs[i].id,
                     type:json.docs[i].type,
                     name:json.docs[i].name,
                     enName:json.docs[i].alternativeName,
@@ -219,75 +427,136 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
         const videos = await firstValueFrom(ob$).catch((err) => console.error(err));
         return videos;
     }
-
-
+    
+    async getPersonsWithMovies(personsId:number[]){
+        const ob$ = await this.rabbitPersonsFilmsService.send({
+            cmd: 'get-persons-with-movies-by-persons-id',
+          },
+          {personsId:personsId});
+          const persons = await firstValueFrom(ob$).catch((err) => console.error(err));
+          return persons;
+    }
     async getFilmById(idF:number){
         const film = await this.filmRepository.findOne({where:{id:idF}})
         const genres = await this.getGenresByMovieId(idF)
         const namesofgenres = await this.getAllNamesOfGenres()
         const countries = await this.getCountriesByMovieId(idF)
+        const countriesNames = await this.getAllCountriesNames()
         const persons = await this.getPersonsByMovieId(idF)
         const videos = await this.getVideosByMovieId(idF)   
         
 
-
-        let ArrNamesOfGenres = []
-        for(let w = 0 ; w < namesofgenres.length;w++){
-            for(let e = 0 ; e < genres.length;e++){
-                if(namesofgenres[w].id===genres[e].genreid){
-                    ArrNamesOfGenres.push(
-                        {
-                            name:namesofgenres[w].name,
-                            enName:namesofgenres[w].enName
-                        }
-                        )
+        let ArrGenresWatchingWithMovie = []
+        let ArrGenres = []
+        for(let w = 0 ; w<genres.length;w++){
+            for(let e = 0 ; e<namesofgenres.length;e++){
+                if(namesofgenres[e].id===genres[w].genreid){
+                    ArrGenresWatchingWithMovie.push(namesofgenres[e].id)
+                    ArrGenres.push({id:namesofgenres[e].id, name:namesofgenres[e].name,enName:namesofgenres[e].enName   })
+                }
+            }
+                
+        }
+        let ArrCountriesWatchithWithMovie = []
+        let ArrCountries = []
+        for(let w = 0 ;w<countries.length;w++){
+            for(let e = 0 ; e<countriesNames.length;e++){
+                if(countriesNames[e].id===countries[w].countryid){
+                    ArrCountriesWatchithWithMovie.push(countriesNames[e].id)
+                    ArrCountries.push({id:countriesNames[e].id, name:countriesNames[e].name,enName:countriesNames[e].enName }) 
+                }
+            }
+                
+                
+        }
+        let arrWatchingWithMovies = []
+        for(let q = 0 ; q <ArrCountriesWatchithWithMovie.length;q++){
+            for(let w = 0 ; w<ArrGenresWatchingWithMovie.length;w++){
+                if((ArrCountriesWatchithWithMovie===ArrGenresWatchingWithMovie)&&arrWatchingWithMovies.includes(ArrCountriesWatchithWithMovie)===false){
+                    arrWatchingWithMovies.push(ArrCountriesWatchithWithMovie)
                 }
             }
         }
 
-
-        let ArrCountries = []
-        for(let w = 0 ; w< countries.length; w++){
-            ArrCountries.push({name:countries[w].country})
-        
-        }
-
-       
-        
-        let ArrPersonsOfMovies = []
+        let ArrPersonsIdOfMovies = []
             for(let w = 0 ;w<persons.length;w++){
-                ArrPersonsOfMovies.push(
-                        {
-                            id:persons[w].personid,
-                            name:persons[w].name,
-                            enName:persons[w].enName,
-                            photo:persons[w].photo,
-                            profession:persons[w].profession,
-                            enProfession:persons[w].enProfession,
-                        }
-                        )
+                ArrPersonsIdOfMovies.push(persons[w].personid)        
                 
         }
-        let ArrVideos = []
-            for(let w = 0 ;w<videos.length;w++){
-                ArrVideos.push(
-                        {
-                            url:videos[w].url,
-                            name:videos[w].name,
-                            site:videos[w].site,
-                            type:videos[w].type,
-                        }
-                        )
-                
+        const allFilmWithh = await this.getAllFilmsWithAllInfo()
+        const personOfMovies =  await this.getPersonsWithMovies(ArrPersonsIdOfMovies)
+        let ArrPersonsOfMovies = []
+        for(let w = 0 ;w<personOfMovies.length;w++){
+            let ArrMoviesOfPerson = []
+            for(let e =0 ; e <personOfMovies[w].movies.length;e++){
+                for(let r = 0;r< allFilmWithh.length;r++){
+                    if(personOfMovies[w].movies[e]===allFilmWithh[r].id){
+                        ArrMoviesOfPerson.push(
+                            allFilmWithh[r]
+
+                    
+                            )
+                    }
+                }
             }
+            ArrPersonsOfMovies.push(
+                {
+                    id:personOfMovies[w].id,
+                    name:personOfMovies[w].name,
+                    enName:personOfMovies[w].enName,
+                    photo:personOfMovies[w].photo,
+                    profession:personOfMovies[w].profession,
+                    enProfession:personOfMovies[w].enProfession,
+                    movies:ArrMoviesOfPerson,
+                }
+            )
+                
+        }
+ 
+        
+        let ArrWatchingWithMovies =[]
+        const moviesByCountries = await this.getMoviesByCountriesId(ArrCountriesWatchithWithMovie)
+        let ArrCountriesWatching =[]
+        for(let q = 0 ;  q<moviesByCountries.length;q++){
+            if((moviesByCountries[q].movieid!=idF)&&(ArrCountriesWatching.includes(moviesByCountries[q].movieid)==false))
+            ArrCountriesWatching.push(moviesByCountries[q].movieid)
+        }
+
+
+        const moviesByGenres = await this.getFilmsByGenreId(ArrGenresWatchingWithMovie)
+        let ArrGenresWatching =[]
+        for(let q = 0 ;  q<moviesByGenres.length;q++){
+            if((moviesByGenres[q].movieid!=idF)&&(ArrCountriesWatching.includes(moviesByGenres[q].movieid)==false))
+            ArrGenresWatching.push(moviesByGenres[q].movieid)
+        }
+        for(let q =0 ;q<ArrCountriesWatching.length;q++){
+            if(ArrGenresWatching.indexOf(ArrCountriesWatching[q])===-1){
+                ArrWatchingWithMovies.push(ArrCountriesWatching[q])
+            }
+        }
+
+        const WhatchinFithfilms = await this.getAllFilmsWithAllInfoByMoviesId(ArrWatchingWithMovies) 
+        let ArrComments = []
         return {
-            film:film,
-            genres:ArrNamesOfGenres,
+            id:film.id,
+            type:film.type,
+            name:film.name,
+            enName:film.enName,
+            posterUrl:film.posterUrl,
+            posterPreviewURL:film.posterPreviewURL,
+            year:film.year,
+            description:film.description,
+            shortDescription:film.shortDescription,
+            ageRating:film.ageRating,
+            ratingKp:film.ratingKp,
+            votesKp:film.votesKp,
+            movieLength:film.movieLength,
+            genres:ArrGenres,
             countries:ArrCountries,
             persons:ArrPersonsOfMovies,
-            trailer :ArrVideos
-            
-            
+            trailer :videos[0].url,
+            watchingWithMovie: WhatchinFithfilms,
+            comments:ArrComments
             
         }
     }
@@ -426,11 +695,22 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
           const arrGenres = await firstValueFrom(ob$).catch((err) => console.error(err));
           return arrGenres;
     }
-    async getMoviesCountriesByNames(ArrCountries:string[]){
-        const ob$ = await this.rabbitCountriesFilmsService.send({
-            cmd: 'get-movies-by-countries-names',
+    async getCountriesByName(ArrCountries:string[]){
+        const ob$ = await this.rabbitCountriesNamesService.send({
+            cmd: 'get-countries-by-names',
           },
-          {ArrCountries:ArrCountries});
+          {
+            ArrCountries:ArrCountries,
+        }
+        );
+          const arrCountries = await firstValueFrom(ob$).catch((err) => console.error(err));
+          return arrCountries;
+    }
+    async getMoviesByCountriesId(countriesid:number[]){
+        const ob$ = await this.rabbitCountriesFilmsService.send({
+            cmd: 'get-movies-by-countries-id',
+          },
+          {countriesid:countriesid});
           const countries = await firstValueFrom(ob$).catch((err) => console.error(err));
           return countries;
     }
@@ -454,7 +734,7 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
           const genres = await firstValueFrom(ob$).catch((err) => console.error(err));
           return genres;
     }
-    async getCountriesByMoviesId(moviesid:number[]){
+    async getCountriesByMoviesId(moviesid:  number[]){
         const ob$ = await this.rabbitCountriesFilmsService.send({
             cmd: 'get-countriesofmovie-by-movies-id',
           },
@@ -473,6 +753,7 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
           const persons = await firstValueFrom(ob$).catch((err) => console.error(err));
           return persons;
     }
+
     async getVideosOfMoviesByMoviesId(moviesid:number[]){
         const ob$ = await this.rabbitVideosService.send({
             cmd: 'get-videos-by-movesid',
@@ -482,14 +763,7 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
           return persons;
     }
 
-    async getAllCountriesNames(){
-        const ob$ = await this.rabbitCountriesFilmsService.send({
-            cmd: 'get-all-names-of-countries',
-          },
-          {});
-          const countries = await firstValueFrom(ob$).catch((err) => console.error(err));
-          return countries;
-    }
+   
     async getFilmsUseFiltre(queryParams:any){
         const {sortField, sortOrder, limit, type, page ,genres, countries, ratingKp, votesKp, director,actor} = queryParams; 
        
@@ -513,35 +787,38 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
         
         if((queryParams.queryParams.countries!=undefined)&&(queryParams.queryParams.genres===undefined)){        /////////////////////////////////// Страны
  
-            const ArrFilmByCountries = [];
-
+            
+            let ArrCountriesId =[]
             if((typeof(queryParams.queryParams.countries)==='object')){
-                const FilmByCountries = await this.getMoviesCountriesByNames(queryParams.queryParams.countries)
-                for(let q = 0 ; q <FilmByCountries.length;q++){
-                    ArrFilmByCountries.push(FilmByCountries[q].movieid)
+                const Countries = await this.getCountriesByName(queryParams.queryParams.countries)
+                for(let q = 0 ; q <Countries.length;q++){
+                    ArrCountriesId.push(Countries[q].id)
                 }
-                for(let q = 0 ; q < ArrFilmByCountries.length;q++){
-                    if(ArrFilmId.includes(ArrFilmByCountries[q])===false){
-                        ArrFilmId.push(ArrFilmByCountries[q])
-                    }
+                const FilmByCountriesId = await this.getMoviesByCountriesId(ArrCountriesId)
+                for(let q = 0 ; q <FilmByCountriesId.length;q++){
+                    ArrFilmId.push(FilmByCountriesId[q].movieid)
                 }
+                
+        
             }
 
             else if ((typeof(queryParams.queryParams.countries)==='string')){
                 queryParams.queryParams.countries = [queryParams.queryParams.countries]
-                const FilmByCountri = await this.getMoviesCountriesByNames(queryParams.queryParams.countries)
-                for(let q = 0 ; q <FilmByCountri.length;q++){
-                    ArrFilmByCountries.push(FilmByCountri[q].movieid)
+                const Countries = await this.getCountriesByName(queryParams.queryParams.countries)
+                for(let q = 0 ; q <Countries.length;q++){
+                    ArrCountriesId.push(Countries[q].id)
                 }
-                for(let q = 0 ; q < ArrFilmByCountries.length;q++){
-                    if(ArrFilmId.includes(ArrFilmByCountries[q])===false){
-                        ArrFilmId.push(ArrFilmByCountries[q])
-                    }
+                const FilmByCountriesId = await this.getMoviesByCountriesId(ArrCountriesId)
+                for(let q = 0 ; q <FilmByCountriesId.length;q++){
+                    ArrFilmId.push(FilmByCountriesId[q].movieid)
                 }
+
+                
+                
             }
+            
 
         }
-
 
         if((queryParams.queryParams.genres!=undefined)&&(queryParams.queryParams.countries===undefined)){ ///////////////////////////////// Жанры
  
@@ -603,30 +880,28 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
                     }
                 }
             }
-            let ArrCountries = []
+            let ArrCountriesId = []
             let ArrFilmByCountries = [];
             if((typeof(queryParams.queryParams.countries)==='object')){
-                const FilmByCountries = await this.getMoviesCountriesByNames(queryParams.queryParams.countries)
-                for(let q = 0 ; q <FilmByCountries.length;q++){
-                    ArrFilmByCountries.push(FilmByCountries[q].movieid)
+                const Countries = await this.getCountriesByName(queryParams.queryParams.countries)
+                for(let q = 0 ; q <Countries.length;q++){
+                    ArrCountriesId.push(Countries[q].id)
                 }
-                for(let q = 0 ; q < ArrFilmByCountries.length;q++){
-                    if(ArrFilmId.includes(ArrFilmByCountries[q])===false){
-                        ArrCountries.push(ArrFilmByCountries[q])
-                    }
+                const FilmByCountriesId = await this.getMoviesByCountriesId(ArrCountriesId)
+                for(let q = 0 ; q <FilmByCountriesId.length;q++){
+                    ArrFilmId.push(FilmByCountriesId[q].movieid)
                 }
+                
             }
 
             else if ((typeof(queryParams.queryParams.countries)==='string')){
-                queryParams.queryParams.countries = [queryParams.queryParams.countries]
-                const FilmByCountri = await this.getMoviesCountriesByNames(queryParams.queryParams.countries)
-                for(let q = 0 ; q <FilmByCountri.length;q++){
-                    ArrFilmByCountries.push(FilmByCountri[q].movieid)
+                const Countries = await this.getCountriesByName(queryParams.queryParams.countries)
+                for(let q = 0 ; q <Countries.length;q++){
+                    ArrCountriesId.push(Countries[q].id)
                 }
-                for(let q = 0 ; q < ArrFilmByCountries.length;q++){
-                    if(ArrFilmId.includes(ArrFilmByCountries[q])===false){
-                        ArrCountries.push(ArrFilmByCountries[q])
-                    }
+                const FilmByCountriesId = await this.getMoviesByCountriesId(ArrCountriesId)
+                for(let q = 0 ; q <FilmByCountriesId.length;q++){
+                    ArrFilmId.push(FilmByCountriesId[q].movieid)
                 }
             }
             for(let q = 0 ; q <ArrFilmByCountries.length;q++){
@@ -640,7 +915,7 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
         
         }
 
-   
+
     let films = []
     let ArrFilmswithDirectorIdOrActor = []
 
@@ -652,6 +927,10 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
     ...(queryParams.queryParams.votesKp&&{votesKp:{[Op.gte]:queryParams.queryParams.votesKp}}),}
     const FiltreRatingKPvotesKP = {...(queryParams.queryParams.ratingKp && {ratingKp: {[Op.gte]: queryParams.queryParams.ratingKp}}),
     ...(queryParams.queryParams.votesKp&&{votesKp:{[Op.gte]:queryParams.queryParams.votesKp}})}
+
+
+
+
     if(((queryParams.queryParams.countries!=undefined)||(queryParams.queryParams.genres!=undefined))&& ///// жанры или cтраны 
     (queryParams.queryParams.director===undefined)&&(queryParams.queryParams.actor===undefined)){
             const Flilms = await this.filmRepository.findAll({where:filtre
@@ -800,11 +1079,20 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
         for(let q = 0 ; q <Films.length;q++){
             films.push(Films[q])
         }
+    }   
+    if(films.length===0){
+        const Films = await this.filmRepository.findAll()
+        queryParams.queryParams.limit=Films.length
+        for(let q = 0 ;q <Films.length;q++){
+            films.push(Films[q])
+            ArrFilmId.push(Films[q].id)
+        }
     }
         const genresInfo = await this.getGenresByMoviesId(ArrFilmId)
         const namesofgenres = await this.getAllNamesOfGenres()
         const countriesInfo = await this.getCountriesByMoviesId(ArrFilmId)
-       
+        const countriesNames = await this.getAllCountriesNames()
+    
         let AllFilms = await this.filmRepository.findAll()
         if(queryParams.queryParams.limit>AllFilms.length){
             queryParams.queryParams.limit = AllFilms.length
@@ -824,35 +1112,42 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
                 FilmsLenth =films.length
             }
             for(let q = 0 ; q<FilmsLenth;q++){
-                let ArrGenresId = []
-                for(let w = 0 ; w < genresInfo.length;w++){
-                    if(genresInfo[w].movieid===films[q].id){
-                        ArrGenresId.push(genresInfo[w].genreid)
-                    }
-                }
-                let ArrNamesOfGenres = []
-                for(let w = 0 ; w < namesofgenres.length;w++){
-                    for(let e = 0 ; e < ArrGenresId.length;e++){
-                        if(namesofgenres[w].id===ArrGenresId[e]){
-                            ArrNamesOfGenres.push(
-                                {
-                                    name:namesofgenres[w].name,
-                                    enName:namesofgenres[w].enName
-                                }
-                                )
+            let ArrGenres = []
+            for(let w = 0 ; w<genresInfo.length;w++){
+                if(genresInfo[w].movieid===films[q].id){
+                    for(let e = 0 ; e<namesofgenres.length;e++){
+                        if(namesofgenres[e].id===genresInfo[w].genreid){
+                            ArrGenres.push({id:namesofgenres[e].id,name:namesofgenres[e].name,enName:namesofgenres[e].enName})
                         }
                     }
                 }
-                let ArrCountries = []
-                for(let w = 0 ;w<countriesInfo.length;w++){
-                    if(countriesInfo[w].movieid===films[q].id){
-                        ArrCountries.push({name:countriesInfo[w].country})
+            }
+
+            let ArrCountries = []
+            for(let w = 0 ;w<countriesInfo.length;w++){
+                if(countriesInfo[w].movieid===films[q].id){
+                    for(let e = 0 ; e<countriesNames.length;e++){
+                        if(countriesNames[e].id===countriesInfo[w].countryid){
+                            ArrCountries.push({id:countriesNames[e].id, name:countriesNames[e].name,enName:countriesNames[e].enName }) 
+                        }
                     }
                 }
+                
+            }
                 ArrFilmPage.push(
                     {
-                        film:films[q],
-                        genres:ArrNamesOfGenres,
+                        id:films[q].id,
+                        name:films[q].name,
+                        enName:films[q].enName,
+                        posterPreviewURL:films[q].posterPreviewURL,
+                        premiereRussia:films[q].premiereRussia,
+                        hasImax:films[q].hasImax,
+                        year:films[q].year,
+                        ageRating:films[q].ageRating,
+                        ratingKp:films[q].ratingKp,
+                        votesKp:films[q].votesKp,
+                        movieLength:films[q].movieLength,
+                        genres:ArrGenres,
                         countries:ArrCountries,
     
                     }
@@ -879,6 +1174,8 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
             }
             
         }
+
+    
         
 
     }
@@ -892,16 +1189,6 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
         
     
         
-
-
-    
-                
-           
-/////// Если вам понравился этот фильм /////////////////////////////////////////////////
-        async eSLIWamPonravilsaEtotFilm(id:number){
-        const film = await this.getFilmById(id)
-            
-        }
 
 
            

@@ -72,6 +72,15 @@
       "compilerOptions": {
         "tsConfigPath": "apps/videos/tsconfig.app.json"
       }
+    },
+    "countriesnames": {
+      "type": "application",
+      "root": "apps/countriesnames",
+      "entryFile": "main",
+      "sourceRoot": "apps/countriesnames/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/countriesnames/tsconfig.app.json"
+      }
     }
   }
 }

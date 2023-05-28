@@ -39,7 +39,7 @@ export class GenresnamesService {
         let NamesgenresArr = []
         let NamesGenres = await this.namesofgenresmoviesRepository.findAll()
         for(let i = 0; i<NamesGenres.length;i++){
-          NamesgenresArr.push(NamesGenres[i].genre);
+          NamesgenresArr.push(NamesGenres[i].name);
         }
 
         if(filmIdArr.length!=0){

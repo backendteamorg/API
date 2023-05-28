@@ -1,16 +1,15 @@
 import { Module } from '@nestjs/common';
-import { CountriesController } from './countries.controller';
-import { CountriesService } from './countries.service';
+import { CountriesnamesController } from './countriesnames.controller';
+import { CountriesnamesService } from './countriesnames.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { SequelizeModule } from '@nestjs/sequelize';
-import { CountriesOfFilms } from './counties.model';
+import { CountriesNames } from './countries-names.model';
 import { ClientProxyFactory, Transport } from '@nestjs/microservices';
-
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: `./apps/countries/.${process.env.NODE_ENV}.env`,
+      envFilePath: `./apps/countriesnames/.${process.env.NODE_ENV}.env`,
       isGlobal:true
     }),
     SequelizeModule.forRoot({
@@ -20,13 +19,13 @@ import { ClientProxyFactory, Transport } from '@nestjs/microservices';
       username: process.env.POSTGRES_USER,
       password: process.env.POSTGRES_PASSWORD,
       database: process.env.POSTGRES_DB,
-      models: [CountriesOfFilms],
+      models: [CountriesNames],
       autoLoadModels: true
     }),
-    SequelizeModule.forFeature([CountriesOfFilms]),
+    SequelizeModule.forFeature([CountriesNames]),
   ],
-  controllers: [CountriesController],
-  providers: [CountriesService,
+  controllers: [CountriesnamesController],
+  providers: [CountriesnamesService,
     {
       provide: 'FILM_SERVICE',
         useFactory:(configService:ConfigService)=> {
@@ -48,29 +47,7 @@ import { ClientProxyFactory, Transport } from '@nestjs/microservices';
           })
         },
         inject:[ConfigService]
-    },
-    {
-      provide: 'COUNTRIESNAMES_SERVICE',
-        useFactory:(configService:ConfigService)=> {
-          const USER = configService.get('RABBITMQ_DEFAULT_USER');
-          const PASSWORD =  configService.get('RABBITMQ_DEFAULT_PASS');
-          const HOST = configService.get('RABBITMQ_HOST');
-          const QUEUE = configService.get('RABBITMQ_COUNTRIESNAMES_QUEUE');
-    
-          return ClientProxyFactory.create({
-            transport: Transport.RMQ,
-            options: {
-              urls:[`amqp://${USER}:${PASSWORD}@${HOST}`],
-              noAck:false,
-              queue: QUEUE,
-              queueOptions: {
-                durable: true
-              }
-            }
-          })
-        },
-        inject:[ConfigService]
     }
   ],
 })
-export class CountriesModule {}
+export class CountriesnamesModule {}

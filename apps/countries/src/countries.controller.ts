@@ -29,7 +29,7 @@ export class CountriesController {
     const message = context.getMessage();
     channel.ack(message);
 
-    return this.countriesService.getAllNamesOfCountries()
+    return 
   }
 
   @MessagePattern({ cmd: 'get-countries-by-movieid' })
@@ -40,7 +40,7 @@ export class CountriesController {
     const message = context.getMessage();
     channel.ack(message);
 
-    return this.countriesService.getCountriesByMovieId(movie.id);
+    return await this.countriesService.getAllCountriesByMoviesId(movie.id)
   }
 
   
@@ -52,8 +52,10 @@ export class CountriesController {
     const message = context.getMessage();
     channel.ack(message);
 
-    return this.countriesService.getMoviesByCountriesNames(movie.ArrCountries);
+    return 
   }
+
+
   @MessagePattern({ cmd: 'get-countriesofmovie-by-movies-id' })
   async getCountriesOfMoviesByMoviesId(
     @Ctx() context: RmqContext,
@@ -62,16 +64,18 @@ export class CountriesController {
     const message = context.getMessage();
     channel.ack(message);
 
-    return this.countriesService.getCountriesByMoviesid(movie.moviesid);
+    return await this.countriesService.getCountriesByMoviesId(movie.moviesid)
   }
-  @MessagePattern({ cmd: 'get-movies-by-country-name' })
+
+
+  @MessagePattern({ cmd: 'get-movies-by-countries-id' })
   async getMoviesByCountryName(
     @Ctx() context: RmqContext,
-    @Payload() movie: { country: string },) {
+    @Payload() movie: { countriesid: number[] },) {
     const channel = context.getChannelRef();
     const message = context.getMessage();
     channel.ack(message);
 
-    return this.countriesService.getMoviesByCountryName(movie.country);
+    return await this.countriesService.getMoviesBycountriesId(movie.countriesid)
   }
 }

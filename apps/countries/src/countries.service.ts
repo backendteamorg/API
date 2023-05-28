@@ -2,11 +2,13 @@ import { Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { CountriesOfFilms } from './counties.model';
 import { ClientProxy } from '@nestjs/microservices';
-import { asyncScheduler, firstValueFrom } from 'rxjs';
+import {  firstValueFrom } from 'rxjs';
 import { Op } from 'sequelize';
+
 @Injectable()
 export class CountriesService {
     constructor(@InjectModel(CountriesOfFilms) private countriesRepository: typeof CountriesOfFilms,
+    @Inject('COUNTRIESNAMES_SERVICE') private rabbitnamesofCountriesService: ClientProxy,
     @Inject('FILM_SERVICE') private rabbitFilmsService: ClientProxy){}
 
     async getAllFilms() {
@@ -17,17 +19,31 @@ export class CountriesService {
         const films = await firstValueFrom(ob$).catch((err) => console.error(err));
         return films;
       }
+      async getAllCountriesNames() {
+        const ob$ = await this.rabbitnamesofCountriesService.send({
+          cmd: 'get-all-countries-names',
+        },
+        {});
+        const countriesNames = await firstValueFrom(ob$).catch((err) => console.error(err));
+        return countriesNames;
+      }
       async formDatabase() {
         let Arrfilm =  await this.getAllFilms()
+        let CountriesNames = await this.getAllCountriesNames()
         let filmIdArr = [];
+        let CountriesNamesArr = []
         for(let i = 0; i<Arrfilm.length;i++){
           filmIdArr.push(Arrfilm[i].id);
+        }
+        for(let i = 0; i<CountriesNames.length;i++){
+          CountriesNamesArr.push(CountriesNames[i]);
         }
         let RepCountrues = await this.countriesRepository.findAll()
         let RepArrCountries = []
         for(let i = 0 ; i < RepCountrues.length; i++){
-          RepArrCountries.push(RepCountrues[i].movieid+' '+RepCountrues[i].country)
+          RepArrCountries.push(RepCountrues[i].movieid+' '+RepCountrues[i].countryid)
         }
+        
         if(filmIdArr.length!=0){
           const countriesREQ =  await fetch(`https://api.kinopoisk.dev/v1/movie?id=${filmIdArr.join('&id=')}&selectFields=countries%20id&limit=1000`, {
             method: 'GET',
@@ -41,14 +57,16 @@ export class CountriesService {
           let arrCountries = []
           for(let i =0;i<json.docs.length;i++){
             for(let j =0;j<json.docs[i].countries.length;j++){
-              if(RepArrCountries.includes(json.docs[i].id+' '+json.docs[i].countries[j].name)===false){
-                await arrCountries.push(
-                  {
-                    movieid:json.docs[i].id,
-                    country:json.docs[i].countries[j].name
-                  }
-                  )
-              }
+             for(let q=0;q<CountriesNamesArr.length;q++){
+                if((CountriesNamesArr[q].name===json.docs[i].countries[j].name)&&(RepArrCountries.includes(json.docs[i].id+' '+CountriesNamesArr[q].id)===false)){
+                  await arrCountries.push(
+                    {
+                      movieid:json.docs[i].id,
+                      countryid:CountriesNamesArr[q].id
+                    }
+                    )
+                }
+             }
             }
           }
           return await this.countriesRepository.bulkCreate(arrCountries)
@@ -62,35 +80,23 @@ export class CountriesService {
     async getAllCountries(){
       return await this.countriesRepository.findAll()
     }
-
-    async getMoviesByCountriesNames(ArrCountries:string[]){
-      return await this.countriesRepository.findAll({
-        where:{ 
-        country:{[Op.in]:ArrCountries}
-        }
-
-      })
-    }
-    async getMoviesByCountryName(country:string){
-      return await this.countriesRepository.findAll({where:{country:country}})
-    }
-    async getCountriesByMovieId(idC:number){
-      return await this.countriesRepository.findAll({where:{movieid:idC}})
+    async getAllCountriesByMoviesId(moviesid:number){
+      return await this.countriesRepository.findAll({where:{movieid:moviesid}})
     }
 
-  async getCountriesByMoviesid(moviesid:number[]){
-    return await this.countriesRepository.findAll({where:{movieid:{[Op.in]:moviesid}}})
-  }
+
+    async getMoviesBycountriesId(countriesid:number[]){
+      return await this.countriesRepository.findAll({attributes: [
+        'movieid'
+     ],where:{countryid:{[Op.in]:countriesid}}})
+    }
   
-  async getAllNamesOfCountries(){
-  const countries = await this.countriesRepository.findAll()
-  let ArrCountriesNames = []
-  for(let q =0 ;q<countries.length;q++){
-    if(ArrCountriesNames.includes(countries[q].country)===false){
-      ArrCountriesNames.push(countries[q].country)
-    }
-  }
-  return ArrCountriesNames
 
-  }
+    
+    async getCountriesByMoviesId(moviesId:number[]){
+      return await this.countriesRepository.findAll({where:{movieid:{[Op.in]:moviesId}}})
+      
+    }
+ 
+
 }
