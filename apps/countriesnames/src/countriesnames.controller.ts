@@ -1,6 +1,7 @@
 import { Controller, Get } from '@nestjs/common';
 import { CountriesnamesService } from './countriesnames.service';
 import { Ctx, MessagePattern, Payload, RmqContext } from '@nestjs/microservices';
+import { CountriesDto } from './dto/counrtiesnames.dto';
 
 @Controller()
 export class CountriesnamesController {
@@ -32,5 +33,14 @@ export class CountriesnamesController {
 
     return await this.countriesnamesService.getCountriesByNames(genre.ArrCountries);
   }
-  
+  @MessagePattern({ cmd: 'update-namesofcountry' })
+  async UpdateDprofile(
+    @Ctx() context: RmqContext,
+    @Payload() countries: CountriesDto) {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return await this.countriesnamesService.updateCountries(countries);
+  }
 }

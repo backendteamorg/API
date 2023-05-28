@@ -4,6 +4,7 @@ import { CountriesNames } from './countries-names.model';
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
 import { Op } from 'sequelize';
+import { CountriesDto } from './dto/counrtiesnames.dto';
 
 @Injectable()
 export class CountriesnamesService {
@@ -59,6 +60,14 @@ export class CountriesnamesService {
   }
   async getAllCountriesNames(){
     return await this.countriesNamesRepository.findAll()
+  }
+  async updateCountries(dto:CountriesDto){
+    const countries = await this.countriesNamesRepository.findOne({where:{id:dto.id}})
+    countries.name = dto.name
+    countries.enName = dto.enName
+    countries.save()
+    return countries
+
   }
   async getCountriesByNames(ArrCountries:string[]){
     return await this.countriesNamesRepository.findAll({where:{

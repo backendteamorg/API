@@ -298,11 +298,12 @@ async getFilm(
     );
   }
   
-  @ApiOperation({summary: 'Изменить название жанра (Пример: {"id":1, "genre:"драма","enName":"drame"})'})
+  @ApiOperation({summary: 'Изменить название жанра (Пример: {"id":1, "name:"драма","enName":"drame"})'})
   @ApiTags('(Редактирвоание данных) Данные с сайта kinopoisk')
   @Patch('namesofgenre')
   async updateGenreOfMovie(
     @Body('id') id: number,
+    @Body('name') name: string,
     @Body('enName') enName: string) {
     return await this.rabbitnamesofGenresService.send(
       {
@@ -310,6 +311,25 @@ async getFilm(
       },
       {
         id,
+        name,
+        enName
+      },
+    );
+  }
+  @ApiOperation({summary: 'Изменить название страны (Пример: {"id":1, "name:"Франция","enName":"France"})'})
+  @ApiTags('(Редактирвоание данных) Данные с сайта kinopoisk')
+  @Patch('namesofcountry')
+  async updateCountriesOfMovie(
+    @Body('id') id: number,
+    @Body('name') name: string,
+    @Body('enName') enName: string) {
+    return await this.rabbitnamesofCountriesService.send(
+      {
+        cmd: 'update-namesofcountry',
+      },
+      {
+        id,
+        name,
         enName
       },
     );

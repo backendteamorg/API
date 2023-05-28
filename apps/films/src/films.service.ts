@@ -852,8 +852,8 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
         }
         if((queryParams.queryParams.genres!=undefined)&&(queryParams.queryParams.countries!=undefined)){  ////////////////////////////////// Страны, жанры
 
-            let ArrGenres = []
             let ArrGenreId = []
+            let ArrMoviesGenreId = []
             if((typeof(queryParams.queryParams.genres)==='object')){
                 const FilmByGenres = await this.getMoviesGenresByNames(queryParams.queryParams.genres)
                 
@@ -862,8 +862,8 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
                 }
                 const arrFilmByGenreId = await this.getFilmsByGenreId(ArrGenreId)
                 for(let q = 0 ;q <arrFilmByGenreId.length;q++){
-                    if(ArrFilmId.includes(arrFilmByGenreId[q].movieid)===false){
-                        ArrGenres.push(arrFilmByGenreId[q].movieid )
+                    if(ArrMoviesGenreId.includes(arrFilmByGenreId[q].movieid)===false){
+                        ArrMoviesGenreId.push(arrFilmByGenreId[q].movieid )
                     }
                 }
             }
@@ -875,13 +875,16 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
                 }
                 const arrFilmByGenreId = await this.getFilmsByGenreId(ArrGenreId)
                 for(let q = 0 ;q <arrFilmByGenreId.length;q++){
-                    if(ArrFilmId.includes(arrFilmByGenreId[q].movieid)===false){
-                        ArrGenres.push(arrFilmByGenreId[q].movieid)
+                    if(ArrMoviesGenreId.includes(arrFilmByGenreId[q].movieid)===false){
+                        ArrMoviesGenreId.push(arrFilmByGenreId[q].movieid)
                     }
                 }
             }
-            let ArrCountriesId = []
-            let ArrFilmByCountries = [];
+
+
+
+            let ArrMoviesCountriesId = []
+            let ArrCountriesId =[]
             if((typeof(queryParams.queryParams.countries)==='object')){
                 const Countries = await this.getCountriesByName(queryParams.queryParams.countries)
                 for(let q = 0 ; q <Countries.length;q++){
@@ -889,29 +892,42 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
                 }
                 const FilmByCountriesId = await this.getMoviesByCountriesId(ArrCountriesId)
                 for(let q = 0 ; q <FilmByCountriesId.length;q++){
-                    ArrFilmId.push(FilmByCountriesId[q].movieid)
+                    if(ArrMoviesCountriesId.includes(FilmByCountriesId[q].movieid)===false){
+                        ArrMoviesCountriesId.push(FilmByCountriesId[q].movieid)
+                    }
+                    
                 }
                 
+        
             }
 
             else if ((typeof(queryParams.queryParams.countries)==='string')){
+                queryParams.queryParams.countries = [queryParams.queryParams.countries]
                 const Countries = await this.getCountriesByName(queryParams.queryParams.countries)
                 for(let q = 0 ; q <Countries.length;q++){
                     ArrCountriesId.push(Countries[q].id)
                 }
                 const FilmByCountriesId = await this.getMoviesByCountriesId(ArrCountriesId)
                 for(let q = 0 ; q <FilmByCountriesId.length;q++){
-                    ArrFilmId.push(FilmByCountriesId[q].movieid)
+                    if(ArrMoviesCountriesId.includes(FilmByCountriesId[q].movieid)===false){
+                        ArrMoviesCountriesId.push(FilmByCountriesId[q].movieid)
+                    }
                 }
+
+                
+                
             }
-            for(let q = 0 ; q <ArrFilmByCountries.length;q++){
-                for(let w = 0 ; w<ArrGenres.length;w++){
-                    if(ArrFilmByCountries[q]===ArrGenres[w]){
-                        ArrFilmId.push(ArrFilmByCountries[q])
+            for(let q = 0 ;q <ArrMoviesCountriesId.length;q++){
+                for(let w = 0 ;w <ArrMoviesGenreId.length;w++){
+                    if(ArrMoviesCountriesId[q]===ArrMoviesGenreId[w]){
+                        ArrFilmId.push(ArrMoviesCountriesId[q])
                         q++
                     }
                 }
             }
+           
+            
+            
         
         }
 
