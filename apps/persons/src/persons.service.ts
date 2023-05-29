@@ -38,15 +38,17 @@ export class PersonsService {
     for(let w = 0; w <persons.length;w++){
       if((ArrPersons[q].personid===persons[w].personid)&&(ArrPersonFilms.includes(persons[w].movieid)===false)){
         ArrPersonFilms.push(persons[w].movieid)
+       
       }
     }
+
+    
+   
     ArrPersonWithMovies.push({
       id:ArrPersons[q].personid,
       name:ArrPersons[q].name,
       enName:ArrPersons[q].enName,
       photo:ArrPersons[q].photo,
-      profession:ArrPersons[q].profession,
-      enProfession:ArrPersons[q].enProfession,
       movies:ArrPersonFilms
     })
 
@@ -55,44 +57,10 @@ export class PersonsService {
     
     
   }
-  async getAllPersonsWithAllInfoByMoviesId(personsId:number[]){
-    const persons =  await this.personsRepository.findAll({where:{personid:{[Op.in]:personsId}}})
+  async getAllPersonsWithAllInfoByMoviesId(moviesid:number[]){
+    const persons =  await this.personsRepository.findAll({where:{movieid:{[Op.in]:moviesid}}})
     let ArrPersons = []
-   let ArrPeronsId = []
-     for(let q = 0; q < persons.length;q++){
-       if(ArrPeronsId.includes(persons[q].personid)===false){
-         ArrPersons.push(persons[q])
-         ArrPeronsId.push(persons[q].personid)
-       }
-     }
-     let ArrPersonWithMovies = []
-    for(let q=0;q<ArrPersons.length;q++ ){
-     let ArrPersonFilms = []
-     for(let w = 0; w <persons.length;w++){
-       if((ArrPersons[q].personid===persons[w].personid)&&(ArrPersonFilms.includes(persons[w].movieid)===false)){
-         ArrPersonFilms.push(persons[w].movieid)
-       }
-     }
-     ArrPersonWithMovies.push({
-       id:ArrPersons[q].personid,
-       name:ArrPersons[q].name,
-       enName:ArrPersons[q].enName,
-       photo:ArrPersons[q].photo,
-       profession:ArrPersons[q].profession,
-       enProfession:ArrPersons[q].enProfession,
-       movies:ArrPersonFilms
-     })
- 
-    }
-     return ArrPersonWithMovies
-     
-     
-   }
-
-  async getAllInfoOfPersonsByPersonId(idP:number){
-    const persons = await this.personsRepository.findAll({where:{personid:idP}})
-    let ArrPersons = []
-    let ArrPeronsId = []
+  let ArrPeronsId = []
     for(let q = 0; q < persons.length;q++){
       if(ArrPeronsId.includes(persons[q].personid)===false){
         ArrPersons.push(persons[q])
@@ -102,18 +70,78 @@ export class PersonsService {
     let ArrPersonWithMovies = []
    for(let q=0;q<ArrPersons.length;q++ ){
     let ArrPersonFilms = []
+   
     for(let w = 0; w <persons.length;w++){
       if((ArrPersons[q].personid===persons[w].personid)&&(ArrPersonFilms.includes(persons[w].movieid)===false)){
         ArrPersonFilms.push(persons[w].movieid)
+       
       }
     }
+    let ArrPersonProfession = []
+    let ArrEnProfession = []
+    for(let w = 0; w <persons.length;w++){
+      if((ArrPersons[q].personid===persons[w].personid)&&(ArrPersonProfession.includes(persons[w].profession)===false)){
+        ArrPersonProfession.push(persons[w].profession)
+        ArrEnProfession.push(persons[w].enProfession)
+       
+      }
+    }
+
+   
     ArrPersonWithMovies.push({
       id:ArrPersons[q].personid,
       name:ArrPersons[q].name,
       enName:ArrPersons[q].enName,
       photo:ArrPersons[q].photo,
-      profession:ArrPersons[q].profession,
-      enProfession:ArrPersons[q].enProfession,
+      profession:ArrPersonProfession,
+      enProfession:ArrEnProfession,
+      movies:ArrPersonFilms
+    })
+
+   }
+    return ArrPersonWithMovies
+     
+     
+   }
+
+  async getAllInfoOfPersonsByPersonId(idP:number){
+    const persons = await this.personsRepository.findAll({where:{personid:idP}})
+    let ArrPersons = []
+  let ArrPeronsId = []
+    for(let q = 0; q < persons.length;q++){
+      if(ArrPeronsId.includes(persons[q].personid)===false){
+        ArrPersons.push(persons[q])
+        ArrPeronsId.push(persons[q].personid)
+      }
+    }
+    let ArrPersonWithMovies = []
+   for(let q=0;q<ArrPersons.length;q++ ){
+    let ArrPersonFilms = []
+   
+    for(let w = 0; w <persons.length;w++){
+      if((ArrPersons[q].personid===persons[w].personid)&&(ArrPersonFilms.includes(persons[w].movieid)===false)){
+        ArrPersonFilms.push(persons[w].movieid)
+       
+      }
+    }
+    let ArrPersonProfession = []
+    let ArrEnProfession = []
+    for(let w = 0; w <persons.length;w++){
+      if((ArrPersons[q].personid===persons[w].personid)&&(ArrPersonProfession.includes(persons[w].profession)===false)){
+        ArrPersonProfession.push(persons[w].profession)
+        ArrEnProfession.push(persons[w].enProfession)
+       
+      }
+    }
+
+   
+    ArrPersonWithMovies.push({
+      id:ArrPersons[q].personid,
+      name:ArrPersons[q].name,
+      enName:ArrPersons[q].enName,
+      photo:ArrPersons[q].photo,
+      profession:ArrPersonProfession,
+      enProfession:ArrEnProfession,
       movies:ArrPersonFilms
     })
 
@@ -134,7 +162,7 @@ export class PersonsService {
 async getAllDirectors(){
   const persons = await this.personsRepository.findAll({where: {[Op.or]:[{profession:'режиссеры'},{enProfession:'director'}]}})
   let ArrPersons = []
-    let ArrPeronsId = []
+  let ArrPeronsId = []
     for(let q = 0; q < persons.length;q++){
       if(ArrPeronsId.includes(persons[q].personid)===false){
         ArrPersons.push(persons[q])
@@ -144,18 +172,31 @@ async getAllDirectors(){
     let ArrPersonWithMovies = []
    for(let q=0;q<ArrPersons.length;q++ ){
     let ArrPersonFilms = []
+   
     for(let w = 0; w <persons.length;w++){
       if((ArrPersons[q].personid===persons[w].personid)&&(ArrPersonFilms.includes(persons[w].movieid)===false)){
         ArrPersonFilms.push(persons[w].movieid)
+       
       }
     }
+    let ArrPersonProfession = []
+    let ArrEnProfession = []
+    for(let w = 0; w <persons.length;w++){
+      if((ArrPersons[q].personid===persons[w].personid)&&(ArrPersonProfession.includes(persons[w].profession)===false)){
+        ArrPersonProfession.push(persons[w].profession)
+        ArrEnProfession.push(persons[w].enProfession)
+       
+      }
+    }
+
+   
     ArrPersonWithMovies.push({
       id:ArrPersons[q].personid,
       name:ArrPersons[q].name,
       enName:ArrPersons[q].enName,
       photo:ArrPersons[q].photo,
-      profession:ArrPersons[q].profession,
-      enProfession:ArrPersons[q].enProfession,
+      profession:ArrPersonProfession,
+      enProfession:ArrEnProfession,
       movies:ArrPersonFilms
     })
 
@@ -165,7 +206,7 @@ async getAllDirectors(){
 async getAllActors(){
   const persons = await this.personsRepository.findAll({where: {[Op.or]:[{profession:'актеры'},{enProfession:'actor'}]}})
   let ArrPersons = []
-    let ArrPeronsId = []
+  let ArrPeronsId = []
     for(let q = 0; q < persons.length;q++){
       if(ArrPeronsId.includes(persons[q].personid)===false){
         ArrPersons.push(persons[q])
@@ -175,18 +216,31 @@ async getAllActors(){
     let ArrPersonWithMovies = []
    for(let q=0;q<ArrPersons.length;q++ ){
     let ArrPersonFilms = []
+   
     for(let w = 0; w <persons.length;w++){
       if((ArrPersons[q].personid===persons[w].personid)&&(ArrPersonFilms.includes(persons[w].movieid)===false)){
         ArrPersonFilms.push(persons[w].movieid)
+       
       }
     }
+    let ArrPersonProfession = []
+    let ArrEnProfession = []
+    for(let w = 0; w <persons.length;w++){
+      if((ArrPersons[q].personid===persons[w].personid)&&(ArrPersonProfession.includes(persons[w].profession)===false)){
+        ArrPersonProfession.push(persons[w].profession)
+        ArrEnProfession.push(persons[w].enProfession)
+       
+      }
+    }
+
+   
     ArrPersonWithMovies.push({
       id:ArrPersons[q].personid,
       name:ArrPersons[q].name,
       enName:ArrPersons[q].enName,
       photo:ArrPersons[q].photo,
-      profession:ArrPersons[q].profession,
-      enProfession:ArrPersons[q].enProfession,
+      profession:ArrPersonProfession,
+      enProfession:ArrEnProfession,
       movies:ArrPersonFilms
     })
 
@@ -195,7 +249,49 @@ async getAllActors(){
 }
 
   async getPersonsOfMovieByMovieId(id:number){
-    return await this.personsRepository.findAll({where:{movieid:id}})
+    const persons = await this.personsRepository.findAll({where:{movieid:id}})
+    let ArrPersons = []
+  let ArrPeronsId = []
+    for(let q = 0; q < persons.length;q++){
+      if(ArrPeronsId.includes(persons[q].personid)===false){
+        ArrPersons.push(persons[q])
+        ArrPeronsId.push(persons[q].personid)
+      }
+    }
+    let ArrPersonWithMovies = []
+   for(let q=0;q<ArrPersons.length;q++ ){
+    let ArrPersonFilms = []
+   
+    for(let w = 0; w <persons.length;w++){
+      if((ArrPersons[q].personid===persons[w].personid)&&(ArrPersonFilms.includes(persons[w].movieid)===false)){
+        ArrPersonFilms.push(persons[w].movieid)
+       
+      }
+    }
+    let ArrPersonProfession = []
+    let ArrEnProfession = []
+    for(let w = 0; w <persons.length;w++){
+      if((ArrPersons[q].personid===persons[w].personid)&&(ArrPersonProfession.includes(persons[w].profession)===false)){
+        ArrPersonProfession.push(persons[w].profession)
+        ArrEnProfession.push(persons[w].enProfession)
+       
+      }
+    }
+
+   
+    ArrPersonWithMovies.push({
+      id:ArrPersons[q].personid,
+      name:ArrPersons[q].name,
+      enName:ArrPersons[q].enName,
+      photo:ArrPersons[q].photo,
+      profession:ArrPersonProfession,
+      enProfession:ArrEnProfession,
+      movies:ArrPersonFilms
+    })
+
+   }
+    return ArrPersonWithMovies
+    
   }
 
   async formDatabase() {

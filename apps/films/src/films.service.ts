@@ -146,8 +146,6 @@ export class FilmsService {
                 name:personOfMovies[q].name,
                 enName:personOfMovies[q].enName,
                 photo:personOfMovies[q].photo,
-                profession:personOfMovies[q].profession,
-                enProfession:personOfMovies[q].enProfession,
                 movies:ArrMovies,
             })
         }
@@ -445,7 +443,7 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
         const persons = await this.getPersonsByMovieId(idF)
         const videos = await this.getVideosByMovieId(idF)   
         
-
+        
         let ArrGenresWatchingWithMovie = []
         let ArrGenres = []
         for(let w = 0 ; w<genres.length;w++){
@@ -478,19 +476,15 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
             }
         }
 
-        let ArrPersonsIdOfMovies = []
-            for(let w = 0 ;w<persons.length;w++){
-                ArrPersonsIdOfMovies.push(persons[w].personid)        
-                
-        }
+    
+        
         const allFilmWithh = await this.getAllFilmsWithAllInfo()
-        const personOfMovies =  await this.getPersonsWithMovies(ArrPersonsIdOfMovies)
         let ArrPersonsOfMovies = []
-        for(let w = 0 ;w<personOfMovies.length;w++){
+        for(let w = 0 ;w<persons.length;w++){
             let ArrMoviesOfPerson = []
-            for(let e =0 ; e <personOfMovies[w].movies.length;e++){
+            for(let e =0 ; e <persons[w].movies.length;e++){
                 for(let r = 0;r< allFilmWithh.length;r++){
-                    if(personOfMovies[w].movies[e]===allFilmWithh[r].id){
+                    if(persons[w].movies[e]===allFilmWithh[r].id){
                         ArrMoviesOfPerson.push(
                             allFilmWithh[r]
 
@@ -501,19 +495,19 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
             }
             ArrPersonsOfMovies.push(
                 {
-                    id:personOfMovies[w].id,
-                    name:personOfMovies[w].name,
-                    enName:personOfMovies[w].enName,
-                    photo:personOfMovies[w].photo,
-                    profession:personOfMovies[w].profession,
-                    enProfession:personOfMovies[w].enProfession,
+                    id:persons[w].id,
+                    name:persons[w].name,
+                    enName:persons[w].enName,
+                    photo:persons[w].photo,
+                    profession:persons[w].profession,
+                    enProfession:persons[w].enProfession,
                     movies:ArrMoviesOfPerson,
                 }
             )
                 
         }
- 
-        
+
+
         let ArrWatchingWithMovies =[]
         const moviesByCountries = await this.getMoviesByCountriesId(ArrCountriesWatchithWithMovie)
         let ArrCountriesWatching =[]
