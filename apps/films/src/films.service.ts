@@ -528,7 +528,12 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
                 ArrWatchingWithMovies.push(ArrCountriesWatching[q])
             }
         }
-
+        let ArrVideos = []
+        for(let q = 0 ; q< videos.length;q++){
+            if(videos[q].site==='youtube'){
+                ArrVideos.push(videos[q].url)
+            }
+        }
         const WhatchinFithfilms = await this.getAllFilmsWithAllInfoByMoviesId(ArrWatchingWithMovies) 
         let ArrComments = []
         return {
@@ -548,7 +553,7 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
             genres:ArrGenres,
             countries:ArrCountries,
             persons:ArrPersonsOfMovies,
-            trailer :videos[0].url,
+            trailer :ArrVideos[0],
             watchingWithMovie: WhatchinFithfilms,
             comments:ArrComments
             

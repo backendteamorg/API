@@ -59,7 +59,8 @@ export class VideosService {
             await arrVidesBulc.push(
               {
                 movieid: json.docs[i].id,
-                url: json.docs[i].videos.trailers[j].url
+                url: json.docs[i].videos.trailers[j].url,
+                site:json.docs[i].videos.trailers[j]?.site
               }
               )
           }

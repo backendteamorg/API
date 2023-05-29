@@ -4,8 +4,8 @@ import { Table, Model, Column, DataType, BelongsToMany} from "sequelize-typescri
 interface VideosCreationAttr {
     id: number;
     movieid: number;
-    name:string;
-    nameEn:string;
+    url:string;
+    site:string;
 }
 
 @Table({tableName: "videos", createdAt: false, updatedAt: false})
@@ -16,4 +16,6 @@ export class Videos extends Model<Videos, VideosCreationAttr> {
     movieid: number;
     @Column({type: DataType.TEXT})
     url:string;
+    @Column({type: DataType.TEXT})
+    site:string;
 }
