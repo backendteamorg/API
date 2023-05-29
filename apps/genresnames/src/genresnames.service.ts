@@ -31,6 +31,8 @@ export class GenresnamesService {
     }
     
     async formDatabase() {
+        let genresEnNames = ["drama","comedy","biography","crime","action","thriller","family","sci-fi","adventures","detective","fantasy"
+        ,"cartoon","melodrama","history","war","horror","western","musical","music","sports","short","children's","documentary"]
         let ArrFilms = await this.getAllFilms()
         let filmIdArr = [];
         for(let i = 0; i<ArrFilms.length;i++){
@@ -67,7 +69,7 @@ export class GenresnamesService {
           }
           let arrGenresObj = []
           for(let i = 0 ; i < arrGenres.length;i++){
-            arrGenresObj.push({name:arrGenres[i]})
+            arrGenresObj.push({name:arrGenres[i],enName:genresEnNames[i]})
           }
           return await this.namesofgenresmoviesRepository.bulkCreate(arrGenresObj)
         }

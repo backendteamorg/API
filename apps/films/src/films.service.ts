@@ -477,7 +477,8 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
         }
 
     
-        
+        let count = 0
+        let ArrFilmBtDirector = []
         const allFilmWithh = await this.getAllFilmsWithAllInfo()
         let ArrPersonsOfMovies = []
         for(let w = 0 ;w<persons.length;w++){
@@ -493,6 +494,15 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
                     }
                 }
             }
+            if((persons[w].profession.includes('режиссеры'))&&(count===0)){
+                const filmByDirector = await this.getAllMoviesByDirector(persons[w].name)
+                for(let b = 0 ; b <filmByDirector.length;b++){
+                    if(filmByDirector[b].movieid!=film.id){
+                        ArrFilmBtDirector.push(filmByDirector[b].movieid)
+                    }
+                }
+                count+=1
+            }
             ArrPersonsOfMovies.push(
                 {
                     id:persons[w].id,
@@ -507,34 +517,16 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
                 
         }
 
-
-        let ArrWatchingWithMovies =[]
-        const moviesByCountries = await this.getMoviesByCountriesId(ArrCountriesWatchithWithMovie)
-        let ArrCountriesWatching =[]
-        for(let q = 0 ;  q<moviesByCountries.length;q++){
-            if((moviesByCountries[q].movieid!=idF)&&(ArrCountriesWatching.includes(moviesByCountries[q].movieid)==false))
-            ArrCountriesWatching.push(moviesByCountries[q].movieid)
-        }
-
-
-        const moviesByGenres = await this.getFilmsByGenreId(ArrGenresWatchingWithMovie)
-        let ArrGenresWatching =[]
-        for(let q = 0 ;  q<moviesByGenres.length;q++){
-            if((moviesByGenres[q].movieid!=idF)&&(ArrCountriesWatching.includes(moviesByGenres[q].movieid)==false))
-            ArrGenresWatching.push(moviesByGenres[q].movieid)
-        }
-        for(let q =0 ;q<ArrCountriesWatching.length;q++){
-            if(ArrGenresWatching.indexOf(ArrCountriesWatching[q])===-1){
-                ArrWatchingWithMovies.push(ArrCountriesWatching[q])
-            }
-        }
+        
+        
+       
         let ArrVideos = []
         for(let q = 0 ; q< videos.length;q++){
             if(videos[q].site==='youtube'){
                 ArrVideos.push(videos[q].url)
             }
         }
-        const WhatchinFithfilms = await this.getAllFilmsWithAllInfoByMoviesId(ArrWatchingWithMovies) 
+        const WhatchinFithfilms = await this.getAllFilmsWithAllInfoByMoviesId(ArrFilmBtDirector) 
         let ArrComments = []
         return {
             id:film.id,

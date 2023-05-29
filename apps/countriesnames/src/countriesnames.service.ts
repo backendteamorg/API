@@ -19,7 +19,16 @@ export class CountriesnamesService {
     return films;
   }
   async formDatabase() {
-    let Arrfilm =  await this.getAllFilms()
+    const countriesEnnanes = [{"enName":"France"},{"enName":"Great Britain"},{"enName":"USA"},{"enName":"Russia"},{"enName":"USSR"},{"enName":"Canada"},{"enName":"Germany"},{"enName":"China"},{"enName":"Mexico"},{"enName":"Hungary"},
+    {"enName":"Australia"},{"enName":"Sweden"}
+  ,{"enName":"Japan"},{"enName":"Malta"},{"enName":"Morocco"},{"enName":"New Zealand"},{"enName":"Jordan"},{"enName":"India"},{"enName":"South Korea"},{"enName":"Hong Kong"}
+  ,{"enName":"Belgium"},{"enName":"UAE"},{"enName":"Taiwan"},{"enName":"Spain"},{"enName":"Denmark"},{"enName":"Netherlands"},{"enName":"Italy"},
+  {"enName":"Switzerland"},{"enName":"Thailand"},{"enName":"Czech"},{"enName":"Romania"},{"enName":"Poland"},{"enName":"Bulgaria"},{"enName":"Norway"},{"enName":"Singapore"},{"enName":"South Africa"},{"enName":"Belarus"},
+  {"enName":"Turkey"},{"enName":"Greece"},{"enName":"Serbia"},{"enName":"Luxembourg"},
+  {"enName":"Ukraine"},{"enName":"Finland"},{"enName":"Argentina"},{"enName":"Tunisia"},{"enName":"Bahamas"},{"enName":"Iceland"},{"enName":"Brazil"},{"enName":"Ireland"},{"enName":"Slovenia"},{"enName":"Indonesia"},
+  {"enName":"Lebanon"},{"enName":"Cyprus"},{"enName":"Qatar"},{"enName":"Germany (FRG)"},
+  {"enName":"Colombia"}]
+  let Arrfilm =  await this.getAllFilms()
     let filmIdArr = [];
     let ArrCountries = [] 
     let countries = await this.countriesNamesRepository.findAll()
@@ -48,15 +57,19 @@ export class CountriesnamesService {
       }
       let ArrCountriesNames = []
       for(let q = 0 ; q <arrCountriesNames.length;q++){
-        ArrCountriesNames.push({name:arrCountriesNames[q]})
+        ArrCountriesNames.push(
+          {
+            name:arrCountriesNames[q],
+            enName:countriesEnnanes[q].enName
+          }
+          )
       }
-      return await this.countriesNamesRepository.bulkCreate(ArrCountriesNames)
+      return ArrCountriesNames
       
     }
     else{
       console.log("Ошибка HTTP: " + countriesnamesREQ.status);
     }
-        
   }
   async getAllCountriesNames(){
     return await this.countriesNamesRepository.findAll()
