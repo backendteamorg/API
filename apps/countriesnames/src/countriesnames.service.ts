@@ -64,7 +64,7 @@ export class CountriesnamesService {
           }
           )
       }
-      return ArrCountriesNames
+      return await this.countriesNamesRepository.bulkCreate(ArrCountriesNames)
       
     }
     else{
@@ -88,4 +88,3 @@ export class CountriesnamesService {
       }})
   }
 }
-
