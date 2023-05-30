@@ -426,14 +426,7 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
         return videos;
     }
     
-    async getPersonsWithMovies(personsId:number[]){
-        const ob$ = await this.rabbitPersonsFilmsService.send({
-            cmd: 'get-persons-with-movies-by-persons-id',
-          },
-          {personsId:personsId});
-          const persons = await firstValueFrom(ob$).catch((err) => console.error(err));
-          return persons;
-    }
+  
     async getFilmById(idF:number){
         const film = await this.filmRepository.findOne({where:{id:idF}})
         const genres = await this.getGenresByMovieId(idF)
@@ -479,27 +472,14 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
     
         let count = 0
         let ArrFilmBtDirector = []
-        const allFilmWithh = await this.getAllFilmsWithAllInfo()
         let ArrPersonsOfMovies = []
         for(let w = 0 ;w<persons.length;w++){
-            let ArrMoviesOfPerson = []
-            for(let e =0 ; e <persons[w].movies.length;e++){
-                for(let r = 0;r< allFilmWithh.length;r++){
-                    if(persons[w].movies[e]===allFilmWithh[r].id){
-                        ArrMoviesOfPerson.push(
-                            allFilmWithh[r]
-
-                    
-                            )
-                    }
-                }
-            }
+          
             if((persons[w].profession.includes('режиссеры'))&&(count===0)){
                 const filmByDirector = await this.getAllMoviesByDirector(persons[w].name)
                 for(let b = 0 ; b <filmByDirector.length;b++){
-                    if(filmByDirector[b].movieid!=film.id){
-                        ArrFilmBtDirector.push(filmByDirector[b].movieid)
-                    }
+                    ArrFilmBtDirector.push(filmByDirector[b].movieid)
+                    
                 }
                 count+=1
             }
@@ -511,7 +491,7 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
                     photo:persons[w].photo,
                     profession:persons[w].profession,
                     enProfession:persons[w].enProfession,
-                    countMovies:ArrMoviesOfPerson.length,
+                    countMovies:persons[w].movies,
                 }
             )
                 

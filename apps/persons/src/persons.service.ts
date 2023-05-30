@@ -57,52 +57,7 @@ export class PersonsService {
     
     
   }
-  async getAllPersonsWithAllInfoByMoviesId(moviesid:number[]){
-    const persons =  await this.personsRepository.findAll({where:{movieid:{[Op.in]:moviesid}}})
-    let ArrPersons = []
-  let ArrPeronsId = []
-    for(let q = 0; q < persons.length;q++){
-      if(ArrPeronsId.includes(persons[q].personid)===false){
-        ArrPersons.push(persons[q])
-        ArrPeronsId.push(persons[q].personid)
-      }
-    }
-    let ArrPersonWithMovies = []
-   for(let q=0;q<ArrPersons.length;q++ ){
-    let ArrPersonFilms = []
-   
-    for(let w = 0; w <persons.length;w++){
-      if((ArrPersons[q].personid===persons[w].personid)&&(ArrPersonFilms.includes(persons[w].movieid)===false)){
-        ArrPersonFilms.push(persons[w].movieid)
-       
-      }
-    }
-    let ArrPersonProfession = []
-    let ArrEnProfession = []
-    for(let w = 0; w <persons.length;w++){
-      if((ArrPersons[q].personid===persons[w].personid)&&(ArrPersonProfession.includes(persons[w].profession)===false)){
-        ArrPersonProfession.push(persons[w].profession)
-        ArrEnProfession.push(persons[w].enProfession)
-       
-      }
-    }
-
-   
-    ArrPersonWithMovies.push({
-      id:ArrPersons[q].personid,
-      name:ArrPersons[q].name,
-      enName:ArrPersons[q].enName,
-      photo:ArrPersons[q].photo,
-      profession:ArrPersonProfession,
-      enProfession:ArrEnProfession,
-      movies:ArrPersonFilms
-    })
-
-   }
-    return ArrPersonWithMovies
-     
-     
-   }
+  
 
   async getAllInfoOfPersonsByPersonId(idP:number){
     const persons = await this.personsRepository.findAll({where:{personid:idP}})
@@ -249,6 +204,7 @@ async getAllActors(){
 }
 
   async getPersonsOfMovieByMovieId(id:number){
+    const allPersons = await this.personsRepository.findAll()
     const persons = await this.personsRepository.findAll({where:{movieid:id}})
     let ArrPersons = []
   let ArrPeronsId = []
@@ -258,14 +214,12 @@ async getAllActors(){
         ArrPeronsId.push(persons[q].personid)
       }
     }
-    let ArrPersonWithMovies = []
+  let ArrPersonWithMovies = []
    for(let q=0;q<ArrPersons.length;q++ ){
     let ArrPersonFilms = []
-   
-    for(let w = 0; w <persons.length;w++){
-      if((ArrPersons[q].personid===persons[w].personid)&&(ArrPersonFilms.includes(persons[w].movieid)===false)){
-        ArrPersonFilms.push(persons[w].movieid)
-       
+    for(let w =0;w<allPersons.length;w++){
+      if((ArrPersons[q].personid===allPersons[w].personid)&&(ArrPersonFilms.includes(allPersons[w].movieid)===false)){
+        ArrPersonFilms.push(allPersons[w].movieid)
       }
     }
     let ArrPersonProfession = []
@@ -277,8 +231,6 @@ async getAllActors(){
        
       }
     }
-
-   
     ArrPersonWithMovies.push({
       id:ArrPersons[q].personid,
       name:ArrPersons[q].name,
@@ -286,9 +238,9 @@ async getAllActors(){
       photo:ArrPersons[q].photo,
       profession:ArrPersonProfession,
       enProfession:ArrEnProfession,
-      movies:ArrPersonFilms
+      movies:ArrPersonFilms.length
     })
-
+   
    }
     return ArrPersonWithMovies
     
