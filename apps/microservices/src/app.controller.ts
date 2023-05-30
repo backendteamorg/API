@@ -374,7 +374,7 @@ async getFilm(
   @ApiTags('Данные с сайта kinopoisk')
   @Get('getAllDirectors')
   async getAllDirectors() {
-    return await this.rabbitFilmsService.send({
+    return await this.rabbitPersonsFilmsService.send({
       cmd: 'get-all-directors',
     },
     {});
@@ -384,7 +384,7 @@ async getFilm(
 @ApiTags('Данные с сайта kinopoisk')
 @Get('getAllActors')
 async getAllActors() {
-  return await this.rabbitFilmsService.send({
+  return await this.rabbitPersonsFilmsService.send({
     cmd: 'get-all-actors',
   },
   {});

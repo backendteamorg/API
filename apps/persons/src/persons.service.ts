@@ -152,7 +152,7 @@ async getAllDirectors(){
       photo:ArrPersons[q].photo,
       profession:ArrPersonProfession,
       enProfession:ArrEnProfession,
-      movies:ArrPersonFilms
+      countMovies:ArrPersonFilms.length
     })
 
    }
@@ -196,7 +196,7 @@ async getAllActors(){
       photo:ArrPersons[q].photo,
       profession:ArrPersonProfession,
       enProfession:ArrEnProfession,
-      movies:ArrPersonFilms
+      countMovies:ArrPersonFilms.length
     })
 
    }
