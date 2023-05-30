@@ -87,7 +87,7 @@ export class FilmsService {
                 photo:directors[q].photo,
                 profession:directors[q].profession,
                 enProfession:directors[q].enProfession,
-                movies:ArrMovies,
+                countMovies:ArrMovies.length,
             })
         }
         return ArrPersons
@@ -122,7 +122,7 @@ export class FilmsService {
                 photo:actors[q].photo,
                 profession:actors[q].profession,
                 enProfession:actors[q].enProfession,
-                movies:ArrMovies,
+                countMovies:ArrMovies.length,
             })
         }
         return ArrPersons
@@ -511,7 +511,7 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
                     photo:persons[w].photo,
                     profession:persons[w].profession,
                     enProfession:persons[w].enProfession,
-                    movies:ArrMoviesOfPerson,
+                    countMovies:ArrMoviesOfPerson.length,
                 }
             )
                 
@@ -1077,6 +1077,7 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
             order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]})
         for(let q = 0 ; q <Films.length;q++){
             films.push(Films[q])
+            ArrFilmId.push(Films[q].id)
         }
     }
     else if ((queryParams.queryParams.director===undefined)&&(queryParams.queryParams.actor===undefined)&& //// рейтинг КП, голоса КП
@@ -1085,6 +1086,8 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
             order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]})
         for(let q = 0 ; q <Films.length;q++){
             films.push(Films[q])
+            ArrFilmId.push(Films[q].id)
+            
         }
     }   
     if(films.length===0){
@@ -1186,24 +1189,4 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
         
 
     }
-     
-
-            
-       
-        
-
-    
-        
-    
-        
-
-
-           
-        
-        
-    
-
-
-
-    
 }
