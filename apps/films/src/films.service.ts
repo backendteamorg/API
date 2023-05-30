@@ -478,10 +478,12 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
             if((persons[w].profession.includes('режиссеры'))&&(count===0)){
                 const filmByDirector = await this.getAllMoviesByDirector(persons[w].name)
                 for(let b = 0 ; b <filmByDirector.length;b++){
-                    ArrFilmBtDirector.push(filmByDirector[b].movieid)
+                    if(filmByDirector[b].movieid!=idF){
+                        ArrFilmBtDirector.push(filmByDirector[b].movieid)
+                        count+=1
+                    }
                     
                 }
-                count+=1
             }
             ArrPersonsOfMovies.push(
                 {
@@ -496,7 +498,6 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
             )
                 
         }
-
         
         
        

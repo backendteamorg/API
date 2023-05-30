@@ -248,17 +248,25 @@ async getAllActors(){
 
   async formDatabase() {
     let arrfilm = await this.getAllFilms()
-    let filmIdArr = [];
-    for(let i = 0; i<arrfilm.length;i++){
-      filmIdArr.push(arrfilm[i].id);
+    let filmIdArr1 = [];
+    let filmIdArr2 = [];
+    let filmIdArr3 = [];
+    for(let i = 0; i<9;i++){
+      filmIdArr1.push(arrfilm[i].id);
+    }
+    for(let i = 10; i<17;i++){
+      filmIdArr2.push(arrfilm[i].id);
+    }
+    for(let i = 18; i<26;i++){
+      filmIdArr3.push(arrfilm[i].id);
     }
     let ArrPersonRep = await this.personsRepository.findAll()
     let ArrPersonsRep = []
     for(let i = 0; i<ArrPersonRep.length;i++){
       ArrPersonsRep.push(ArrPersonRep[i].movieid+'@'+ArrPersonRep[i].personid);
     }
-    if(filmIdArr.length!=0){
-      const personsREQ =  await fetch(`https://api.kinopoisk.dev/v1/movie?id=${filmIdArr.join('&id=')}&selectFields=\
+    if(filmIdArr1.length!=0){
+      const personsREQ1 =  await fetch(`https://api.kinopoisk.dev/v1/movie?id=${filmIdArr1.join('&id=')}&selectFields=\
 persons.id%20persons.photo%20persons.name%20persons.enName%20persons.profession%20persons.enProfession%20id`, {
         method: 'GET',
         headers:{
@@ -266,21 +274,39 @@ persons.id%20persons.photo%20persons.name%20persons.enName%20persons.profession%
                   'Content-Type': 'application/json',
                 },
     })
-    if(personsREQ.ok){
-      let json = await personsREQ.json();
+    const personsREQ2 =  await fetch(`https://api.kinopoisk.dev/v1/movie?id=${filmIdArr2.join('&id=')}&selectFields=\
+persons.id%20persons.photo%20persons.name%20persons.enName%20persons.profession%20persons.enProfession%20id`, {
+        method: 'GET',
+        headers:{
+                  'X-API-KEY': 'QTD9VCR-EW8M0Y4-QR6W0Y1-Y8J1BFT',
+                  'Content-Type': 'application/json',
+                },
+    })
+    const personsREQ3 =  await fetch(`https://api.kinopoisk.dev/v1/movie?id=${filmIdArr3.join('&id=')}&selectFields=\
+persons.id%20persons.photo%20persons.name%20persons.enName%20persons.profession%20persons.enProfession%20id`, {
+        method: 'GET',
+        headers:{
+                  'X-API-KEY': 'QTD9VCR-EW8M0Y4-QR6W0Y1-Y8J1BFT',
+                  'Content-Type': 'application/json',
+                },
+    })
+    if(personsREQ1.ok){
+      let json1 = await personsREQ1.json();
+      let json2 = await personsREQ2.json();
+      let json3 = await personsREQ3.json();
       let arrPersons = []
-      for(let i = 0 ;i < json.docs.length;i++){
-          for(let j = 0 ;j<json.docs[i].persons.length;j++){
-            if(ArrPersonsRep.includes(json.docs[i].id+'@'+json.docs[i].persons[j].id)===false){
+      for(let i = 0 ;i < json1.docs.length;i++){
+          for(let j = 0 ;j<json1.docs[i].persons.length;j++){
+            if(ArrPersonsRep.includes(json1.docs[i].id+'@'+json1.docs[i].persons[j].id)===false){
               arrPersons.push(
                 {
-                  movieid:json.docs[i].id,
-                  personid:json.docs[i].persons[j].id,
-                  name:json.docs[i].persons[j].name,
-                  enName:json.docs[i].persons[j].enName,
-                  photo:json.docs[i].persons[j].photo,
-                  profession:json.docs[i].persons[j].profession,
-                  enProfession:json.docs[i].persons[j].enProfession,
+                  movieid:json1.docs[i].id,
+                  personid:json1.docs[i].persons[j].id,
+                  name:json1.docs[i].persons[j].name,
+                  enName:json1.docs[i].persons[j].enName,
+                  photo:json1.docs[i].persons[j].photo,
+                  profession:json1.docs[i].persons[j].profession,
+                  enProfession:json1.docs[i].persons[j].enProfession,
     
                 }
                 )
@@ -289,12 +315,54 @@ persons.id%20persons.photo%20persons.name%20persons.enName%20persons.profession%
             
           }
       }
+      for(let i = 0 ;i < json2.docs.length;i++){
+        for(let j = 0 ;j<json2.docs[i].persons.length;j++){
+          if(ArrPersonsRep.includes(json2.docs[i].id+'@'+json2.docs[i].persons[j].id)===false){
+            arrPersons.push(
+              {
+                movieid:json2.docs[i].id,
+                personid:json2.docs[i].persons[j].id,
+                name:json2.docs[i].persons[j].name,
+                enName:json2.docs[i].persons[j].enName,
+                photo:json2.docs[i].persons[j].photo,
+                profession:json2.docs[i].persons[j].profession,
+                enProfession:json2.docs[i].persons[j].enProfession,
+  
+              }
+              )
+          }
+
+          
+        }
+    }
+    for(let i = 0 ;i < json3.docs.length;i++){
+      for(let j = 0 ;j<json3.docs[i].persons.length;j++){
+        if(ArrPersonsRep.includes(json3.docs[i].id+'@'+json3.docs[i].persons[j].id)===false){
+          arrPersons.push(
+            {
+              movieid:json3.docs[i].id,
+              personid:json3.docs[i].persons[j].id,
+              name:json3.docs[i].persons[j].name,
+              enName:json3.docs[i].persons[j].enName,
+              photo:json3.docs[i].persons[j].photo,
+              profession:json3.docs[i].persons[j].profession,
+              enProfession:json3.docs[i].persons[j].enProfession,
+
+            }
+            )
+        }
+
+        
+      }
+  }
+      
+      
       return await this.personsRepository.bulkCreate(arrPersons)
  
        
     }
     else{
-      console.log("Ошибка HTTP: " + personsREQ.status);
+      console.log("Ошибка HTTP: " + personsREQ1.status);
     }
         
       }
