@@ -16,32 +16,7 @@ import { CommentsMiddleware } from './middlewares/middleware';
   ConfigModule.forRoot({
     envFilePath: `./apps/microservices/.${process.env.NODE_ENV}.env`,
     isGlobal:true
-  }), ClientsModule.register([
-    {
-      name: 'AUTH_SERVICE',
-      transport: Transport.RMQ,
-      options: {
-        urls: ['amqp://rabbitmq:5672'],
-        queue: 'auth_queue',
-        queueOptions: {
-          durable: false
-        },
-      },
-    }]), ConfigModule.forRoot({
-        envFilePath: `./apps/microservices/.${process.env.NODE_ENV}.env`,
-        isGlobal:true
-      }), ClientsModule.register([
-        {
-          name: 'COMMENT_SERVICE',
-          transport: Transport.RMQ,
-          options: {
-            urls: ['amqp://rabbitmq:5672'],
-            queue: 'comment_queue',
-            queueOptions: {
-              durable: false
-            },
-          },
-        }])
+  })
   ],
   controllers: [AppController],
   providers: [GoogleStrategy, VKStrategy, AuthService, CommentsService,
@@ -185,6 +160,72 @@ import { CommentsMiddleware } from './middlewares/middleware';
           const PASSWORD =  configService.get('RABBITMQ_DEFAULT_PASS');
           const HOST = configService.get('RABBITMQ_HOST');
           const QUEUE = configService.get('RABBITMQ_VIDEOS_QUEUE');
+    
+          return ClientProxyFactory.create({
+            transport: Transport.RMQ,
+            options: {
+              urls:[`amqp://${USER}:${PASSWORD}@${HOST}`],
+              noAck:false,
+              queue: QUEUE,
+              queueOptions: {
+                durable: true
+              }
+            }
+          })
+        },
+        inject:[ConfigService]
+    },
+    {
+      provide: 'VIDEOS_SERVICE',
+        useFactory:(configService:ConfigService)=> {
+          const USER = configService.get('RABBITMQ_DEFAULT_USER');
+          const PASSWORD =  configService.get('RABBITMQ_DEFAULT_PASS');
+          const HOST = configService.get('RABBITMQ_HOST');
+          const QUEUE = configService.get('RABBITMQ_VIDEOS_QUEUE');
+    
+          return ClientProxyFactory.create({
+            transport: Transport.RMQ,
+            options: {
+              urls:[`amqp://${USER}:${PASSWORD}@${HOST}`],
+              noAck:false,
+              queue: QUEUE,
+              queueOptions: {
+                durable: true
+              }
+            }
+          })
+        },
+        inject:[ConfigService]
+    },
+    {
+      provide: 'AUTH_SERVICE',
+        useFactory:(configService:ConfigService)=> {
+          const USER = configService.get('RABBITMQ_DEFAULT_USER');
+          const PASSWORD =  configService.get('RABBITMQ_DEFAULT_PASS');
+          const HOST = configService.get('RABBITMQ_HOST');
+          const QUEUE = configService.get('RABBITMQ_AUTH_QUEUE');
+    
+          return ClientProxyFactory.create({
+            transport: Transport.RMQ,
+            options: {
+              urls:[`amqp://${USER}:${PASSWORD}@${HOST}`],
+              noAck:false,
+              queue: QUEUE,
+              queueOptions: {
+                durable: true
+              }
+            }
+          })
+        },
+        inject:[ConfigService]
+    },
+    {
+      provide: 'COMMENT_SERVICE',
+        useFactory:(configService:ConfigService)=> {
+          const USER = configService.get('RABBITMQ_DEFAULT_USER');
+          const PASSWORD =  configService.get('RABBITMQ_DEFAULT_PASS');
+          const HOST = configService.get('RABBITMQ_HOST');
+          const QUEUE = configService.get('RABBITMQ_COMMENT_QUEUE');
     
           return ClientProxyFactory.create({
             transport: Transport.RMQ,

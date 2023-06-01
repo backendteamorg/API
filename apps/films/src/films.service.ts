@@ -17,7 +17,8 @@ export class FilmsService {
     @Inject('COUNTRIESNAMES_SERVICE') private rabbitCountriesNamesService: ClientProxy,
     @Inject('VIDEOS_SERVICE') private rabbitVideosService: ClientProxy,
     @Inject('NAMESOFGENRES_SERVICE') private rabbitnamesofGenresService: ClientProxy,
-    @Inject('PERSONS_SERVICE') private rabbitPersonsFilmsService: ClientProxy) {}
+    @Inject('PERSONS_SERVICE') private rabbitPersonsFilmsService: ClientProxy,
+    @Inject('COMMENT_SERVICE') private rabbitCommentService: ClientProxy) {}
 
     async parsingCountries(){
         const ob$ = await this.rabbitCountriesFilmsService.send({
@@ -485,6 +486,14 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
         return videos;
     }
     
+    async getCommentsByMovieId(idF:number){
+        const ob$ = await this.rabbitCommentService.send({
+            cmd: 'get-comments-by-filmid',
+          },
+          {idF:idF});
+          const videos = await firstValueFrom(ob$).catch((err) => console.error(err));
+          return videos;
+    }
   
     async getFilmById(idF:number){
         const film = await this.filmRepository.findOne({where:{id:idF}})
@@ -494,7 +503,7 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
         const countriesNames = await this.getAllCountriesNames()
         const persons = await this.getPersonsByMovieId(idF)
         const videos = await this.getVideosByMovieId(idF)   
-        
+        const comments = await this.getCommentsByMovieId(idF)
         
         let ArrGenresWatchingWithMovie = []
         let ArrGenres = []
@@ -566,8 +575,34 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
                 ArrVideos.push(videos[q].url)
             }
         }
+        
         const WhatchinFithfilms = await this.getAllFilmsWithAllInfoByMoviesId(ArrFilmBtDirector) 
         let ArrComments = []
+        if(comments!=undefined){
+            for(let q = 0 ; q<comments.length;q++){
+                if(comments[q].parentId===null){
+                    let ArrCildeComments = []
+                for(let w = 0 ;w < comments.length;w++){
+                        if(comments[q].id===comments[w].parentId){
+                            ArrCildeComments.push(comments[w])
+                        }
+                    }
+                    ArrComments.push(
+                        {
+                            id:comments[q].id,
+                            user:comments[q].email,
+                            date:comments[q].date,
+                            text:comments[q].text,
+                            childComment:ArrCildeComments,
+                        }
+                        )
+    
+                }
+                }
+        }
+        
+            
+        
         return {
             id:film.id,
             type:film.type,

@@ -507,22 +507,25 @@ async login(@Body() userDto: CreateUserDto, @Res({ passthrough: true }) res: Res
 @ApiOperation({summary: 'Публикация комментария к фильму'})
 @ApiTags('/comment/film')
 @Post('/comment/film')
-async publishCommentToFilm(@Body('text') commentText: string, @Req() req) {
+async publishCommentToFilm(
+  @Body('text') commentText: string, 
+  @Body('movieid') movieid: number, 
+  @Req() req) {
     const date = String(new Date());
     const email = req.user.email;
     
-    const comment = await this.commentService.publishCommentToFilm({date: date, userEmail: email, text: commentText});
+    const comment = await this.commentService.publishCommentToFilm({date: date, userEmail: email, text: commentText,  movieid:  movieid});
     return comment;
 }
 
 @ApiOperation({summary: 'Публикация комментария к другому комментарию'})
 @ApiTags('/comment/childComment')
 @Post('/comment/childComment')
-async publishChildComment(@Body() commentInfo: any, @Req() req) {
+async publishChildComment(@Body() commentInfo: any, @Body('movieid') movieid: number, @Req() req) {
     const date = String(new Date());
         const email = req.user.email;
         const comment = await this.commentService.publishChildComment({date: date, userEmail: email, text: commentInfo.text,
-                                                                         parentId: commentInfo.parentId});
+                                                                         parentId: commentInfo.parentId, movieid:movieid});
         return comment;
 }
 

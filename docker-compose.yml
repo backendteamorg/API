@@ -13,8 +13,6 @@ services:
     container_name: rabbitmq
     networks:
       - app
-    
-
   microservices:
     build:
       context: ./
@@ -190,7 +188,6 @@ services:
     networks:
       - app
 
-
   genres:
     build:
       context: ./
@@ -305,7 +302,7 @@ services:
     environment:
       PG_DATA: /var/lib/postgresql/data
     ports:
-      - 5470:5432
+      - 5445:5432
     volumes:
       - pgdatavideos:/var/lib/postgresql/data
     depends_on:
@@ -313,6 +310,13 @@ services:
     restart: always
     networks:
       - app
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+    container_name: adminer
 
   new-auth:
     build:
@@ -330,6 +334,7 @@ services:
     container_name: new-auth
     networks:
       - app
+
   
   auth_postgres:
     container_name: auth_postgres
@@ -339,20 +344,41 @@ services:
     environment:
       PG_DATA: /var/lib/postgresql/data
     ports:
-      - 5480:5432
+      - 5470:5432
     volumes:
       - pgdataauth:/var/lib/postgresql/data
     restart: always
     networks:
       - app
-  
-
-  adminer:
-    image: adminer
-    restart: always
+  comments:
+    build:
+      context: ./
+      dockerfile: ./apps/comments/Dockerfile
+    env_file:
+      - apps/comments/.development.env
+    depends_on:
+      - rabbitmq
+      - auth_postgres
     ports:
-      - 8080:8080
-    container_name: adminer
+      - 3003:3003
+    command: npm run start:dev comments
+    restart: always
+    container_name: comments
+    networks:
+      - app
+
+  comments_postgres:
+    container_name: comments_postgres
+    image: postgres
+    env_file:
+      - apps/comments/.development.env
+    environment:
+      PG_DATA: /var/lib/postgresql/data
+    ports:
+      - 5490:5432
+    volumes:
+      - pgdatacomments:/var/lib/postgresql/data
+    restart: always
     networks:
       - app
 volumes:
@@ -364,5 +390,6 @@ volumes:
   pgdatagenresnames:
   pgdatacountriesnames:
   pgdataauth:
+  pgdatacomments:
 networks:
   app:

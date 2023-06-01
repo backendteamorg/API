@@ -1,16 +1,17 @@
-import { Controller, Get, Req} from '@nestjs/common';
+import { Controller, Get, Req,Inject} from '@nestjs/common';
 import { CommentsService } from './comments.service';
 import { Request } from 'express';
-import { MessagePattern, Payload } from '@nestjs/microservices';
+import { ClientProxy, Ctx, MessagePattern, Payload, RmqContext } from '@nestjs/microservices';
 
 @Controller()
 export class CommentsController {
-  constructor(private readonly commentService: CommentsService) {}
+  constructor(private readonly commentService: CommentsService,
+  @Inject('FILM_SERVICE') private rabbitFilmsService: ClientProxy) {}
 
   @MessagePattern('publish.comment.film')
   async createComment(@Payload() data: any) {
-    const comment = await this.commentService.createComment(data);
-    return comment;
+    return await this.commentService.createComment(data);
+    
   }
 
   @MessagePattern('publish.comment.child')
@@ -22,5 +23,15 @@ export class CommentsController {
   @MessagePattern('get.comment.byId')
   async getComment(@Payload() id: number) {
     return await this.commentService.getComment(id);
+  }
+  @MessagePattern({ cmd: 'get-comments-by-filmid' })
+  async getFilmById(
+    @Ctx() context: RmqContext,
+    @Payload() film: { idF: number },) {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return await this.commentService.getCommentsByMovieId(film.idF);
   }
 }

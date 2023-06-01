@@ -3,7 +3,8 @@ import { Comment } from './comments.model';
 import { CommentsController } from './comments.controller';
 import { CommentsService } from './comments.service';
 import { SequelizeModule } from '@nestjs/sequelize';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ClientProxyFactory, Transport } from '@nestjs/microservices';
 
 
 @Module({
@@ -22,7 +23,30 @@ import { ConfigModule } from '@nestjs/config';
         autoLoadModels: true
       }), SequelizeModule.forFeature([Comment])],
     controllers: [CommentsController],
-    providers: [CommentsService]
+    providers: [CommentsService,
+      {
+        provide: 'FILM_SERVICE',
+          useFactory:(configService:ConfigService)=> {
+            const USER = configService.get('RABBITMQ_DEFAULT_USER');
+            const PASSWORD =  configService.get('RABBITMQ_DEFAULT_PASS');
+            const HOST = configService.get('RABBITMQ_HOST');
+            const QUEUE = configService.get('RABBITMQ_FILM_QUEUE');
+      
+            return ClientProxyFactory.create({
+              transport: Transport.RMQ,
+              options: {
+                urls:[`amqp://${USER}:${PASSWORD}@${HOST}`],
+                noAck:false,
+                queue: QUEUE,
+                queueOptions: {
+                  durable: true
+                }
+              }
+            })
+          },
+          inject:[ConfigService]
+      },
+    ]
 })
 export class CommentsModule {
 }
