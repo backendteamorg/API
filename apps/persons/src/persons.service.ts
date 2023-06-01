@@ -457,6 +457,6 @@ persons.id%20persons.photo%20persons.name%20persons.enName%20persons.profession%
         count+=1
       }
     }
-    return `Удалено записей: ${count}`
+    return `Удалено записей в сервисе persons: ${count}`
   }
 }

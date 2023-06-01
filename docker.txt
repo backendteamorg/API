@@ -289,6 +289,39 @@ services:
       - 8080:8080
     container_name: adminer
 
+  new-auth:
+    build:
+      context: ./
+      dockerfile: ./apps/new-auth/Dockerfile
+    env_file:
+      - apps/new-auth/.development.env
+    depends_on:
+      - rabbitmq
+      - auth_postgres
+    ports:
+      - 3002:3002
+    command: npm run start:dev new-auth 
+    restart: always
+    container_name: new-auth
+
+  
+  auth_postgres:
+    container_name: auth_postgres
+    image: postgres
+    env_file:
+      - apps/new-auth/.development.env
+    environment:
+      PG_DATA: /var/lib/postgresql/data
+    ports:
+      - 5470:5432
+    volumes:
+      - pgdataauth:/var/lib/postgresql/data
+    restart: always
+
+
+
+  
+
 volumes:
   pgdatafilm:
   pgdatacountries:
@@ -297,3 +330,4 @@ volumes:
   pgdatavideos:
   pgdatagenresnames:
   pgdatacountriesnames:
+  pgdataauth:

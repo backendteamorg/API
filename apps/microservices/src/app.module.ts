@@ -1,19 +1,50 @@
-import { Module, forwardRef } from '@nestjs/common';
+import { MiddlewareConsumer,Module, forwardRef,NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { ClientProxyFactory,Transport } from '@nestjs/microservices';
+import { ClientProxyFactory,ClientsModule,Transport } from '@nestjs/microservices';
 import { JwtModule } from '@nestjs/jwt';
-
+import { PassportModule } from '@nestjs/passport';
+import { GoogleStrategy } from './google.strategy';
+import { VKStrategy } from './vkontakte.strategy';
+import { AuthService } from './auth.service';
+import { CommentsService } from './comments.service';
+import * as cookieParser from 'cookie-parser';
+import { CommentsMiddleware } from './middlewares/middleware';
 
 @Module({
-  imports: [
-    ConfigModule.forRoot({
-      envFilePath: `./apps/microservices/.${process.env.NODE_ENV}.env`,
-      isGlobal:true
-    }),
+  imports: [PassportModule.register({defaultStrategy: 'google'}), PassportModule.register({defaultStrategy: 'vkontakte'}),
+  ConfigModule.forRoot({
+    envFilePath: `./apps/microservices/.${process.env.NODE_ENV}.env`,
+    isGlobal:true
+  }), ClientsModule.register([
+    {
+      name: 'AUTH_SERVICE',
+      transport: Transport.RMQ,
+      options: {
+        urls: ['amqp://rabbitmq:5672'],
+        queue: 'auth_queue',
+        queueOptions: {
+          durable: false
+        },
+      },
+    }]), ConfigModule.forRoot({
+        envFilePath: `./apps/microservices/.${process.env.NODE_ENV}.env`,
+        isGlobal:true
+      }), ClientsModule.register([
+        {
+          name: 'COMMENT_SERVICE',
+          transport: Transport.RMQ,
+          options: {
+            urls: ['amqp://rabbitmq:5672'],
+            queue: 'comment_queue',
+            queueOptions: {
+              durable: false
+            },
+          },
+        }])
   ],
   controllers: [AppController],
-  providers: [
+  providers: [GoogleStrategy, VKStrategy, AuthService, CommentsService,
    
     {
       provide: 'FILM_SERVICE',
@@ -172,4 +203,9 @@ import { JwtModule } from '@nestjs/jwt';
 
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+      consumer.apply(cookieParser()).forRoutes('*');
+      consumer.apply(CommentsMiddleware).forRoutes('comment');
+  }
+}

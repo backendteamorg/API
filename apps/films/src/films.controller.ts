@@ -173,4 +173,12 @@ export class FilmsController {
 
     return await this.filmsService.deleteFilm(film.id);
   }
+  @MessagePattern({ cmd: 'parsing-all-info'})
+  async parsingAllInfo(@Ctx() context: RmqContext){
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return await this.filmsService.pasringAll()
+  }
 }

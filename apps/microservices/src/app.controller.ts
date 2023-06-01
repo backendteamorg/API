@@ -1,17 +1,22 @@
-import { Controller, Get,Inject,Post,Body, UseGuards, Put,Param ,Delete, Patch, Req,Query} from '@nestjs/common';
+import { Controller, Get,Inject,Post,Body, UseGuards, Put,Param ,Delete, Patch, Req,Query, Res} from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-
+import { AuthGuard } from '@nestjs/passport';
 import { ApiCreatedResponse, ApiOperation, ApiProperty, ApiResponse, ApiTags } from '@nestjs/swagger';
-
+import { Request, Response } from 'express';
 import { IsEmail, IsString } from 'class-validator';
 
 import { FilteDto } from 'apps/films/src/dto/filtre.dto';
+import { AuthService } from './auth.service';
+import { CommentsService } from './comments.service';
+import { CreateUserDto } from './dto/createuser.dto';
 
 
 
 @Controller()
 export class AppController {
   constructor(
+          private authService: AuthService,
+          private commentService: CommentsService,
   @Inject('FILM_SERVICE') private rabbitFilmsService: ClientProxy,
   @Inject('PERSONS_SERVICE') private rabbitPersonsFilmsService: ClientProxy,
   @Inject('GENRES_SERVICE') private rabbitGenresFilmsService: ClientProxy,
@@ -34,82 +39,18 @@ export class AppController {
     {});
 
   }
-  @ApiOperation({summary: 'Сделать запрос к api на информацию о странах фильмов данные о которых были получены ранее'})
-  @ApiTags('Данные с api kinopoisk')
-  @Get('admin/countriesNames/parsing')
-  async countriesNamesParser() {
-    return await this.rabbitnamesofCountriesService.send({
-      cmd: 'parser-countries-names',
-    },
-    {});
-
-  } 
   
-  @ApiOperation({summary: 'Сделать запрос к api на информацию о странах фильмов данные о которых были получены ранее'})
-  @ApiTags('Данные с api kinopoisk')
-  @Get('admin/countries/parsing')
-  async countriesParser() {
-    return await this.rabbitCountriesFilmsService.send({
-      cmd: 'parser-countries',
-    },
-    {});
 
-  }
-  
-  @ApiTags('Данные с api kinopoisk')
-  @ApiOperation({summary: 'Сделать запрос к api на информацию о людях учавствовавших в сьемках фильмов данные о которых были получены ранее'})
-  @Get('admin/personsofmovies/parsing')
-  async parsingPersons() {
-    return await this.rabbitPersonsFilmsService.send({
-      cmd: 'parser-persons',
-    },
-    {});
-
-  }
- 
-
-  
-  
- 
-
-  @ApiOperation({summary: 'Получить информацию с api о жанрах фильмов данные о которых были получены ранее'})
-  @ApiTags('Данные с api kinopoisk')
-  @Get('admin/namesofgenres/parsing')
-  async nemesofgenresgParser() {
-    return await this.rabbitnamesofGenresService.send({
-      cmd: 'parser-namesofgenres',
-    },
-    {});
+@ApiOperation({summary: 'Получить информацию о фильмов данные о которых были получены ранее'})
+@ApiTags('Данные с api kinopoisk')
+@Get('admin/getall/parsing')
+async parsingAll() {
+  return await this.rabbitFilmsService.send({
+    cmd: 'parsing-all-info',
+  },
+  {});
 
 }
-  
-  @ApiOperation({summary: 'Получить информацию с api о жанрах фильмов данные о которых были получены ранее'})
-  @ApiTags('Данные с api kinopoisk')
-  @Get('admin/genres/parsing')
-  async genresgParser() {
-    return await this.rabbitGenresFilmsService.send({
-      cmd: 'parser-genres',
-    },
-    {});
-
-}
-
-
-
-
-
-@ApiOperation({summary: 'Получить c api информацию о трейлерах фильмов данные о которых были получены ранее'})
-  @ApiTags('Данные с api kinopoisk')
-  @Get('admin/videos/parsing')
-  async videosParser() {
-    return await this.rabbitVideosService.send({
-      cmd: 'videos-parsing',
-    },
-    {});
-
-}
-
-
 
 
 
@@ -336,6 +277,34 @@ async getFilm(
       },
     );
   }
+  @ApiOperation({summary: 'Удалить жанр'})
+  @ApiTags('(Редактирвоание данных) Данные с сайта kinopoisk')
+  @Delete('namesofgenre/:id')
+  async deleteGenreOfMovie(
+    @Param('id') id: number) {
+    return await this.rabbitnamesofGenresService.send(
+      {
+        cmd: 'delete-genre-by-id',
+      },
+      {
+        id
+      },
+    );
+  }
+  @ApiOperation({summary: 'Удалить страну'})
+  @ApiTags('(Редактирвоание данных) Данные с сайта kinopoisk')
+  @Delete('namesofcountry/:id')
+  async deleteCountry(
+    @Param('id') id: number) {
+    return await this.rabbitnamesofCountriesService.send(
+      {
+        cmd: 'delete-country-by-id',
+      },
+      {
+        id
+      },
+    );
+  }
   @ApiOperation({summary: 'Изменить название фильма (Пример: {"id":301, "name":"Матрица","enName":"Matrix"})'}) 
   @ApiTags('(Редактирвоание данных) Данные с сайта kinopoisk')
   @Patch('film')
@@ -354,46 +323,7 @@ async getFilm(
       },
     );
   }
-@ApiOperation({summary: 'Очистить страны после удаления фильма'})
-@ApiTags('(Редактирвоание данных) Данные с сайта kinopoisk')
-@Get('clearCountries')
-async clearCountries() {
-  return await this.rabbitCountriesFilmsService.send({
-    cmd: 'clear-countries',
-  },
-  {});
 
-}
-@ApiOperation({summary: 'Очистить жанры после удаления фильма'})
-@ApiTags('(Редактирвоание данных) Данные с сайта kinopoisk')
-@Get('clearGenres')
-async clearGenres() {
-  return await this.rabbitGenresFilmsService.send({
-    cmd: 'clear-genres',
-  },
-  {});
-
-}
-@ApiOperation({summary: 'Очистить персоны после удаления фильма'})
-@ApiTags('(Редактирвоание данных) Данные с сайта kinopoisk')
-@Get('clearPersons')
-async clearPersons() {
-  return await this.rabbitPersonsFilmsService.send({
-    cmd: 'clear-persons',
-  },
-  {});
-
-}
-@ApiOperation({summary: 'Очистить видео после удаления фильма'})
-@ApiTags('(Редактирвоание данных) Данные с сайта kinopoisk')
-@Get('clearVideos')
-async clearVideos() {
-  return await this.rabbitVideosService.send({
-    cmd: 'clear-videos',
-  },
-  {});
-
-}
   
   @ApiOperation({summary: 'Изменить название жанра (Пример: {"id":1, "name:"драма","enName":"drame"})'}) //////////////////// CRUD ЖАНРОВ
   @ApiTags('(Редактирвоание данных) Данные с сайта kinopoisk')
@@ -429,20 +359,7 @@ async clearVideos() {
       },
     );
   }
-  @ApiOperation({summary: 'Удалить жанр'})
-  @ApiTags('(Редактирвоание данных) Данные с сайта kinopoisk')
-  @Delete('namesofgenre/:id')
-  async deleteGenreOfMovie(
-    @Param('id') id: number) {
-    return await this.rabbitnamesofGenresService.send(
-      {
-        cmd: 'delete-genre-by-id',
-      },
-      {
-        id
-      },
-    );
-  }
+  
 
 
   @ApiOperation({summary: 'Добавить название жанра (Пример: {"id":1, "name:"драма","enName":"drame"})'})     //////////////////// CRUD СТРАН
@@ -458,20 +375,6 @@ async clearVideos() {
       {
         name,
         enName
-      },
-    );
-  }
-  @ApiOperation({summary: 'Удалить страну'})
-  @ApiTags('(Редактирвоание данных) Данные с сайта kinopoisk')
-  @Delete('namesofcountry/:id')
-  async deleteCountry(
-    @Param('id') id: number) {
-    return await this.rabbitnamesofCountriesService.send(
-      {
-        cmd: 'delete-country-by-id',
-      },
-      {
-        id
       },
     );
   }
@@ -548,4 +451,88 @@ async getAllActors() {
   {});
 
 }
+@ApiOperation({summary: 'Авторизация через ВК'})
+@ApiTags('auth/vk')
+@UseGuards(AuthGuard('vkontakte'))
+@Get('auth/vk')
+async VKlogin() {}
+
+@Get('auth/vk/redirect')
+@UseGuards(AuthGuard('vkontakte'))
+async VKloginRedirect(@Req() req, @Res() res) {
+    console.log(req.user);
+    res.cookie('authenticationType', 'vk', {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true});
+    res.cookie('refreshToken', req.user.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true}).send(req.user.refreshToken);
+}
+
+@ApiOperation({summary: 'Авторизация через google'})
+@ApiTags('auth/google')
+@UseGuards(AuthGuard('google'))
+@Get('auth/google')
+async googleLogin() {}
+
+@Get('auth/google/redirect')
+@UseGuards(AuthGuard('google'))
+async googleLoginRedirect(@Req() req, @Res() res) {
+    res.cookie('authenticationType', 'google', {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true});
+    res.cookie('refreshToken', req.user.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true}).send(req.user.accessToken);
+}
+@ApiOperation({summary: 'Выход из аккаунта и очищение cookies'})
+@ApiTags('/auth/logout')
+@Post('/auth/logout')
+async logout(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
+    res.clearCookie('refreshToken');
+    res.clearCookie('authenticationType');
+    return {message: "cookies has been cleared"};
+}
+
+@ApiOperation({summary: 'Регистрация через email'})
+@ApiTags('/auth/registration')
+@Post('/auth/registration')
+async registration(@Body() userDto: CreateUserDto, @Res({ passthrough: true }) res: Response) {
+    const user = await this.authService.registration(userDto);
+    res.cookie('authenticationType', 'email', {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true});
+    res.cookie('refreshToken', user.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true}).send(user.accessToken);
+}
+
+@ApiOperation({summary: 'Авторизация через email'})
+@ApiTags('/auth/login')
+@Post('/auth/login')
+async login(@Body() userDto: CreateUserDto, @Res({ passthrough: true }) res: Response) {
+    const user = await this.authService.login(userDto);
+    res.cookie('authenticationType', 'email', {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true});
+    res.cookie('refreshToken', user.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true}).send(user.accessToken);
+}
+
+@ApiOperation({summary: 'Публикация комментария к фильму'})
+@ApiTags('/comment/film')
+@Post('/comment/film')
+async publishCommentToFilm(@Body('text') commentText: string, @Req() req) {
+    const date = String(new Date());
+    const email = req.user.email;
+    
+    const comment = await this.commentService.publishCommentToFilm({date: date, userEmail: email, text: commentText});
+    return comment;
+}
+
+@ApiOperation({summary: 'Публикация комментария к другому комментарию'})
+@ApiTags('/comment/childComment')
+@Post('/comment/childComment')
+async publishChildComment(@Body() commentInfo: any, @Req() req) {
+    const date = String(new Date());
+        const email = req.user.email;
+        const comment = await this.commentService.publishChildComment({date: date, userEmail: email, text: commentInfo.text,
+                                                                         parentId: commentInfo.parentId});
+        return comment;
+}
+
+@ApiOperation({summary: 'Получить данные комментария'})
+@ApiTags('/comment/:id')
+@Get('/comment/:id')
+    async getComment(@Param() data) {
+        const comment = await this.commentService.getComment(data.id);
+        return comment;
+    }
+
+
 }

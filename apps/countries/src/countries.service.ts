@@ -41,7 +41,7 @@ export class CountriesService {
             count+=1
           }
         }
-        return `Удалено записей: ${count}`
+        return `Удалено записей в сервисе countries: ${count}`
       }
       async formDatabase() {
         let Arrfilm =  await this.getAllFilms()

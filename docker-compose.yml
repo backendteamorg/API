@@ -2,10 +2,8 @@ version: '3.0'
 services:
 
   rabbitmq:
-    image: rabbitmq:3-management
+    image: rabbitmq:3.12.0-beta.6-management-alpine
     hostname: rabbitmq
-    volumes:
-      - /var/lib/rabbitmq
     ports:
       - '5672:5672'
       - '15672:15672'
@@ -13,6 +11,9 @@ services:
       - apps/microservices/.development.env
     restart: always
     container_name: rabbitmq
+    networks:
+      - app
+    
 
   microservices:
     build:
@@ -28,6 +29,8 @@ services:
     restart: always
     command: npm run start:dev microservices 
     container_name: microservices
+    networks:
+      - app
 
   films:
     build:
@@ -46,6 +49,8 @@ services:
     command: npm run start:dev films 
     restart: always
     container_name: films
+    networks:
+      - app
 
     
   films_postgres:
@@ -60,6 +65,8 @@ services:
     volumes:
       - pgdatafilm:/var/lib/postgresql/data
     restart: always
+    networks:
+      - app
 
   countriesnames:
     build:
@@ -79,6 +86,8 @@ services:
     command: npm run start:dev countriesnames 
     restart: always
     container_name: countriesnames
+    networks:
+      - app
 
     
   countriesnames_postgres:
@@ -95,6 +104,8 @@ services:
     volumes:
       - pgdatacountriesnames:/var/lib/postgresql/data
     restart: always
+    networks:
+      - app
 
 
   
@@ -117,6 +128,8 @@ services:
     command: npm run start:dev countries 
     restart: always
     container_name: countries
+    networks:
+      - app
 
     
   countries_postgres:
@@ -133,6 +146,8 @@ services:
     volumes:
       - pgdatacountries:/var/lib/postgresql/data
     restart: always
+    networks:
+      - app
 
   
   
@@ -154,6 +169,8 @@ services:
     command: npm run start:dev genresnames 
     restart: always
     container_name: genresnames
+    networks:
+      - app
 
     
   genresnames_postgres:
@@ -170,6 +187,9 @@ services:
     volumes:
       - pgdatagenresnames:/var/lib/postgresql/data
     restart: always
+    networks:
+      - app
+
 
   genres:
     build:
@@ -190,6 +210,8 @@ services:
     command: npm run start:dev genres 
     restart: always
     container_name: genres
+    networks:
+      - app
 
     
   genres_postgres:
@@ -206,6 +228,8 @@ services:
     volumes:
       - pgdatagenres:/var/lib/postgresql/data
     restart: always
+    networks:
+      - app
 
 
   persons:
@@ -226,6 +250,8 @@ services:
     command: npm run start:dev persons 
     restart: always
     container_name: persons
+    networks:
+      - app
 
     
   persons_postgres:
@@ -242,6 +268,8 @@ services:
     depends_on:
       - films_postgres
     restart: always
+    networks:
+      - app
 
   
 
@@ -265,6 +293,8 @@ services:
     command: npm run start:dev videos 
     restart: always
     container_name: videos
+    networks:
+      - app
 
     
   videos_postgres:
@@ -275,12 +305,47 @@ services:
     environment:
       PG_DATA: /var/lib/postgresql/data
     ports:
-      - 5445:5432
+      - 5470:5432
     volumes:
       - pgdatavideos:/var/lib/postgresql/data
     depends_on:
       - films_postgres
     restart: always
+    networks:
+      - app
+
+  new-auth:
+    build:
+      context: ./
+      dockerfile: ./apps/new-auth/Dockerfile
+    env_file:
+      - apps/new-auth/.development.env
+    depends_on:
+      - rabbitmq
+      - auth_postgres
+    ports:
+      - 3002:3002
+    command: npm run start:dev new-auth 
+    restart: always
+    container_name: new-auth
+    networks:
+      - app
+  
+  auth_postgres:
+    container_name: auth_postgres
+    image: postgres
+    env_file:
+      - apps/new-auth/.development.env
+    environment:
+      PG_DATA: /var/lib/postgresql/data
+    ports:
+      - 5480:5432
+    volumes:
+      - pgdataauth:/var/lib/postgresql/data
+    restart: always
+    networks:
+      - app
+  
 
   adminer:
     image: adminer
@@ -288,7 +353,8 @@ services:
     ports:
       - 8080:8080
     container_name: adminer
-
+    networks:
+      - app
 volumes:
   pgdatafilm:
   pgdatacountries:
@@ -297,3 +363,6 @@ volumes:
   pgdatavideos:
   pgdatagenresnames:
   pgdatacountriesnames:
+  pgdataauth:
+networks:
+  app:

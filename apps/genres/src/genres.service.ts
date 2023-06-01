@@ -150,6 +150,6 @@ export class GenresService {
         count+=1
       }
     }
-    return `Удалено записей: ${count}`
+    return `Удалено записей в сервисе genres: ${count}`
   }
 }

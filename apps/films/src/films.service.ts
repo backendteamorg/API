@@ -19,6 +19,64 @@ export class FilmsService {
     @Inject('NAMESOFGENRES_SERVICE') private rabbitnamesofGenresService: ClientProxy,
     @Inject('PERSONS_SERVICE') private rabbitPersonsFilmsService: ClientProxy) {}
 
+    async parsingCountries(){
+        const ob$ = await this.rabbitCountriesFilmsService.send({
+            cmd: 'parser-countries',
+          },
+          {});
+          const persons = await firstValueFrom(ob$).catch((err) => console.error(err));
+          return persons;
+    }
+    async parsingNamesOfCountries(){
+        const ob$ = await this.rabbitCountriesNamesService.send({
+            cmd: 'parser-countries-names',
+          },
+          {});
+          const persons = await firstValueFrom(ob$).catch((err) => console.error(err));
+          return persons;
+    }
+    async parsingGenresNames(){
+        const ob$ = await this.rabbitnamesofGenresService.send({
+            cmd: 'parser-namesofgenres',
+          },
+          {});
+          const persons = await firstValueFrom(ob$).catch((err) => console.error(err));
+          return persons;
+    }
+    async parsingGenresOfMovie(){
+        const ob$ = await this.rabbitGenresFilmsService.send({
+            cmd: 'parser-genres',
+          },
+          {});
+          const persons = await firstValueFrom(ob$).catch((err) => console.error(err));
+          return persons;
+    }
+    async parsingPersons(){
+        const ob$ = await this.rabbitPersonsFilmsService.send({
+            cmd: 'parser-persons',
+          },
+          {});
+          const persons = await firstValueFrom(ob$).catch((err) => console.error(err));
+          return persons;
+    }
+    async parsingVideos(){
+        const ob$ = await this.rabbitVideosService.send({
+            cmd: 'videos-parsing',
+          },
+          {});
+          const persons = await firstValueFrom(ob$).catch((err) => console.error(err));
+          return persons;
+    }
+
+    async pasringAll(){
+        await this.parsingNamesOfCountries()
+        await this.parsingCountries()
+        await this.parsingGenresNames()
+        await this.parsingGenresOfMovie()
+        await this.parsingPersons()
+        await this.parsingVideos()
+        return  'Данные получены'
+    }
     async getAllPersonsWithMovies(){
         const ob$ = await this.rabbitPersonsFilmsService.send({
             cmd: 'get-all-persons-with-info',
@@ -1171,10 +1229,49 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
         return film
 
     }
+    async clearCountries(){
+        const ob$ =await this.rabbitCountriesFilmsService.send({
+            cmd: 'clear-countries',
+        },
+        {});
+        const persons = await firstValueFrom(ob$).catch((err) => console.error(err));
+        return persons;
+    }
+    async clearGenres(){
+        const ob$ =await this.rabbitGenresFilmsService.send({
+            cmd: 'clear-genres',
+        },
+        {});
+        const persons = await firstValueFrom(ob$).catch((err) => console.error(err));
+        return persons;
+          
+    }
+    async clearPersons(){
+        const ob$ =await this.rabbitPersonsFilmsService.send({
+            cmd: 'clear-persons',
+        },
+        {});
+        const persons = await firstValueFrom(ob$).catch((err) => console.error(err));
+        return persons;
+          
+    }
+    async clearVideos(){
+        const ob$ =await this.rabbitVideosService.send({
+            cmd: 'clear-videos',
+          },
+          {});
+        const persons = await firstValueFrom(ob$).catch((err) => console.error(err));
+        return persons;
+          
+    }
     async deleteFilm(idF:number){
         const film = await this.filmRepository.findByPk(idF)
         await this.filmRepository.destroy({where:{id:idF}})
-        return film
+        const countries =  await this.clearCountries()
+        const genres = await this.clearGenres()
+        const persons= await this.clearPersons()
+        const videos = await this.clearVideos()
+        return `Фильм с id ${idF} удален`+'; '+countries+'; '+genres+'; '+persons+'; '+videos+';'
     }
   async postFilm(dto:CreateFilmDto){
     return await this.filmRepository.create(dto)
