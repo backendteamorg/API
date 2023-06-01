@@ -77,4 +77,21 @@ export class VideosService {
   async getVideosByMoviesId(moviesid:number[]){
     return this.videosRepository.findAll({where:{movieid:{[Op.in]:moviesid}}})
   }
+
+  async clearVideos(){
+    const film = await this.getAllFilms()
+    const videos = await this.videosRepository.findAll()
+    let ArrFilmdId = []
+    for(let q = 0 ; q <film.length;q++ ){
+      ArrFilmdId.push(film[q].id)
+    }
+    let count = 0 
+    for(let q = 0 ; q <videos.length;q++){
+      if(ArrFilmdId.includes(videos[q].movieid)===false){
+        await this.videosRepository.destroy({where:{id:videos[q].id}})
+        count+=1
+      }
+    }
+    return `Удалено записей: ${count}`
+  }
 }

@@ -7,6 +7,7 @@ import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
 import e from 'express';
 import { FilteDto } from './dto/filtre.dto';
+import { CreateFilmDto } from './dto/create-film.dto';
 
 @Injectable()
 export class FilmsService {
@@ -550,14 +551,6 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
 
 
 
-    async updateNameMovie(dto:FilmDto){
-        const film =  await this.filmRepository.findOne({where: {id: dto.id}})
-        film.name = dto.name;
-        film.enName = dto.enName;
-        film.save();
-        return film
-
-    }
 ///// Фильры ///////////////////////////////////////////////////////////////////////////////////////////////
 
     async getMoviesByRatingKp(rating:number){
@@ -1170,4 +1163,22 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
         
 
     }
+    async updateNameMovie(dto:FilmDto){
+        const film =  await this.filmRepository.findOne({where: {id: dto.id}})
+        film.name = dto.name;
+        film.enName = dto.enName;
+        film.save();
+        return film
+
+    }
+    async deleteFilm(idF:number){
+        const film = await this.filmRepository.findByPk(idF)
+        await this.filmRepository.destroy({where:{id:idF}})
+        return film
+    }
+  async postFilm(dto:CreateFilmDto){
+    return await this.filmRepository.create(dto)
+  }
+
+
 }

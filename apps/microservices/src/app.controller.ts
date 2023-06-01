@@ -279,7 +279,64 @@ async getFilm(
   
 
   
-  @ApiOperation({summary: 'Изменить название фильма (Пример: {"id":301, "name":"Матрица","enName":"Matrix"})'})
+    @ApiOperation({summary: 'Добавить (Пример: {"id":301, "name":"Матрица","enName":"Matrix"}) (все поля из базового запроса к фильмам)'})  //////////////////// CRUD фИЛЬМОВ
+    @ApiTags('(Редактирвоание данных) Данные с сайта kinopoisk')
+    @Post('film')
+    async createFilm(
+      @Body('id') id: number,
+      @Body('type') type: string,
+      @Body('name') name: string,
+      @Body('enName') enName: string,
+      @Body('posterUrl') posterUrl: string,
+      @Body('posterPreviewURL') posterPreviewURL: string,
+      @Body('premiereRussia') premiereRussia: string,
+      @Body('hasIMAX') hasIMAX: boolean,
+      @Body('year') year: number,
+      @Body('description') description: string,
+      @Body('shortDescription') shortDescription: string,
+      @Body('ageRating') ageRating: number,
+      @Body('ratingKp') ratingKp: number,
+      @Body('votesKp') votesKp: number,
+      @Body('movieLength') movieLength: number,) {
+      return await this.rabbitFilmsService.send(
+        {
+          cmd: 'post-film',
+        },
+        {
+          id,
+          type,
+          name,
+          enName,
+          posterUrl,
+          posterPreviewURL,
+          premiereRussia,
+          hasIMAX,
+          year,
+          description,
+          shortDescription,
+          ageRating,
+          ratingKp,
+          votesKp,
+          movieLength,
+          
+        },
+      );
+  }
+  @ApiOperation({summary: 'Удалить фильм'})                  
+  @ApiTags('(Редактирвоание данных) Данные с сайта kinopoisk')
+  @Delete('film/:id')
+  async deleteFilmById(
+    @Param('id') id: number) {
+    return await this.rabbitFilmsService.send(
+      {
+        cmd: 'delete-film-by-id',
+      },
+      {
+        id
+      },
+    );
+  }
+  @ApiOperation({summary: 'Изменить название фильма (Пример: {"id":301, "name":"Матрица","enName":"Matrix"})'}) 
   @ApiTags('(Редактирвоание данных) Данные с сайта kinopoisk')
   @Patch('film')
   async updateNameOfMovie(
@@ -297,8 +354,48 @@ async getFilm(
       },
     );
   }
+@ApiOperation({summary: 'Очистить страны после удаления фильма'})
+@ApiTags('(Редактирвоание данных) Данные с сайта kinopoisk')
+@Get('clearCountries')
+async clearCountries() {
+  return await this.rabbitCountriesFilmsService.send({
+    cmd: 'clear-countries',
+  },
+  {});
+
+}
+@ApiOperation({summary: 'Очистить жанры после удаления фильма'})
+@ApiTags('(Редактирвоание данных) Данные с сайта kinopoisk')
+@Get('clearGenres')
+async clearGenres() {
+  return await this.rabbitGenresFilmsService.send({
+    cmd: 'clear-genres',
+  },
+  {});
+
+}
+@ApiOperation({summary: 'Очистить персоны после удаления фильма'})
+@ApiTags('(Редактирвоание данных) Данные с сайта kinopoisk')
+@Get('clearPersons')
+async clearPersons() {
+  return await this.rabbitPersonsFilmsService.send({
+    cmd: 'clear-persons',
+  },
+  {});
+
+}
+@ApiOperation({summary: 'Очистить видео после удаления фильма'})
+@ApiTags('(Редактирвоание данных) Данные с сайта kinopoisk')
+@Get('clearVideos')
+async clearVideos() {
+  return await this.rabbitVideosService.send({
+    cmd: 'clear-videos',
+  },
+  {});
+
+}
   
-  @ApiOperation({summary: 'Изменить название жанра (Пример: {"id":1, "name:"драма","enName":"drame"})'})
+  @ApiOperation({summary: 'Изменить название жанра (Пример: {"id":1, "name:"драма","enName":"drame"})'}) //////////////////// CRUD ЖАНРОВ
   @ApiTags('(Редактирвоание данных) Данные с сайта kinopoisk')
   @Patch('namesofgenre')
   async updateGenreOfMovie(
@@ -313,6 +410,68 @@ async getFilm(
         id,
         name,
         enName
+      },
+    );
+  }
+  @ApiOperation({summary: 'Добавить название жанра (Пример: {"id":1, "name:"драма","enName":"drame"})'})
+  @ApiTags('(Редактирвоание данных) Данные с сайта kinopoisk')
+  @Post('namesofgenre')
+  async postGenreOfMovie(
+    @Body('name') name: string,
+    @Body('enName') enName: string) {
+    return await this.rabbitnamesofGenresService.send(
+      {
+        cmd: 'post-namesgenres',
+      },
+      {
+        name,
+        enName
+      },
+    );
+  }
+  @ApiOperation({summary: 'Удалить жанр'})
+  @ApiTags('(Редактирвоание данных) Данные с сайта kinopoisk')
+  @Delete('namesofgenre/:id')
+  async deleteGenreOfMovie(
+    @Param('id') id: number) {
+    return await this.rabbitnamesofGenresService.send(
+      {
+        cmd: 'delete-genre-by-id',
+      },
+      {
+        id
+      },
+    );
+  }
+
+
+  @ApiOperation({summary: 'Добавить название жанра (Пример: {"id":1, "name:"драма","enName":"drame"})'})     //////////////////// CRUD СТРАН
+  @ApiTags('(Редактирвоание данных) Данные с сайта kinopoisk')
+  @Post('namesofcountry')
+  async postCountry(
+    @Body('name') name: string,
+    @Body('enName') enName: string) {
+    return await this.rabbitnamesofCountriesService.send(
+      {
+        cmd: 'post-country',
+      },
+      {
+        name,
+        enName
+      },
+    );
+  }
+  @ApiOperation({summary: 'Удалить страну'})
+  @ApiTags('(Редактирвоание данных) Данные с сайта kinopoisk')
+  @Delete('namesofcountry/:id')
+  async deleteCountry(
+    @Param('id') id: number) {
+    return await this.rabbitnamesofCountriesService.send(
+      {
+        cmd: 'delete-country-by-id',
+      },
+      {
+        id
       },
     );
   }
@@ -337,8 +496,7 @@ async getFilm(
 
 
 
-
-  @ApiOperation({summary: 'Получить все страны'})
+  @ApiOperation({summary: 'Получить все страны'}) /////////////////////////////////////
   @ApiTags('Данные с сайта kinopoisk')
   @Get('namesOfCountries')
   async getCountriesNames() {

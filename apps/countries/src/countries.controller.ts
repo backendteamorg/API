@@ -23,14 +23,6 @@ export class CountriesController {
 
     return this.countriesService.getAllCountries()
   }
-  @MessagePattern({ cmd: 'get-all-names-of-countries'})
-  async getAllNamesCountries(@Ctx() context: RmqContext){
-    const channel = context.getChannelRef();
-    const message = context.getMessage();
-    channel.ack(message);
-
-    return 
-  }
 
   @MessagePattern({ cmd: 'get-countries-by-movieid' })
   async getUserById(
@@ -43,19 +35,6 @@ export class CountriesController {
     return await this.countriesService.getAllCountriesByMoviesId(movie.id)
   }
 
-  
-  @MessagePattern({ cmd: 'get-movies-by-countries-names' })
-  async getMoviesByCountriesNames(
-    @Ctx() context: RmqContext,
-    @Payload() movie: { ArrCountries: string[] },) {
-    const channel = context.getChannelRef();
-    const message = context.getMessage();
-    channel.ack(message);
-
-    return 
-  }
-
-
   @MessagePattern({ cmd: 'get-countriesofmovie-by-movies-id' })
   async getCountriesOfMoviesByMoviesId(
     @Ctx() context: RmqContext,
@@ -67,7 +46,6 @@ export class CountriesController {
     return await this.countriesService.getCountriesByMoviesId(movie.moviesid)
   }
 
-
   @MessagePattern({ cmd: 'get-movies-by-countries-id' })
   async getMoviesByCountryName(
     @Ctx() context: RmqContext,
@@ -77,5 +55,15 @@ export class CountriesController {
     channel.ack(message);
 
     return await this.countriesService.getMoviesBycountriesId(movie.countriesid)
+  }
+
+
+  @MessagePattern({ cmd: 'clear-countries'}) ////////////////////// Очищение данных после удаления фильма
+  async clearCountries(@Ctx() context: RmqContext){
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return this.countriesService.clearCountries()
   }
 }

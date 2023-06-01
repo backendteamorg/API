@@ -120,6 +120,13 @@ export class PersonsController {
     return this.personsService.getAllActors()
   }
 
+  @MessagePattern({ cmd: 'clear-persons'}) ////////////////////// Очищение данных после удаления фильма
+  async clearCountries(@Ctx() context: RmqContext){
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
 
+    return this.personsService.clearPersons()
+  }
 
 }

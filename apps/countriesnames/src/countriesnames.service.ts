@@ -87,4 +87,19 @@ export class CountriesnamesService {
       [Op.or]:[{name:{[Op.in]:ArrCountries}},{enName:{[Op.in]:ArrCountries}}]
       }})
   }
+  async postCountryName(dto:CountriesDto){
+    const countries = await this.countriesNamesRepository.findAll()
+    for(let q = 0 ; q <countries.length;q++){
+      if(countries[q].name===dto.name||countries[q].enName===dto.enName){
+        return 'Такое название страны уже есть в базе'
+      }
+    }
+    return await this.countriesNamesRepository.create(dto)
+  }
+  async deleteCountryName(idC:number){
+    const country = await this.countriesNamesRepository.findByPk(idC)
+    await this.countriesNamesRepository.destroy({where:{id:idC}})
+      return `Страна c id ${country.id} удалена`
+
+  }
 }

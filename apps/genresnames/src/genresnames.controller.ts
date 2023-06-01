@@ -66,6 +66,25 @@ export class GenresnamesController {
 
     return await this.genresnamesService.getGenreByName(genre.genre);
   }
+  @MessagePattern({ cmd: 'delete-genre-by-id' })
+  async getAllInfoPersonBypersonId(
+    @Ctx() context: RmqContext,
+    @Payload() genre: { id: number },) {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
 
+    return this.genresnamesService.deleteGenre(genre.id);
+  }
 
+  @MessagePattern({ cmd: 'post-namesgenres' })
+  async postNameGenre(
+    @Ctx() context: RmqContext,
+    @Payload() genre: GenresNamesDto) {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return this.genresnamesService.postGenre(genre);
+  }
 }

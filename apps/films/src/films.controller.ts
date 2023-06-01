@@ -3,13 +3,12 @@ import { FilmsService } from './films.service';
 import { Ctx, MessagePattern, Payload, RmqContext } from '@nestjs/microservices';
 import { FilmDto } from './dto/film.dto';
 import { FilteDto } from './dto/filtre.dto';
+import { CreateFilmDto } from './dto/create-film.dto';
 
 @Controller()
 export class FilmsController {
   constructor(private readonly filmsService: FilmsService) {}
 
-  
-  
 
   @MessagePattern({ cmd: 'parser-films'})
   async getFilms(@Ctx() context: RmqContext){
@@ -19,9 +18,37 @@ export class FilmsController {
 
     return await this.filmsService.formDatabase()
   }
- 
- 
+  
+  
 
+  @MessagePattern({ cmd: 'get-all-info-personsoffilms-by-personid' })  //////////// GET
+  async getPersonsByPersonId(
+    @Ctx() context: RmqContext,
+    @Payload() person: { id: number },) {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return await this.filmsService.getPersonInfoByiD(person.id);
+  }
+
+  @MessagePattern({ cmd: 'get-all-directors'})
+  async getAllDirectors(@Ctx() context: RmqContext){
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return await this.filmsService.getAllDirectors()
+  }
+  @MessagePattern({ cmd: 'get-all-actors'})
+  async getAllActors(@Ctx() context: RmqContext){
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return await this.filmsService.getAllActors()
+  }
+ 
   @MessagePattern({ cmd: 'get-all-films-with-info'})
   async getAllFilmsWithInfo(@Ctx() context: RmqContext){
     const channel = context.getChannelRef();
@@ -41,7 +68,7 @@ export class FilmsController {
   }
 
   @MessagePattern({ cmd: 'get-film-by-id' })
-  async getUserById(
+  async getFilmById(
     @Ctx() context: RmqContext,
     @Payload() film: { id: number },) {
     const channel = context.getChannelRef();
@@ -74,17 +101,6 @@ export class FilmsController {
     return this.filmsService.getFilmsByActor(actor.actor);
   
   }
-  @MessagePattern({ cmd: 'update-nameoffilm' })
-  async UpdateDprofile(
-    @Ctx() context: RmqContext,
-    @Payload() film: FilmDto) {
-    const channel = context.getChannelRef();
-    const message = context.getMessage();
-    channel.ack(message);
-
-    return await this.filmsService.updateNameMovie(film);
-  }
-
   @MessagePattern({ cmd: 'get-film-by-rating-kp' })
   async getMoviesByRatingKp(
     @Ctx() context: RmqContext,
@@ -108,19 +124,15 @@ export class FilmsController {
   }
   @MessagePattern({ cmd: 'get-all-persons-with-film-info' })
   async getAllPersonsWithInfo(
-    @Ctx() context: RmqContext,
-    @Payload() film: { id: number },) {
+    @Ctx() context: RmqContext ) {
     const channel = context.getChannelRef();
     const message = context.getMessage();
     channel.ack(message);
 
     return await this.filmsService.getAllPersonsWithInfo();
   }
-  
-
-
   @MessagePattern({ cmd: 'get-films-use-filtres' })
-  async register(
+  async filtre(
     @Ctx() context: RmqContext, 
     @Payload() queryParams: any) {
     const channel = context.getChannelRef();
@@ -130,32 +142,35 @@ export class FilmsController {
     return this.filmsService.getFilmsUseFiltre(queryParams);
   }
 
-  @MessagePattern({ cmd: 'get-all-info-personsoffilms-by-personid' })
-  async getPersonsByPersonId(
+
+  @MessagePattern({ cmd: 'post-film' }) 
+  async PostFilm(                           /////////////РЕДАКТИРВАОНИЕ, УДАЛЕНИЕ
     @Ctx() context: RmqContext,
-    @Payload() person: { id: number },) {
+    @Payload() film: CreateFilmDto) {
     const channel = context.getChannelRef();
     const message = context.getMessage();
     channel.ack(message);
 
-    return await this.filmsService.getPersonInfoByiD(person.id);
+    return await this.filmsService.postFilm(film);
   }
-
-  @MessagePattern({ cmd: 'get-all-directors'})
-  async getAllDirectors(@Ctx() context: RmqContext){
+  @MessagePattern({ cmd: 'update-nameoffilm' })        
+  async UpdateFilm(
+    @Ctx() context: RmqContext,
+    @Payload() film: FilmDto) {
     const channel = context.getChannelRef();
     const message = context.getMessage();
     channel.ack(message);
 
-    return await this.filmsService.getAllDirectors()
+    return await this.filmsService.updateNameMovie(film);
   }
-  @MessagePattern({ cmd: 'get-all-actors'})
-  async getAllActors(@Ctx() context: RmqContext){
+  @MessagePattern({ cmd: 'delete-film-by-id' })
+  async deleteFilmById(
+    @Ctx() context: RmqContext,
+    @Payload() film: { id: number },) {
     const channel = context.getChannelRef();
     const message = context.getMessage();
     channel.ack(message);
 
-    return await this.filmsService.getAllActors()
+    return await this.filmsService.deleteFilm(film.id);
   }
- 
 }

@@ -43,4 +43,25 @@ export class CountriesnamesController {
 
     return await this.countriesnamesService.updateCountries(countries);
   }
+  @MessagePattern({ cmd: 'delete-country-by-id' })
+  async getAllInfoPersonBypersonId(
+    @Ctx() context: RmqContext,
+    @Payload() country: { id: number },) {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return this.countriesnamesService.deleteCountryName(country.id);
+  }
+
+  @MessagePattern({ cmd: 'post-country' })
+  async postNameGenre(
+    @Ctx() context: RmqContext,
+    @Payload() country: CountriesDto) {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return this.countriesnamesService.postCountryName(country);
+  }
 }

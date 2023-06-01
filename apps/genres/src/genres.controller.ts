@@ -55,4 +55,12 @@ export class GenresController {
 
     return this.genresService.getMoviesByGenreId(genre.genreid);
   }
+  @MessagePattern({ cmd: 'clear-genres'}) ////////////////////// Очищение данных после удаления фильма
+  async clearCountries(@Ctx() context: RmqContext){
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return this.genresService.clearGenres()
+  }
 }

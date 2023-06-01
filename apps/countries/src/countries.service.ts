@@ -27,6 +27,22 @@ export class CountriesService {
         const countriesNames = await firstValueFrom(ob$).catch((err) => console.error(err));
         return countriesNames;
       }
+      async clearCountries(){
+        const film = await this.getAllFilms()
+        const countries = await this.countriesRepository.findAll()
+        let ArrFilmdId = []
+        for(let q = 0 ; q <film.length;q++ ){
+          ArrFilmdId.push(film[q].id)
+        }
+        let count = 0 
+        for(let q = 0 ; q <countries.length;q++){
+          if(ArrFilmdId.includes(countries[q].movieid)===false){
+            await this.countriesRepository.destroy({where:{id:countries[q].id}})
+            count+=1
+          }
+        }
+        return `Удалено записей: ${count}`
+      }
       async formDatabase() {
         let Arrfilm =  await this.getAllFilms()
         let CountriesNames = await this.getAllCountriesNames()

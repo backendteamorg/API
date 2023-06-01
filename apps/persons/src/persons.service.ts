@@ -248,6 +248,7 @@ async getAllActors(){
 
   async formDatabase() {
     let arrfilm = await this.getAllFilms()
+    
     let filmIdArr1 = [];
     let filmIdArr2 = [];
     let filmIdArr3 = [];
@@ -356,7 +357,7 @@ persons.id%20persons.photo%20persons.name%20persons.enName%20persons.profession%
       }
   }
       
-      
+  
       return await this.personsRepository.bulkCreate(arrPersons)
  
        
@@ -442,5 +443,20 @@ persons.id%20persons.photo%20persons.name%20persons.enName%20persons.profession%
     );
 
   }
-  
+  async clearPersons(){
+    const film = await this.getAllFilms()
+    const persons = await this.personsRepository.findAll()
+    let ArrFilmdId = []
+    for(let q = 0 ; q <film.length;q++ ){
+      ArrFilmdId.push(film[q].id)
+    }
+    let count = 0 
+    for(let q = 0 ; q <persons.length;q++){
+      if(ArrFilmdId.includes(persons[q].movieid)===false){
+        await this.personsRepository.destroy({where:{id:persons[q].id}})
+        count+=1
+      }
+    }
+    return `Удалено записей: ${count}`
+  }
 }

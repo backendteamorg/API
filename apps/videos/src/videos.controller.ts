@@ -44,5 +44,13 @@ export class VideosController {
     channel.ack(message);
 
     return this.videosService.getVideosByMoviesId(movie.moviesid);
+  }
+  @MessagePattern({ cmd: 'clear-videos'}) ////////////////////// Очищение данных после удаления фильма
+  async clearCountries(@Ctx() context: RmqContext){
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return this.videosService.clearVideos()
   } 
 }

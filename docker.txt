@@ -61,6 +61,41 @@ services:
       - pgdatafilm:/var/lib/postgresql/data
     restart: always
 
+  countriesnames:
+    build:
+      context: ./
+      dockerfile: ./apps/countriesnames/Dockerfile
+    env_file:
+      - apps/countriesnames/.development.env
+    depends_on:
+      - rabbitmq
+      - countriesnames_postgres
+      - films
+    ports:
+      - 6154:6154
+    volumes:
+      - .:/usr/src/app 
+      - /usr/src/app/node_modules
+    command: npm run start:dev countriesnames 
+    restart: always
+    container_name: countriesnames
+
+    
+  countriesnames_postgres:
+    container_name: countriesnames_postgres
+    image: postgres:12
+    env_file:
+      - apps/countriesnames/.development.env
+    environment:
+      PG_DATA: /var/lib/postgresql/data
+    ports:
+      - 5434:5432
+    depends_on:
+      - films_postgres
+    volumes:
+      - pgdatacountriesnames:/var/lib/postgresql/data
+    restart: always
+
 
   
   countries:
@@ -73,6 +108,7 @@ services:
       - rabbitmq
       - countries_postgres
       - films
+      - countriesnames
     ports:
       - 6129:6129
     volumes:
@@ -260,4 +296,4 @@ volumes:
   pgdatapersons:
   pgdatavideos:
   pgdatagenresnames:
-  
+  pgdatacountriesnames:

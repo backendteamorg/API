@@ -136,4 +136,20 @@ export class GenresService {
     return await this.genresRepository.findAll({where:{movieid:{[Op.in]:moviesId}}})
     
   }
+  async clearGenres(){
+    const film = await this.getAllFilms()
+    const genres = await this.genresRepository.findAll()
+    let ArrFilmdId = []
+    for(let q = 0 ; q <film.length;q++ ){
+      ArrFilmdId.push(film[q].id)
+    }
+    let count = 0 
+    for(let q = 0 ; q <genres.length;q++){
+      if(ArrFilmdId.includes(genres[q].movieid)===false){
+        await this.genresRepository.destroy({where:{id:genres[q].id}})
+        count+=1
+      }
+    }
+    return `Удалено записей: ${count}`
+  }
 }

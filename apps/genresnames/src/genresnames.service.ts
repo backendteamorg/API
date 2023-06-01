@@ -6,6 +6,7 @@ import { ClientProxy } from '@nestjs/microservices';
 import { GenresNamesDto } from './dto/genresnames.dto';
 import { Op } from 'sequelize';
 
+
 @Injectable()
 export class GenresnamesService {
     constructor(@InjectModel(namesGenresOfFilms) private namesofgenresmoviesRepository,
@@ -31,8 +32,7 @@ export class GenresnamesService {
     }
     
     async formDatabase() {
-        let genresEnNames = ["drama","comedy","biography","crime","action","thriller","family","sci-fi","adventures","detective","fantasy"
-        ,"cartoon","melodrama","history","war","horror","western","musical","music","sports","short","children's","documentary"]
+        let genresEnNames = ["drama","comedy","biography","crime","action","thriller","family","sci-fi","adventures","detective","cartoon","fantasy","melodrama","history","war","horror","western","musical","music","sports","short","children's","documentary"]
         let ArrFilms = await this.getAllFilms()
         let filmIdArr = [];
         for(let i = 0; i<ArrFilms.length;i++){
@@ -110,5 +110,19 @@ export class GenresnamesService {
    
     async getGenresNamesByGenresId(genresId:number[]){
       return await this.namesofgenresmoviesRepository.findAll({where:{id:{[Op.in]:genresId}}})
+    }
+    async deleteGenre(idG:number){
+      const genre = await this.namesofgenresmoviesRepository.findByPk(idG)
+      await this.namesofgenresmoviesRepository.destroy({where:{id:idG}})
+      return `Жанр c id ${genre.id} удален`
+    }
+    async postGenre(dto:GenresNamesDto){
+      const genres = await this.namesofgenresmoviesRepository.findAll()
+      for(let q = 0 ; q <genres.length;q++){
+        if(genres[q].name===dto.name||genres[q].enName===dto.enName){
+          return 'Такое название жанра уже есть в базе'
+        }
+      }
+      return await namesGenresOfFilms.create(dto)
     }
   }
