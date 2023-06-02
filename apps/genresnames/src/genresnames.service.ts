@@ -68,8 +68,103 @@ export class GenresnamesService {
           }
           }
           let arrGenresObj = []
-          for(let i = 0 ; i < arrGenres.length;i++){
-            arrGenresObj.push({name:arrGenres[i],enName:genresEnNames[i]})
+          for(let q = 0 ; q < arrGenres.length;q++){
+            if(arrGenres[q]==="драма"){
+                arrGenresObj.push({name:arrGenres[q],enName:"drama"})
+            }
+            else if(arrGenres[q]==="комедия"){
+              arrGenresObj.push({name:arrGenres[q],enName:"comedy"})
+
+            }
+            else if(arrGenres[q]==="комедия"){
+              arrGenresObj.push({name:arrGenres[q],enName:"comedy"})
+
+            }
+            else if(arrGenres[q]==="биография"){
+              arrGenresObj.push({name:arrGenres[q],enName:"biography"})
+
+            }
+            else if(arrGenres[q]==="криминал"){
+              arrGenresObj.push({name:arrGenres[q],enName:"crime"})
+
+            }
+            else if(arrGenres[q]==="боевик"){
+              arrGenresObj.push({name:arrGenres[q],enName:"action"})
+
+            }
+            else if(arrGenres[q]==="триллер"){
+              arrGenresObj.push({name:arrGenres[q],enName:"thriller"})
+
+            }
+            else if(arrGenres[q]==="семейный"){
+              arrGenresObj.push({name:arrGenres[q],enName:"family"})
+
+            }
+            else if(arrGenres[q]==="фантастика"){
+              arrGenresObj.push({name:arrGenres[q],enName:"sci-fi"})
+
+            }
+            else if(arrGenres[q]==="приключения"){
+              arrGenresObj.push({name:arrGenres[q],enName:"adventures"})
+
+            }
+            else if(arrGenres[q]==="детектив"){
+              arrGenresObj.push({name:arrGenres[q],enName:"detective"})
+
+            }
+            else if(arrGenres[q]==="фэнтези"){
+              arrGenresObj.push({name:arrGenres[q],enName:"fantasy"})
+
+            }
+            else if(arrGenres[q]==="мультфильм"){
+              arrGenresObj.push({name:arrGenres[q],enName:"cartoon"})
+
+            }
+            else if(arrGenres[q]==="мелодрама"){
+              arrGenresObj.push({name:arrGenres[q],enName:"melodrama"})
+
+            }
+            else if(arrGenres[q]==="история"){
+              arrGenresObj.push({name:arrGenres[q],enName:"history"})
+
+            }
+            else if(arrGenres[q]==="военный"){
+              arrGenresObj.push({name:arrGenres[q],enName:"war"})
+
+            }
+            else if(arrGenres[q]==="ужасы"){
+              arrGenresObj.push({name:arrGenres[q],enName:"horror"})
+
+            }
+            else if(arrGenres[q]==="вестерн"){
+              arrGenresObj.push({name:arrGenres[q],enName:"western"})
+
+            }
+            else if(arrGenres[q]==="мюзикл"){
+              arrGenresObj.push({name:arrGenres[q],enName:"musical"})
+
+            }
+            else if(arrGenres[q]==="музыка"){
+              arrGenresObj.push({name:arrGenres[q],enName:"music"})
+
+            }
+            else if(arrGenres[q]==="спорт"){
+              arrGenresObj.push({name:arrGenres[q],enName:"sports"})
+
+            }
+            else if(arrGenres[q]==="короткометражка"){
+              arrGenresObj.push({name:arrGenres[q],enName:"short"})
+
+            }
+            else if(arrGenres[q]==="детский"){
+              arrGenresObj.push({name:arrGenres[q],enName:"children's"})
+
+            }
+            else if(arrGenres[q]==="документальный"){
+              arrGenresObj.push({name:arrGenres[q],enName:"documentary"})
+
+            }
+            
           }
           return await this.namesofgenresmoviesRepository.bulkCreate(arrGenresObj)
         }

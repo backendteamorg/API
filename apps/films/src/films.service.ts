@@ -584,13 +584,20 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
                     let ArrCildeComments = []
                 for(let w = 0 ;w < comments.length;w++){
                         if(comments[q].id===comments[w].parentId){
-                            ArrCildeComments.push(comments[w])
+                            ArrCildeComments.push(
+                                {
+                                    id:comments[w].id,
+                                    user:comments[w].userEmail,
+                                    date:comments[w].date,
+                                    text:comments[w].text
+                                }
+                                )
                         }
                     }
                     ArrComments.push(
                         {
                             id:comments[q].id,
-                            user:comments[q].email,
+                            user:comments[q].userEmail,
                             date:comments[q].date,
                             text:comments[q].text,
                             childComment:ArrCildeComments,
