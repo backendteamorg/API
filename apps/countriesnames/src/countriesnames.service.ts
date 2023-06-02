@@ -164,6 +164,11 @@ export class CountriesnamesService {
         ArrObjCountriesnNames.push({name:arrCountriesNames[q],enName:"Germany (FRG)"})
       }else if(arrCountriesNames[q]==="Колумбия"){
         ArrObjCountriesnNames.push({name:arrCountriesNames[q],enName:"Colombia"})
+      }else if(arrCountriesNames[q]==="Кипр"){
+        ArrObjCountriesnNames.push({name:arrCountriesNames[q],enName:"Cyprus"})
+      }
+      else{
+        ArrObjCountriesnNames.push({name:arrCountriesNames[q],enName:"Other"})
       }
       
       

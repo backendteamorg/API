@@ -163,6 +163,8 @@ export class GenresnamesService {
             else if(arrGenres[q]==="документальный"){
               arrGenresObj.push({name:arrGenres[q],enName:"documentary"})
 
+            }else{
+              arrGenresObj.push({name:arrGenres[q],enName:"Other"})
             }
             
           }
