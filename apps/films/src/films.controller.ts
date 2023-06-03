@@ -5,6 +5,7 @@ import { FilmDto } from './dto/film.dto';
 import { FilteDto } from './dto/filtre.dto';
 import { CreateFilmDto } from './dto/create-film.dto';
 
+
 @Controller()
 export class FilmsController {
   constructor(private readonly filmsService: FilmsService) {}
@@ -76,6 +77,16 @@ export class FilmsController {
     channel.ack(message);
 
     return await this.filmsService.getFilmById(film.id);
+  }
+  @MessagePattern({ cmd: 'get-film-by-movies-id' })
+  async getFilmByMoviesId(
+    @Ctx() context: RmqContext,
+    @Payload() film: { movies: number[] },) {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return await this.filmsService.getMoviesByMoviesId(film.movies);
   }
 
   @MessagePattern({ cmd: 'get-movies-by-director' })

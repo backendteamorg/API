@@ -59,6 +59,15 @@ $ npm run start:dev genres
 # start service countries in watch mode 
 $ npm run start:dev countries
 
+# start service countriesnames in watch mode 
+$ npm run start:dev countriesnames
+
+# start service new-auth in watch mode 
+$ npm run start:dev new-auth
+
+# start service comments in watch mode 
+$ npm run start:dev comments
+
 
 
 

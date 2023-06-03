@@ -15,6 +15,7 @@ import { RolesGuard } from './roles.guard';
 
 
 
+
 @Controller()
 export class AppController {
   constructor(
@@ -167,7 +168,18 @@ async getFilm(
           {id:id},
           );
   }
- 
+  @ApiOperation({summary: 'Получить список фильмов по id фильмов'})
+  @ApiTags('Данные с сайта kinopoisk')
+  @Post('moveisbyid')
+  async getMoviesByMoviesId(
+    @Body('movies') movies: number[]) {
+      return await this.rabbitFilmsService.send(
+          {
+           cmd: 'get-film-by-movies-id',
+          },
+          {movies:movies},
+          );
+  }
   
 
   @ApiOperation({summary: 'Получить сохраненные данные о сьемочной группе'})

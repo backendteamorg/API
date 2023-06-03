@@ -9,6 +9,7 @@ import e from 'express';
 import { FilteDto } from './dto/filtre.dto';
 import { CreateFilmDto } from './dto/create-film.dto';
 
+
 @Injectable()
 export class FilmsService {
     constructor(@InjectModel(Films) private filmRepository: typeof Films,
@@ -69,6 +70,9 @@ export class FilmsService {
           return persons;
     }
 
+    async getMoviesByMoviesId(movies:number[]){
+        return await this.getAllFilmsWithAllInfoByMoviesId(movies)
+    }
     async pasringAll(){
         await this.parsingNamesOfCountries()
         await this.parsingCountries()
@@ -1307,7 +1311,7 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
           
     }
     async deleteFilm(idF:number){
-        const film = await this.filmRepository.findByPk(idF)
+        
         await this.filmRepository.destroy({where:{id:idF}})
         const countries =  await this.clearCountries()
         const genres = await this.clearGenres()
@@ -1316,6 +1320,12 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
         return `Фильм с id ${idF} удален`+'; '+countries+'; '+genres+'; '+persons+'; '+videos+';'
     }
   async postFilm(dto:CreateFilmDto){
+    const films = await this.filmRepository.findAll()
+    for(let q = 0 ;q<films.length;q++){
+        if(films[q].name===dto.name){
+            return 'Фильм с таким названием уже есть базе данных'
+        }
+    }
     return await this.filmRepository.create(dto)
   }
 

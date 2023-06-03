@@ -199,7 +199,7 @@ export class CountriesnamesService {
     const countries = await this.countriesNamesRepository.findAll()
     for(let q = 0 ; q <countries.length;q++){
       if(countries[q].name===dto.name||countries[q].enName===dto.enName){
-        return 'Такое название страны уже есть в базе'
+        return 'Страна уже есть в базе'
       }
     }
     return await this.countriesNamesRepository.create(dto)
