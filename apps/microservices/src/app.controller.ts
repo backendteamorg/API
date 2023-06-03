@@ -1,4 +1,4 @@
-import { Controller, Get,Inject,Post,Body, UseGuards, Put,Param ,Delete, Patch, Req,Query, Res} from '@nestjs/common';
+import { Controller, Get,Inject,Post,Body, UseGuards, Put,Param ,Delete, Patch, Req,Query, Res, UseInterceptors } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiCreatedResponse, ApiOperation, ApiProperty, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -9,6 +9,9 @@ import { FilteDto } from 'apps/films/src/dto/filtre.dto';
 import { AuthService } from './auth.service';
 import { CommentsService } from './comments.service';
 import { CreateUserDto } from './dto/createuser.dto';
+import { AddRoleDto } from './dto/addRole.dto';
+import { Roles } from './roles-auth.decorator';
+import { RolesGuard } from './roles.guard';
 
 
 
@@ -23,12 +26,14 @@ export class AppController {
   @Inject('COUNTRIES_SERVICE') private rabbitCountriesFilmsService: ClientProxy,
   @Inject('VIDEOS_SERVICE') private rabbitVideosService: ClientProxy,
   @Inject('NAMESOFGENRES_SERVICE') private rabbitnamesofGenresService: ClientProxy,
-  @Inject('COUNTRIESNAMES_SERVICE') private rabbitnamesofCountriesService: ClientProxy,) {}
+  @Inject('COUNTRIESNAMES_SERVICE') private rabbitnamesofCountriesService: ClientProxy,
+  @Inject('AUTH_SERVICE') private rabbitUserService: ClientProxy) {}
 
 
   
- 
-  
+    
+  @UseGuards(RolesGuard)
+  @Roles('admin')
   @ApiOperation({summary: 'Сделать запрос к api на информацию о фильмах с сайта "Кинопоиск"'})
   @ApiTags('Данные с api kinopoisk')
   @Get('admin/films/parsing')
@@ -39,8 +44,8 @@ export class AppController {
     {});
 
   }
-  
-
+@Roles('admin')
+@UseGuards(RolesGuard)
 @ApiOperation({summary: 'Получить информацию о фильмов данные о которых были получены ранее'})
 @ApiTags('Данные с api kinopoisk')
 @Get('admin/getall/parsing')
@@ -58,7 +63,6 @@ async parsingAll() {
 
 @ApiOperation({summary: 'Получить сохраненные данные о фильмах используя фильтры. Доступные поля {limit, type, page ,genres, countries, ratingKp, votesKp, director,actor}. Пример ввода :localhost:6125/movies?genres=драма&genres=фантастика'})
 @ApiTags('(Фильры) Данные с сайта kinopoisk')
-
 @Get('movies')
 async getFilmsUseFiltres(
   @Query() queryParams: any
@@ -218,8 +222,8 @@ async getFilm(
 
   
   
-
-  
+    @Roles('admin')
+    @UseGuards(RolesGuard)
     @ApiOperation({summary: 'Добавить (Пример: {"id":301, "name":"Матрица","enName":"Matrix"}) (все поля из базового запроса к фильмам)'})  //////////////////// CRUD фИЛЬМОВ
     @ApiTags('(Редактирвоание данных) Данные с сайта kinopoisk')
     @Post('film')
@@ -263,6 +267,8 @@ async getFilm(
         },
       );
   }
+  @Roles('admin')
+  @UseGuards(RolesGuard)
   @ApiOperation({summary: 'Удалить фильм'})                  
   @ApiTags('(Редактирвоание данных) Данные с сайта kinopoisk')
   @Delete('film/:id')
@@ -277,6 +283,8 @@ async getFilm(
       },
     );
   }
+  @Roles('admin')
+  @UseGuards(RolesGuard)
   @ApiOperation({summary: 'Удалить жанр'})
   @ApiTags('(Редактирвоание данных) Данные с сайта kinopoisk')
   @Delete('namesofgenre/:id')
@@ -291,6 +299,8 @@ async getFilm(
       },
     );
   }
+  @Roles('admin')
+  @UseGuards(RolesGuard)
   @ApiOperation({summary: 'Удалить страну'})
   @ApiTags('(Редактирвоание данных) Данные с сайта kinopoisk')
   @Delete('namesofcountry/:id')
@@ -305,6 +315,8 @@ async getFilm(
       },
     );
   }
+  @Roles('admin')
+  @UseGuards(RolesGuard)
   @ApiOperation({summary: 'Изменить название фильма (Пример: {"id":301, "name":"Матрица","enName":"Matrix"})'}) 
   @ApiTags('(Редактирвоание данных) Данные с сайта kinopoisk')
   @Patch('film')
@@ -323,8 +335,8 @@ async getFilm(
       },
     );
   }
-
-  
+  @Roles('admin')
+  @UseGuards(RolesGuard)
   @ApiOperation({summary: 'Изменить название жанра (Пример: {"id":1, "name:"драма","enName":"drame"})'}) //////////////////// CRUD ЖАНРОВ
   @ApiTags('(Редактирвоание данных) Данные с сайта kinopoisk')
   @Patch('namesofgenre')
@@ -343,6 +355,8 @@ async getFilm(
       },
     );
   }
+  @Roles('admin')
+  @UseGuards(RolesGuard)
   @ApiOperation({summary: 'Добавить название жанра (Пример: {"id":1, "name:"драма","enName":"drame"})'})
   @ApiTags('(Редактирвоание данных) Данные с сайта kinopoisk')
   @Post('namesofgenre')
@@ -360,8 +374,8 @@ async getFilm(
     );
   }
   
-
-
+  @Roles('admin')
+  @UseGuards(RolesGuard)
   @ApiOperation({summary: 'Добавить название жанра (Пример: {"id":1, "name:"драма","enName":"drame"})'})     //////////////////// CRUD СТРАН
   @ApiTags('(Редактирвоание данных) Данные с сайта kinopoisk')
   @Post('namesofcountry')
@@ -378,6 +392,8 @@ async getFilm(
       },
     );
   }
+  @Roles('admin')
+  @UseGuards(RolesGuard)
   @ApiOperation({summary: 'Изменить название страны (Пример: {"id":1, "name:"Франция","enName":"France"})'})
   @ApiTags('(Редактирвоание данных) Данные с сайта kinopoisk')
   @Patch('namesofcountry')
@@ -489,7 +505,7 @@ async logout(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
 @ApiOperation({summary: 'Регистрация через email'})
 @ApiTags('/auth/registration')
 @Post('/auth/registration')
-async registration(@Body() userDto: CreateUserDto, @Res({ passthrough: true }) res: Response) {
+async registration(@Body() userDto: CreateUserDto, @Res({ passthrough: true }) res: Response, @Req() req) {
     const user = await this.authService.registration(userDto);
     res.cookie('authenticationType', 'email', {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true});
     res.cookie('refreshToken', user.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true}).send(user.accessToken);
@@ -498,12 +514,11 @@ async registration(@Body() userDto: CreateUserDto, @Res({ passthrough: true }) r
 @ApiOperation({summary: 'Авторизация через email'})
 @ApiTags('/auth/login')
 @Post('/auth/login')
-async login(@Body() userDto: CreateUserDto, @Res({ passthrough: true }) res: Response) {
+async login(@Body() userDto: CreateUserDto, @Res({ passthrough: true }) res: Response, @Req() req) {
     const user = await this.authService.login(userDto);
     res.cookie('authenticationType', 'email', {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true});
     res.cookie('refreshToken', user.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true}).send(user.accessToken);
 }
-
 @ApiOperation({summary: 'Публикация комментария к фильму'})
 @ApiTags('/comment/film')
 @Post('/comment/film')
@@ -532,10 +547,31 @@ async publishChildComment(@Body() commentInfo: any, @Body('movieid') movieid: nu
 @ApiOperation({summary: 'Получить данные комментария'})
 @ApiTags('/comment/:id')
 @Get('/comment/:id')
-    async getComment(@Param() data) {
-        const comment = await this.commentService.getComment(data.id);
-        return comment;
+async getComment(@Param() data) {
+    const comment = await this.commentService.getComment(data.id);
+    return comment;
+}
+
+@ApiOperation({summary: 'Создать роль'})
+@ApiTags('/role')
+@Post('/role')
+    async createRole(@Body('value') value: string) {
+        return await this.rabbitUserService.send('create.role', {value:value});
     }
 
+@ApiOperation({summary: 'Добавить роль пользователю по почте'})
+@ApiTags('/addRole')
+@Post('/addRole')
+    async addRoleToUser(@Body() data: AddRoleDto) {
+        return await this.rabbitUserService.send('add.role.toUser', data);
+    }
 
+@ApiOperation({summary: 'Добавить роль пользователю по почте'})
+@ApiTags('/addRole')
+@Get('/test')
+@Roles('admin')
+@UseGuards(RolesGuard)
+    async test(@Req() req) {
+        return 'OK';
+    }
 }

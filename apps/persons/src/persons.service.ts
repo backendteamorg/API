@@ -252,14 +252,18 @@ async getAllActors(){
     let filmIdArr1 = [];
     let filmIdArr2 = [];
     let filmIdArr3 = [];
-    for(let i = 0; i<9;i++){
+    let filmIdArr4 = [];
+    for(let i = 0; i<arrfilm.length/4;i++){
       filmIdArr1.push(arrfilm[i].id);
     }
-    for(let i = 10; i<17;i++){
+    for(let i = 250; i<250+arrfilm.length/4;i++){
       filmIdArr2.push(arrfilm[i].id);
     }
-    for(let i = 18; i<26;i++){
+    for(let i = 500; i<500+arrfilm.length/4;i++){
       filmIdArr3.push(arrfilm[i].id);
+    }
+    for(let i = 750; i<750+arrfilm.length/4;i++){
+      filmIdArr4.push(arrfilm[i].id);
     }
     let ArrPersonRep = await this.personsRepository.findAll()
     let ArrPersonsRep = []
@@ -268,7 +272,7 @@ async getAllActors(){
     }
     if(filmIdArr1.length!=0){
       const personsREQ1 =  await fetch(`https://api.kinopoisk.dev/v1/movie?id=${filmIdArr1.join('&id=')}&selectFields=\
-persons.id%20persons.photo%20persons.name%20persons.enName%20persons.profession%20persons.enProfession%20id`, {
+persons.id%20persons.photo%20persons.name%20persons.enName%20persons.profession%20persons.enProfession%20id&page=1&limit=10000`, {
         method: 'GET',
         headers:{
                   'X-API-KEY': 'QTD9VCR-EW8M0Y4-QR6W0Y1-Y8J1BFT',
@@ -276,7 +280,7 @@ persons.id%20persons.photo%20persons.name%20persons.enName%20persons.profession%
                 },
     })
     const personsREQ2 =  await fetch(`https://api.kinopoisk.dev/v1/movie?id=${filmIdArr2.join('&id=')}&selectFields=\
-persons.id%20persons.photo%20persons.name%20persons.enName%20persons.profession%20persons.enProfession%20id`, {
+persons.id%20persons.photo%20persons.name%20persons.enName%20persons.profession%20persons.enProfession%20id&page=1&limit=10000`, {
         method: 'GET',
         headers:{
                   'X-API-KEY': 'QTD9VCR-EW8M0Y4-QR6W0Y1-Y8J1BFT',
@@ -284,7 +288,15 @@ persons.id%20persons.photo%20persons.name%20persons.enName%20persons.profession%
                 },
     })
     const personsREQ3 =  await fetch(`https://api.kinopoisk.dev/v1/movie?id=${filmIdArr3.join('&id=')}&selectFields=\
-persons.id%20persons.photo%20persons.name%20persons.enName%20persons.profession%20persons.enProfession%20id`, {
+persons.id%20persons.photo%20persons.name%20persons.enName%20persons.profession%20persons.enProfession%20id&page=1&limit=10000`, {
+        method: 'GET',
+        headers:{
+                  'X-API-KEY': 'QTD9VCR-EW8M0Y4-QR6W0Y1-Y8J1BFT',
+                  'Content-Type': 'application/json',
+                },
+    })
+    const personsREQ4 =  await fetch(`https://api.kinopoisk.dev/v1/movie?id=${filmIdArr4.join('&id=')}&selectFields=\
+persons.id%20persons.photo%20persons.name%20persons.enName%20persons.profession%20persons.enProfession%20id&page=1&limit=10000`, {
         method: 'GET',
         headers:{
                   'X-API-KEY': 'QTD9VCR-EW8M0Y4-QR6W0Y1-Y8J1BFT',
@@ -295,6 +307,7 @@ persons.id%20persons.photo%20persons.name%20persons.enName%20persons.profession%
       let json1 = await personsREQ1.json();
       let json2 = await personsREQ2.json();
       let json3 = await personsREQ3.json();
+      let json4 = await personsREQ4.json();
       let arrPersons = []
       for(let i = 0 ;i < json1.docs.length;i++){
           for(let j = 0 ;j<json1.docs[i].persons.length;j++){
@@ -348,6 +361,26 @@ persons.id%20persons.photo%20persons.name%20persons.enName%20persons.profession%
               photo:json3.docs[i].persons[j].photo,
               profession:json3.docs[i].persons[j].profession,
               enProfession:json3.docs[i].persons[j].enProfession,
+
+            }
+            )
+        }
+
+        
+      }
+    }
+    for(let i = 0 ;i < json4.docs.length;i++){
+      for(let j = 0 ;j<json4.docs[i].persons.length;j++){
+        if(ArrPersonsRep.includes(json4.docs[i].id+'@'+json4.docs[i].persons[j].id)===false){
+          arrPersons.push(
+            {
+              movieid:json4.docs[i].id,
+              personid:json4.docs[i].persons[j].id,
+              name:json4.docs[i].persons[j].name,
+              enName:json4.docs[i].persons[j].enName,
+              photo:json4.docs[i].persons[j].photo,
+              profession:json4.docs[i].persons[j].profession,
+              enProfession:json4.docs[i].persons[j].enProfession,
 
             }
             )

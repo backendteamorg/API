@@ -217,7 +217,7 @@ export class GenresnamesService {
       const genres = await this.namesofgenresmoviesRepository.findAll()
       for(let q = 0 ; q <genres.length;q++){
         if(genres[q].name===dto.name||genres[q].enName===dto.enName){
-          return 'Такое название жанра уже есть в базе'
+          return 'Жанр уже есть в базе данных'
         }
       }
       return await namesGenresOfFilms.create(dto)

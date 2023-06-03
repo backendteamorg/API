@@ -29,7 +29,6 @@ services:
     container_name: microservices
     networks:
       - app
-
   films:
     build:
       context: ./
@@ -311,15 +310,6 @@ services:
     networks:
       - app
 
-  adminer:
-    image: adminer
-    restart: always
-    ports:
-      - 8080:8080
-    container_name: adminer
-    networks:
-      - app
-
   new-auth:
     build:
       context: ./
@@ -381,6 +371,15 @@ services:
     volumes:
       - pgdatacomments:/var/lib/postgresql/data
     restart: always
+    networks:
+      - app
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+    container_name: adminer
     networks:
       - app
 volumes:

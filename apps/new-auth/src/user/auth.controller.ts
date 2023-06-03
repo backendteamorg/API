@@ -34,6 +34,13 @@ export class AuthController {
         
     }
 
+    @MessagePattern('add.role.toUser')
+    async addRole(@Payload() data) {
+        console.log(data);
+        const user = await this.userService.addRole(data);
+        return user;
+    }
+
     @MessagePattern('login.user')
     async login(@Payload() userDto) {
         const userData = await this.userService.login(userDto);

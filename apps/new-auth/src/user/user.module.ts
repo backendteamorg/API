@@ -5,9 +5,10 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { User } from './user.model';
 import { Token } from './token.model';
 import { AuthController } from './auth.controller';
+import { RoleModule } from '../role/role.module';
 
 @Module({
-  imports:[SequelizeModule.forFeature([User, Token])],
+  imports:[SequelizeModule.forFeature([User, Token]), RoleModule],
   controllers: [UserController, AuthController],
   providers: [UserService]
 })

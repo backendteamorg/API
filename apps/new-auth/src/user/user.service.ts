@@ -7,11 +7,14 @@ import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
 import * as dotenv from 'dotenv';
 import { UserPayloadDto } from './dto/userPayload.dto';
+import { RoleService } from '../role/role.service';
+import { AddRoleDto } from './dto/addRole.dto';
 dotenv.config();
 @Injectable()
 export class UserService {
     constructor(@InjectModel(User) private userRepo: typeof User,
-    @InjectModel(Token) private tokenRepo: typeof Token){}
+    @InjectModel(Token) private tokenRepo: typeof Token,
+    private roleService: RoleService){}
     async registration(createUserDto: CreateUserDto) {
         const candidate = await this.userRepo.findOne({where: {email : createUserDto.email}});
         if(candidate) {
@@ -21,15 +24,20 @@ export class UserService {
         const hashedPassword = await bcrypt.hash(createUserDto.password, 3);
         const user = await this.userRepo.create({password: hashedPassword, email: createUserDto.email});
  
+        const role = await this.roleService.getRoleByValue('user');
+        await user.$set('roles', [role.id]);
+        user.roles = [role];
+
         const userPayloadDto = new UserPayloadDto(user);
         const tokens = await this.generateTokens({...userPayloadDto});
         await this.saveToken(userPayloadDto.userId, tokens.refreshToken);
         
-        return {...tokens};
+        const userWithRoles = await this.userRepo.findOne({where: {email : user.email}, include: {all:true}});
+        return {userWithRoles, accessToken: tokens.accessToken, refreshToken: tokens.refreshToken};
      }
  
      async login(createUserDto: CreateUserDto) {
-         const user = await this.userRepo.findOne({where: {email: createUserDto.email}});
+         const user = await this.userRepo.findOne({where: {email: createUserDto.email}, include: {all:true}});
          if(!user) {
              throw new Error('Пользователь с такой почтой не найден');
          }     
@@ -41,7 +49,7 @@ export class UserService {
          const tokens = await this.generateTokens({...userPayloadDto});
          await this.saveToken(userPayloadDto.userId, tokens.refreshToken);
         
-        return {...tokens};
+        return {user, accessToken: tokens.accessToken, refreshToken: tokens.refreshToken};
      }
  
      async logout(refrershToken: string) {
@@ -76,8 +84,10 @@ export class UserService {
  
      async validateAccessToken(token: string) {
          try {
-             const userData = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
-             return userData;
+                const userData = await jwt.verify(token, process.env.JWT_ACCESS_SECRET);
+                const { email } = userData;
+                const user = await this.userRepo.findOne({where: { email: email}, include: {all:true}});
+             return user;
          } catch(e) {
              return e;
          }
@@ -106,5 +116,13 @@ export class UserService {
  
          const token = await this.tokenRepo.create({refreshToken: refreshToken, userId: userId}); 
          return token;
+     }
+
+     async addRole(dto: AddRoleDto) {
+        const role = await this.roleService.getRoleByValue(dto.roleValue);
+        const user = await this.userRepo.findOne({where: {email: dto.email}});
+        await user.$set('roles', [role.id]);
+        user.roles = [role];
+        return user;
      }
 }
