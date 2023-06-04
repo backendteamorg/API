@@ -34,4 +34,14 @@ export class CommentsController {
 
     return await this.commentService.getCommentsByMovieId(film.idF);
   }
+  @MessagePattern({ cmd: 'get-comments-by-parentId' })
+  async getCommentByParentId(
+    @Ctx() context: RmqContext,
+    @Payload() comment: { parentId: number },) {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return await this.commentService.getAllChildCommentByParentId(comment.parentId);
+  }
 }

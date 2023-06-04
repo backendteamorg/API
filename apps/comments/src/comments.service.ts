@@ -48,4 +48,7 @@ export class CommentsService {
     async getCommentsByMovieId(idF:number){
         return await this.commentRepo.findAll({where:{movieid:idF}})
     }
+    async getAllChildCommentByParentId(idC:number){
+        return await this.commentRepo.findAll({where:{parentId:idC}})
+    }
 }

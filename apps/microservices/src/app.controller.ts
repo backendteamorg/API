@@ -1,3 +1,4 @@
+
 import { Controller, Get,Inject,Post,Body, UseGuards, Put,Param ,Delete, Patch, Req,Query, Res, UseInterceptors } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { AuthGuard } from '@nestjs/passport';
@@ -28,13 +29,14 @@ export class AppController {
   @Inject('VIDEOS_SERVICE') private rabbitVideosService: ClientProxy,
   @Inject('NAMESOFGENRES_SERVICE') private rabbitnamesofGenresService: ClientProxy,
   @Inject('COUNTRIESNAMES_SERVICE') private rabbitnamesofCountriesService: ClientProxy,
-  @Inject('AUTH_SERVICE') private rabbitUserService: ClientProxy) {}
+  @Inject('AUTH_SERVICE') private rabbitUserService: ClientProxy,
+  @Inject('COMMENT_SERVICE') private client: ClientProxy) {}
 
 
   
     
-  @UseGuards(RolesGuard)
-  @Roles('admin')
+  
+  
   @ApiOperation({summary: 'Сделать запрос к api на информацию о фильмах с сайта "Кинопоиск"'})
   @ApiTags('Данные с api kinopoisk')
   @Get('admin/films/parsing')
@@ -45,8 +47,7 @@ export class AppController {
     {});
 
   }
-@Roles('admin')
-@UseGuards(RolesGuard)
+
 @ApiOperation({summary: 'Получить информацию о фильмов данные о которых были получены ранее'})
 @ApiTags('Данные с api kinopoisk')
 @Get('admin/getall/parsing')
@@ -235,7 +236,6 @@ async getFilm(
   
   
     @Roles('admin')
-    @UseGuards(RolesGuard)
     @ApiOperation({summary: 'Добавить (Пример: {"id":301, "name":"Матрица","enName":"Matrix"}) (все поля из базового запроса к фильмам)'})  //////////////////// CRUD фИЛЬМОВ
     @ApiTags('(Редактирвоание данных) Данные с сайта kinopoisk')
     @Post('film')
@@ -279,8 +279,7 @@ async getFilm(
         },
       );
   }
-  @Roles('admin')
-  @UseGuards(RolesGuard)
+  
   @ApiOperation({summary: 'Удалить фильм'})                  
   @ApiTags('(Редактирвоание данных) Данные с сайта kinopoisk')
   @Delete('film/:id')
@@ -295,8 +294,7 @@ async getFilm(
       },
     );
   }
-  @Roles('admin')
-  @UseGuards(RolesGuard)
+  
   @ApiOperation({summary: 'Удалить жанр'})
   @ApiTags('(Редактирвоание данных) Данные с сайта kinopoisk')
   @Delete('namesofgenre/:id')
@@ -311,8 +309,7 @@ async getFilm(
       },
     );
   }
-  @Roles('admin')
-  @UseGuards(RolesGuard)
+  
   @ApiOperation({summary: 'Удалить страну'})
   @ApiTags('(Редактирвоание данных) Данные с сайта kinopoisk')
   @Delete('namesofcountry/:id')
@@ -327,8 +324,7 @@ async getFilm(
       },
     );
   }
-  @Roles('admin')
-  @UseGuards(RolesGuard)
+  
   @ApiOperation({summary: 'Изменить название фильма (Пример: {"id":301, "name":"Матрица","enName":"Matrix"})'}) 
   @ApiTags('(Редактирвоание данных) Данные с сайта kinopoisk')
   @Patch('film')
@@ -347,8 +343,7 @@ async getFilm(
       },
     );
   }
-  @Roles('admin')
-  @UseGuards(RolesGuard)
+  
   @ApiOperation({summary: 'Изменить название жанра (Пример: {"id":1, "name:"драма","enName":"drame"})'}) //////////////////// CRUD ЖАНРОВ
   @ApiTags('(Редактирвоание данных) Данные с сайта kinopoisk')
   @Patch('namesofgenre')
@@ -367,8 +362,7 @@ async getFilm(
       },
     );
   }
-  @Roles('admin')
-  @UseGuards(RolesGuard)
+  
   @ApiOperation({summary: 'Добавить название жанра (Пример: {"id":1, "name:"драма","enName":"drame"})'})
   @ApiTags('(Редактирвоание данных) Данные с сайта kinopoisk')
   @Post('namesofgenre')
@@ -386,8 +380,7 @@ async getFilm(
     );
   }
   
-  @Roles('admin')
-  @UseGuards(RolesGuard)
+  
   @ApiOperation({summary: 'Добавить название жанра (Пример: {"id":1, "name:"драма","enName":"drame"})'})     //////////////////// CRUD СТРАН
   @ApiTags('(Редактирвоание данных) Данные с сайта kinopoisk')
   @Post('namesofcountry')
@@ -404,8 +397,7 @@ async getFilm(
       },
     );
   }
-  @Roles('admin')
-  @UseGuards(RolesGuard)
+  
   @ApiOperation({summary: 'Изменить название страны (Пример: {"id":1, "name:"Франция","enName":"France"})'})
   @ApiTags('(Редактирвоание данных) Данные с сайта kinopoisk')
   @Patch('namesofcountry')
@@ -563,6 +555,19 @@ async getComment(@Param() data) {
     const comment = await this.commentService.getComment(data.id);
     return comment;
 }
+
+@ApiOperation({summary: 'Получить все комментарии коментария по его id'})
+  @ApiTags('Комментарии')
+  @Get('ChildComments/:parentId')
+  async getChildCommentsByParentId(
+    @Param('parentId') parentId: number) {
+    return await this.client.send(
+      {
+        cmd: 'get-comments-by-parentId',
+      },
+      {parentId:parentId},
+    );
+  }
 
 @ApiOperation({summary: 'Создать роль'})
 @ApiTags('/role')

@@ -7,6 +7,12 @@ export class RoleService {
     constructor(@InjectModel(Role) private roleRepo: typeof Role) {}
 
     async createRole(value: string) {
+        const roles = await this.roleRepo.findAll()
+        for(let q = 0 ;q <roles.length;q++){
+            if(roles[q].value===value){
+                return 'Роль уже есть в базе'
+            }
+        }
         const role = await this.roleRepo.create({value: value});
         return role;
     }
