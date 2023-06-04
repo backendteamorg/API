@@ -67,7 +67,7 @@ export class CountriesService {
                       'X-API-KEY': 'QTD9VCR-EW8M0Y4-QR6W0Y1-Y8J1BFT',
                       'Content-Type': 'application/json',
                     },
-        })
+        }) 
         if(countriesREQ.ok){
           let json = await countriesREQ.json();
           let arrCountries = []
