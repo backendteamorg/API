@@ -429,16 +429,7 @@ async getFilm(
     {});
 
   }
-  @ApiOperation({summary: 'Получить все сохраненные данные о тех кто учавтсовал в сьемках фильмов данные о которых были получены ранее'})
-  @ApiTags('(Суммарные данные) с сайта kinopoisk')
-  @Get('personswithinfo')
-  async GetAllPersonWithInfo() {
-    return await this.rabbitFilmsService.send({
-      cmd: 'get-all-persons-with-film-info',
-    },
-    {});
-
-  } 
+  
   @ApiOperation({summary: 'Получить всю инфомрацию о персоне по id'})
   @ApiTags('(Суммарные данные) с сайта kinopoisk')
   @Get('personswithinfo/:id')

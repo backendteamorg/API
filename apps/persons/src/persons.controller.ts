@@ -27,14 +27,7 @@ export class PersonsController {
   }
 
 
-  @MessagePattern({ cmd: 'get-all-persons-with-info'})
-  async getAllPersonsWithInfo(@Ctx() context: RmqContext){
-    const channel = context.getChannelRef();
-    const message = context.getMessage();
-    channel.ack(message);
-
-    return this.personsService.getAllPersonsWithAllInfo()
-  }
+  
 
   @MessagePattern({ cmd: 'get-personsoffilms-by-moveid' })
   async getUserById(
