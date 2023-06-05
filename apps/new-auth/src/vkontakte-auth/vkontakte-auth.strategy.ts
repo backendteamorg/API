@@ -14,15 +14,11 @@ export class VKStrategy extends PassportStrategy(Strategy, "vkontakte") {
             clientSecret: process.env.VK_SECRET,
             callbackURL: process.env.VK_REDIRECT_URI,
             scope: ['profile'],
-        }, async function(
-            accessToken: string,
-            params: any,
-            profile: any,
-            done: VerifyCallback
+        }, async function(accessToken: string,params: any,profile: any,done: VerifyCallback
         ) {  
              const user = await userService.createUser({displayName: profile.displayName, refreshToken: accessToken,
                  id: profile.id});
-            return done(null, {user: user, accessToken: user.refreshToken});
+            return done(null, {user: user, accessToken: user});
         });
     }
 }
