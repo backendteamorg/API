@@ -589,7 +589,7 @@ async getComment(@Param() data) {
     async validateVKToken(@Body('token')  accessToken: string, @Req() req) {
         const { refreshToken } = req.cookies;
         const userData =  await this.authService.validateVkToken({accessToken: accessToken, refreshToken: refreshToken});
-        return {displayName: userData.displayName, roles: userData.roles};
+        return {id: userData.id,displayName: userData.displayName, roles: userData.roles};
     }
 
 @ApiOperation({summary: 'Email валидация accessToken'})
