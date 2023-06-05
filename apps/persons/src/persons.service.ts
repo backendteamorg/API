@@ -253,7 +253,7 @@ async getAllActors(){
     let filmIdArr2 = [];
     let filmIdArr3 = [];
     let filmIdArr4 = [];
-    for(let i = 0; i<100;i++){
+    for(let i = 0; i<50;i++){
       filmIdArr1.push(arrfilm[i].id);
     }
   
