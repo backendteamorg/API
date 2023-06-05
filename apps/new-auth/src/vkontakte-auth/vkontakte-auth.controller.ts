@@ -8,12 +8,11 @@ export class VkontakteAuthController {
     @MessagePattern('vkontakte.login')
     async vkAuthRedirect(@Payload() data: any) {
         console.log('VK service got a message');
-        
         const user = await this.authService.createUser(data);
         return user;
     }
 
-    @MessagePattern({ cmd: 'validate.vk.token'})
+    @MessagePattern('validate.vk.token')
     async validateToken(@Payload() data: any) {
         let accessToken = data.accessToken;
         let userData = await this.authService.validateToken(accessToken);

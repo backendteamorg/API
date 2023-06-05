@@ -9,10 +9,11 @@ import { VkUser } from './vkontakte-auth/user.model';
 import { RoleModule } from './role/role.module';
 import { Role } from './role/role.model';
 import { UserRoles } from './role/user-roles.model';
+import { GoogleUserModule } from './google-auth/google-auth.module';
 import { GoogleUserRoles } from './role/googleUser-roles.model';
 import { GoogleUser } from './google-auth/user.model';
 import { VKUserRoles } from './role/vkUser-roles.model';
-import { GoogleUserModule } from './google-auth/google-auth.module';
+
 
 
 @Module({

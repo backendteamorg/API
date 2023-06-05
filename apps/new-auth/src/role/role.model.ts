@@ -1,6 +1,10 @@
 import { Table, Column, DataType, Model, BelongsToMany } from "sequelize-typescript";
 import { UserRoles } from "./user-roles.model";
 import { User } from "../user/user.model";
+import { GoogleUser } from "../google-auth/user.model";
+import { GoogleUserRoles } from "./googleUser-roles.model";
+import { VkUser } from "../vkontakte-auth/user.model";
+import { VKUserRoles } from "./vkUser-roles.model";
 
 interface RoleCreationAttrs {
     value: string;
@@ -16,4 +20,10 @@ export class Role extends Model<Role, RoleCreationAttrs>{
     
     @BelongsToMany(() => User, () => UserRoles)
     users: User[];
+
+    @BelongsToMany(() => GoogleUser, () => GoogleUserRoles)
+    googleUsers: GoogleUser
+
+    @BelongsToMany(() => VkUser, () => VKUserRoles)
+    vkUsers: VkUser
 }

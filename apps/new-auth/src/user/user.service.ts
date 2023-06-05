@@ -33,7 +33,7 @@ export class UserService {
         await this.saveToken(userPayloadDto.userId, tokens.refreshToken);
         
         const userWithRoles = await this.userRepo.findOne({where: {email : user.email}, include: {all:true}});
-        return {userWithRoles, accessToken: tokens.accessToken, refreshToken: tokens.refreshToken};
+        return {user: userWithRoles, accessToken: tokens.accessToken, refreshToken: tokens.refreshToken};
      }
  
      async login(createUserDto: CreateUserDto) {
@@ -49,7 +49,7 @@ export class UserService {
          const tokens = await this.generateTokens({...userPayloadDto});
          await this.saveToken(userPayloadDto.userId, tokens.refreshToken);
         
-        return {user, accessToken: tokens.accessToken, refreshToken: tokens.refreshToken};
+        return {user: user, accessToken: tokens.accessToken, refreshToken: tokens.refreshToken};
      }
  
      async logout(refrershToken: string) {

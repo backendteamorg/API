@@ -1,4 +1,6 @@
-import { Table, Model, Column, HasOne, DataType} from "sequelize-typescript";
+import { Table, Model, Column, HasOne, DataType, BelongsToMany} from "sequelize-typescript";
+import { VKUserRoles } from "../role/vkUser-roles.model";
+import { Role } from "../role/role.model";
 
 interface UserCreationAttr {
     id: string;
@@ -17,4 +19,7 @@ export class VkUser extends Model<VkUser, UserCreationAttr> {
 
     @Column({type: DataType.STRING, allowNull: false})
     refreshToken: string;
+
+    @BelongsToMany(() => Role, () => VKUserRoles)
+    roles: Role[]
 }

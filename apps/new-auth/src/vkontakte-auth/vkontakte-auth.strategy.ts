@@ -22,7 +22,7 @@ export class VKStrategy extends PassportStrategy(Strategy, "vkontakte") {
         ) {  
              const user = await userService.createUser({displayName: profile.displayName, refreshToken: accessToken,
                  id: profile.id});
-            return done(null, user);
+            return done(null, {user: user, accessToken: user.refreshToken});
         });
     }
 }
