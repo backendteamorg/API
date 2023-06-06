@@ -11,7 +11,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
         super({
             clientID: process.env.GOOGLE_CLIENT_ID,
             clientSecret: process.env.GOOGLE_SECRET,
-            callbackURL: 'http://localhost:3000',
+            callbackURL: process.env.GOOGLE_REDIRECT_URI,
             display: "popup",
             scope: ['email', 'profile'],
         });
@@ -24,7 +24,8 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     };
 
     async validate(accessToken: string, refreshToken: string, profile: any, done: VerifyCallback) { 
-        const user = await this.googleAuthService.googleAuthRedirect({displayName: profile.displayName, email: profile.emails[0].value,refreshToken: refreshToken, userId: profile.id});
-        done(null, {user: user, accessToken: accessToken });
+        const user = await this.googleAuthService.googleAuthRedirect({displayName: profile.displayName, email: profile.emails[0].value, 
+                                                                   refreshToken: refreshToken, accessToken:accessToken,userId: profile.id});
+        done(null, {user: user, accessToken: accessToken});
     }
 }   

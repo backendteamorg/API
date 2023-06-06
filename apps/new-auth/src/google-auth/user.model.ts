@@ -24,6 +24,9 @@ export class GoogleUser extends Model<GoogleUser, UserCreationAttr> {
     @Column({type: DataType.STRING, allowNull: false})
     refreshToken: string;
 
+    @Column({type: DataType.STRING, allowNull: false})
+    accessToken: string;
+
     @BelongsToMany(() => Role, () => GoogleUserRoles)
     roles: Role[]
 }

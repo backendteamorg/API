@@ -3,4 +3,5 @@ export class CreateGoogleUserDto {
     readonly email: string;
     readonly displayName: string;
     readonly refreshToken: string;
+    readonly accessToken: string;
 }

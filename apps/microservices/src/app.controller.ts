@@ -583,7 +583,7 @@ async getComment(@Param() data) {
     async validateGoogleToken(@Body('token')  accessToken: string, @Req() req) {
         const { refreshToken } = req.cookies;
         const userData =  await this.authService.validateGoogleToken({accessToken: accessToken, refreshToken: refreshToken});
-        return {email: userData.email, roles: userData.roles};
+        return {email: userData.email,accessToken:userData.accessToken, roles: userData.roles};
     }
 
 @ApiOperation({summary: 'Vkontakte валидация accessToken'})
@@ -592,7 +592,7 @@ async getComment(@Param() data) {
     async validateVKToken(@Body('token')  accessToken: string, @Req() req) {
         const { refreshToken } = req.cookies;
         const userData =  await this.authService.validateVkToken({accessToken: accessToken, refreshToken: refreshToken});
-        return {id: userData.id,displayName: userData.displayName, roles: userData.roles};
+        return {id: userData.id,accessToken:userData.refreshToken,displayName: userData.displayName, roles: userData.roles};
     }
 
 @ApiOperation({summary: 'Email валидация accessToken'})

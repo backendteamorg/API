@@ -12,7 +12,7 @@ export class GoogleAuthController {
     @MessagePattern('google.login')
     async googleAuthRedirect(@Payload() data: CreateGoogleUserDto) { 
         const user = await this.googleService.createUser(data); 
-        return {refreshToken: user.refreshToken, userEmail: user.email, userRole: user.roles};
+        return {refreshToken: user.refreshToken, accessToken:user.accessToken,userEmail: user.email, userRole: user.roles};
     }
 
     @MessagePattern('validate.google.token')

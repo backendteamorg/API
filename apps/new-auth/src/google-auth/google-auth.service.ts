@@ -16,6 +16,7 @@ export class GoogleAuthService {
         if(candidate) {
             candidate.displayName = userDto.displayName;
             candidate.refreshToken = userDto.refreshToken;
+            candidate.accessToken = userDto.accessToken;
             return candidate.save();
         }
         
@@ -39,8 +40,8 @@ export class GoogleAuthService {
         console.log(refreshToken);
         
         const response = await axios.post('https://www.googleapis.com/oauth2/v4/token', {
-            client_id: "566384345920-v5ce4vga2onnu8spm5fv97lbc441pojp.apps.googleusercontent.com",
-            client_secret: "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",
+            clientID: process.env.GOOGLE_CLIENT_ID,
+            clientSecret: process.env.GOOGLE_SECRET,
             refresh_token: refreshToken,
             grant_type: "refresh_token"
         })
