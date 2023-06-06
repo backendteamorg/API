@@ -13,7 +13,7 @@ export class VKStrategy extends PassportStrategy(Strategy, "vkontakte") {
             clientID: process.env.VK_CLIENT_ID,
             clientSecret: process.env.VK_SECRET,
             callbackURL: process.env.VK_REDIRECT_URI,
-            scope: ['profile'],
+            scope: ['email', 'profile'],
         }, async function(
             accessToken: string,
             params: any,
