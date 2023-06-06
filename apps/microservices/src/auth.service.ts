@@ -39,7 +39,7 @@ export class AuthService {
         return data;
     }
 
-    async validateVkToken(dto: ValidateToken) {
+    async validateVkToken(dto:ValidateToken) {
         const data = await (this.client.send('validate.vk.token',{...dto})).toPromise();
         return data;
     }

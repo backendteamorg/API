@@ -1,4 +1,3 @@
-
 import { Controller, Get,Inject,Post,Body, UseGuards, Put,Param ,Delete, Patch, Req,Query, Res, UseInterceptors } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { AuthGuard } from '@nestjs/passport';
@@ -592,7 +591,7 @@ async getComment(@Param() data) {
     async validateVKToken(@Body('token')  accessToken: string, @Req() req) {
         const { refreshToken } = req.cookies;
         const userData =  await this.authService.validateVkToken({accessToken: accessToken, refreshToken: refreshToken});
-        return {id: userData.id,accessToken:userData.refreshToken,displayName: userData.displayName, roles: userData.roles};
+        return {refreshToken:userData.refreshToken,displayName: userData.displayName, roles: userData.roles};
     }
 
 @ApiOperation({summary: 'Email валидация accessToken'})
