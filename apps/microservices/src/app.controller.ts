@@ -474,7 +474,9 @@ async VKloginRedirect(@Req() req, @Res() res) {
     res.cookie('authenticationType', 'vk', {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true});
     res.cookie('refreshToken', req.user.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true}).send({accessToken: req.user.refreshToken, displayName: req.user.displayName,
                                                         roles: req.user.roles});
+    
 }
+
 
 @ApiOperation({summary: 'Авторизация через google'})
 @ApiTags('auth/google')
@@ -487,6 +489,7 @@ async googleLogin() {}
 async googleLoginRedirect(@Req() req, @Res() res) {
     res.cookie('authenticationType', 'google', {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true});
     res.cookie('refreshToken', req.user.user.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true}).send(req.user);
+    
 }
 @ApiOperation({summary: 'Выход из аккаунта и очищение cookies'})
 @ApiTags('/auth/logout')

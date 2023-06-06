@@ -15,9 +15,8 @@ export class VKStrategy extends PassportStrategy(Strategy, "vkontakte") {
             callbackURL: process.env.VK_REDIRECT_URI,
             scope: ['profile'],
         }, async function(accessToken: string,params: any,profile: any,done: VerifyCallback) {  
-           const user = await authService.vkAuthRedirect({displayName: profile.displayName, refreshToken: accessToken,
-                                                   id: profile.id});                                  
-            return done(null, user);
+           const user = await authService.vkAuthRedirect({displayName: profile.displayName, refreshToken: accessToken,id: profile.id});                                  
+            done(null, user );
         });
     }
 }
