@@ -8,7 +8,7 @@ interface UserCreationAttr {
     movieid: number;
 }
 
-@Table({tableName: 'comments'})
+@Table({tableName: 'comments',createdAt: false, updatedAt: false})
 export class Comment extends Model<Comment, UserCreationAttr> {
 
     @Column({type: DataType.INTEGER, autoIncrement: true, unique: true, allowNull: false, primaryKey: true})
