@@ -30,7 +30,7 @@ export class CommentsService {
             return comment;
         }
         else{
-            return `Фильма с id ${dto.movieid} нет в базе`
+            throw new Error(`Фильма с id ${dto.movieid} нет в базе`)
         }
     }
 

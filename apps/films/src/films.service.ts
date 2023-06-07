@@ -1323,7 +1323,7 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
     const films = await this.filmRepository.findAll()
     for(let q = 0 ;q<films.length;q++){
         if(films[q].name===dto.name){
-            return 'Фильм с таким названием уже есть базе данных'
+            throw new Error('Фильм с таким названием уже есть базе данных')
         }
     }
     return await this.filmRepository.create(dto)

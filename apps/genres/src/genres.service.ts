@@ -98,7 +98,7 @@ export class GenresService {
         
     }
     else{
-      return 'DB_FILMS OR DB_NAMES_OF_GENRE IS EMPTY'
+      throw new Error('DB_FILMS OR DB_NAMES_OF_GENRE IS EMPTY')
     }
   }
 

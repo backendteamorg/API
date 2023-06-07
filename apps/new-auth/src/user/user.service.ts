@@ -18,7 +18,7 @@ export class UserService {
     async registration(createUserDto: CreateUserDto) {
         const candidate = await this.userRepo.findOne({where: {email : createUserDto.email}});
         if(candidate) {
-             throw new Error('Пользователь с таким почтовым адрссом уже существует!')
+            throw new Error('Пользователь с введеным почтовым адресом уже существует!')
         }
  
         const hashedPassword = await bcrypt.hash(createUserDto.password, 3);
@@ -39,11 +39,11 @@ export class UserService {
      async login(createUserDto: CreateUserDto) {
          const user = await this.userRepo.findOne({where: {email: createUserDto.email}, include: {all:true}});
          if(!user) {
-             throw new Error('Пользователь с такой почтой не найден');
+             throw new Error('Пользователь с введеной почтой не найден');
          }     
          const passwordEquals = await bcrypt.compare(createUserDto.password, user.password);
          if(!passwordEquals) {
-             throw new Error('Неверный пороль');
+             throw new Error('Неверный пароль');
          }
          const userPayloadDto = new UserPayloadDto(user);
          const tokens = await this.generateTokens({...userPayloadDto});
@@ -99,7 +99,7 @@ export class UserService {
      }
  
      async generateTokens(payload: UserPayloadDto) {
-         const accessToken = jwt.sign(payload, process.env.JWT_ACCESS_SECRET, {expiresIn: '30m'});
+         const accessToken = jwt.sign(payload, process.env.JWT_ACCESS_SECRET, {expiresIn: '1d'});
          const refreshToken = jwt.sign(payload, process.env.JWT_REFRESH_SECRET, {expiresIn: '30d'});
          return {
              accessToken,
