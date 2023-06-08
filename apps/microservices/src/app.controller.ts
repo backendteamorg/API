@@ -75,7 +75,7 @@ async getAllFilmsWithInfo() {
   },
   {});
 
-}
+} 
 @ApiOperation({summary: 'Получить все сохраненные данные о фильмах c IMAX'}) 
 @ApiTags('(Суммарные данные) с сайта kinopoisk')
 @Get('filmsHasIMAX')

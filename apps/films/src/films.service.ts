@@ -889,11 +889,14 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
 
    
     async getFilmsUseFiltre(queryParams:any){
-        const {limit, type, page ,genres, countries, ratingKp, votesKp, director,actor, SortField,SortType} = queryParams; 
+        const {limit, type, sortOrder,page ,genres, countries, ratingKp, votesKp, director,actor, SortField,SortType} = queryParams; 
        
         
         if(queryParams.queryParams.limit===undefined){
             queryParams.queryParams.limit = 10
+        }
+        if(queryParams.queryParams.sortOrder===undefined){
+            queryParams.queryParams.sortOrder = 'DESC'
         }
         if(queryParams.queryParams.page===undefined){
             queryParams.queryParams.page = 1
