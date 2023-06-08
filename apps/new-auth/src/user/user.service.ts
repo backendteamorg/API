@@ -10,6 +10,7 @@ import { UserPayloadDto } from './dto/userPayload.dto';
 import { RoleService } from '../role/role.service';
 import { AddRoleDto } from './dto/addRole.dto';
 dotenv.config();
+
 @Injectable()
 export class UserService {
     constructor(@InjectModel(User) private userRepo: typeof User,
@@ -18,7 +19,7 @@ export class UserService {
     async registration(createUserDto: CreateUserDto) {
         const candidate = await this.userRepo.findOne({where: {email : createUserDto.email}});
         if(candidate) {
-            throw new Error('Пользователь с введеным почтовым адресом уже существует!')
+             throw new Error('Пользователь с таким почтовым адрссом уже существует!')
         }
  
         const hashedPassword = await bcrypt.hash(createUserDto.password, 3);
@@ -39,11 +40,11 @@ export class UserService {
      async login(createUserDto: CreateUserDto) {
          const user = await this.userRepo.findOne({where: {email: createUserDto.email}, include: {all:true}});
          if(!user) {
-             throw new Error('Пользователь с введеной почтой не найден');
+             throw new Error('Пользователь с такой почтой не найден');
          }     
          const passwordEquals = await bcrypt.compare(createUserDto.password, user.password);
          if(!passwordEquals) {
-             throw new Error('Неверный пароль');
+             throw new Error('Неверный пороль');
          }
          const userPayloadDto = new UserPayloadDto(user);
          const tokens = await this.generateTokens({...userPayloadDto});
@@ -98,7 +99,7 @@ export class UserService {
          return userData;
      }
  
-     async generateTokens(payload: UserPayloadDto) {
+    async generateTokens(payload: UserPayloadDto) {
          const accessToken = jwt.sign(payload, process.env.JWT_ACCESS_SECRET, {expiresIn: '30m'});
          const refreshToken = jwt.sign(payload, process.env.JWT_REFRESH_SECRET, {expiresIn: '30d'});
          return {
@@ -106,7 +107,7 @@ export class UserService {
              refreshToken
          }
      }
-
+ 
      async saveToken(userId: number, refreshToken: string) {
          const tokenData = await this.tokenRepo.findOne({where: {userId: userId}});
          if(tokenData) {
@@ -119,6 +120,8 @@ export class UserService {
      }
 
      async addRole(dto: AddRoleDto) {
+        console.log(dto);
+        
         const role = await this.roleService.getRoleByValue(dto.roleValue);
         const user = await this.userRepo.findOne({where: {email: dto.email}});
         await user.$set('roles', [role.id]);

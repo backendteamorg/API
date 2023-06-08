@@ -4,8 +4,7 @@ import { Role } from "../role/role.model";
 
 interface UserCreationAttr {
     id: string;
-    displayName: string;
-    refreshToken: string;
+    name: string;
 }
 
 @Table({tableName: 'vk_users'})
@@ -15,9 +14,9 @@ export class VkUser extends Model<VkUser, UserCreationAttr> {
     id: string;
 
     @Column({type: DataType.STRING, allowNull: false})
-    displayName: string;
+    name: string;
 
-    @Column({type: DataType.STRING, allowNull: false})
+    @Column({type: DataType.STRING})
     refreshToken: string;
 
     @BelongsToMany(() => Role, () => VKUserRoles)

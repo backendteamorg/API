@@ -1,9 +1,9 @@
-import { Controller, Get, Param, Req, Res, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Req, Res, UseGuards, UnauthorizedException } from '@nestjs/common';
 import { GoogleAuthService } from './google-auth.service';
-import { Request } from 'express';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { CreateGoogleUserDto } from './dto/createGoogleUser.dto';
 import { ValidateGoogleToken } from './dto/validateGoogleToken.dto';
+import * as jwt from 'jsonwebtoken';
 
 @Controller('google')
 export class GoogleAuthController {
@@ -12,11 +12,24 @@ export class GoogleAuthController {
     @MessagePattern('google.login')
     async googleAuthRedirect(@Payload() data: CreateGoogleUserDto) { 
         const user = await this.googleService.createUser(data); 
-        return {refreshToken: user.refreshToken, accessToken:user.accessToken,userEmail: user.email, userRole: user.roles};
+        return user;
     }
 
     @MessagePattern('validate.google.token')
-    async validateAccesToken(@Req() req: Request, @Payload() dto: ValidateGoogleToken) {
-        return await this.googleService.validateAccessToken(dto);
+    async validateToken(@Payload() data: any) {
+        let tokens = data;
+        const { refreshToken, accessToken } = data;
+        let userData = await this.googleService.validateAccessToken(accessToken);
+        if(userData instanceof Error) {
+            if(userData instanceof jwt.TokenExpiredError) {
+                const tokens = await this.googleService.refresh(refreshToken);
+                userData = await this.googleService.validateAccessToken(tokens.accessToken);
+                console.log('TOKENS HAS BEEN UPDATED');
+            } else {
+                return new UnauthorizedException();
+            }
+        }
+        return {accessToken: tokens.accessToken || data.accessToken, 
+            refreshToken: tokens.refrershToken || data.refreshToken, user: userData};
     }
 }

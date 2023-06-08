@@ -36,7 +36,6 @@ export class AuthController {
 
     @MessagePattern('add.role.toUser')
     async addRole(@Payload() data) {
-        console.log(data);
         const user = await this.userService.addRole(data);
         return user;
     }
@@ -55,7 +54,7 @@ export class AuthController {
         return token;
     }
 
-    
+    @Get('refresh')
     async refresh(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
         const {refrershToken} = req.cookies;
         const userData = await this.userService.refresh(refrershToken);

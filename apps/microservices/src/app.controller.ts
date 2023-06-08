@@ -12,6 +12,8 @@ import { CreateUserDto } from './dto/createuser.dto';
 import { AddRoleDto } from './dto/addRole.dto';
 import { Roles } from './roles-auth.decorator';
 import { RolesGuard } from './roles.guard';
+import { CreateGoogleUserDto } from './dto/googleUser.dto';
+import { CreateVkUserDto } from './dto/createVkUser.dto';
 
 
 
@@ -357,33 +359,25 @@ async getAllActors() {
 }
 @ApiOperation({summary: 'Авторизация через ВК'})
 @ApiTags('auth/vk')
-@UseGuards(AuthGuard('vkontakte'))
-@Get('auth/vk')
-async VKlogin() {}
-
-@Get('auth/vk/redirect')
-@UseGuards(AuthGuard('vkontakte'))
-async VKloginRedirect(@Req() req, @Res() res) {
+@Post('auth/vk')
+async VKlogin(@Body() vkUserDto: CreateVkUserDto, @Res({ passthrough: true }) res: Response) {
+    const user = await this.authService.createVKUser(vkUserDto);
     res.cookie('authenticationType', 'vk', {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true});
-    res.cookie('refreshToken', req.user.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true}).send({accessToken: req.user.refreshToken, displayName: req.user.displayName,
-                                                        roles: req.user.roles});
-    
+    res.cookie('refreshToken', user.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true});
+    return {type: 'vk', user: user.name, roles: user.roles, accessToken: user.accessToken};
 }
-
 
 @ApiOperation({summary: 'Авторизация через google'})
 @ApiTags('auth/google')
-@UseGuards(AuthGuard('google'))
-@Get('auth/google')
-async googleLogin() {}
-
-@Get('auth/google/redirect')
-@UseGuards(AuthGuard('google'))
-async googleLoginRedirect(@Req() req, @Res() res) {
+@Post('auth/google')
+async googleLogin(@Body() googleUserDto: CreateGoogleUserDto, @Res({ passthrough: true }) res: Response) {
+    const user = await this.authService.createGoogleUser(googleUserDto);
     res.cookie('authenticationType', 'google', {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true});
-    res.cookie('refreshToken', req.user.user.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true}).send(req.user);
-    
+    res.cookie('refreshToken', user.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true});
+    return {type: 'google', user: user.email, roles: user.roles, accessToken: user.accessToken};
 }
+
+
 @ApiOperation({summary: 'Выход из аккаунта и очищение cookies'})
 @ApiTags('/auth/logout')
 @Post('/auth/logout')
@@ -418,13 +412,14 @@ async login(@Body() userDto: CreateUserDto, @Res({ passthrough: true }) res: Res
 @ApiTags('/comment/film')
 @Post('/comment/film')
 async publishCommentToFilm(
-  @Body('text') commentText: string, 
-  @Body('movieid') movieid: number, 
+  @Body() commentDto: any, 
   @Req() req) {
-    const date = String(new Date());
-    const email = req.user.email;
+    console.log(req.user);
     
-    const comment = await this.commentService.publishCommentToFilm({date: date, userEmail: email, text: commentText,  movieid:  movieid});
+    const date = String(new Date());
+    const email = req.user.user;
+
+    const comment = await this.commentService.publishCommentToFilm({date: date, userEmail: email, text: commentDto.text,  movieid:  commentDto.movieid});
     return comment;
 }
 
@@ -461,6 +456,14 @@ async getComment(@Param() data) {
         return await this.rabbitUserService.send('add.role.toUser', data);
     }
 
+@ApiOperation({summary: 'Создание админ пользователя и добавление двух ролей в БД'})
+@ApiTags('/createAdmin')
+@Post('/createAdmin')
+    async createAdminUser() {
+        const user = await this.authService.createAdmin();
+        return user;
+    }
+
 @ApiOperation({summary: 'Тестовое'})
 @ApiTags('/addRole')
 @Get('/test')
@@ -468,33 +471,6 @@ async getComment(@Param() data) {
 @UseGuards(RolesGuard)
     async test(@Req() req) {
         return 'OK';
-    }
-
-@ApiOperation({summary: 'Google валидация accessToken'})
-@ApiTags('/validate/google')
-@Post('/validate/google')
-    async validateGoogleToken(@Body('token')  accessToken: string, @Req() req) {
-        const { refreshToken } = req.cookies;
-        const userData =  await this.authService.validateGoogleToken({accessToken: accessToken, refreshToken: refreshToken});
-        return {email: userData.email, roles: userData.roles};
-    }
-
-@ApiOperation({summary: 'Vkontakte валидация accessToken'})
-@ApiTags('/validate/vk')
-@Post('/validate/vk')
-    async validateVKToken(@Body('token')  accessToken: string, @Req() req) {
-        const { refreshToken } = req.cookies;
-        const userData =  await this.authService.validateVkToken({accessToken: accessToken, refreshToken: refreshToken});
-        return {displayName: userData.displayName, roles: userData.roles};
-    }
-
-@ApiOperation({summary: 'Email валидация accessToken'})
-@ApiTags('/validate/email')
-@Post('/validate/email')
-    async validateEmailToken(@Body('token')  accessToken: string, @Req() req) {
-        const { refreshToken } = req.cookies;
-        const userData =  await this.authService.validateEmailToken({accessToken: accessToken, refreshToken: refreshToken});
-        return {email: userData.user.email, roles: userData.user.roles};
     }
 
 }

@@ -5,7 +5,6 @@ import { PassportModule } from '@nestjs/passport';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { VkUser } from './user.model';
 import * as cookieParser from 'cookie-parser';
-import { GoogleAuthMiddleware } from './middlewares/auth.middleware';
 import { RoleModule } from '../role/role.module';
 
 @Module({

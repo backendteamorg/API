@@ -2,19 +2,19 @@ import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { CreateVkUserDto } from './dto/createVkUser.dto';
 import { CreateUserDto } from './dto/createuser.dto';
-import { GoogleUserDto } from './dto/googleUser.dto';
+import { CreateGoogleUserDto } from './dto/googleUser.dto';
 import { ValidateToken } from './dto/validateGoogleToken.dto';
 
 @Injectable()
 export class AuthService {
     constructor(@Inject('AUTH_SERVICE') private client: ClientProxy) {}
 
-    async googleAuthRedirect(userDto: GoogleUserDto) {
+    async createGoogleUser(userDto: CreateGoogleUserDto) {
         const user = await (this.client.send('google.login', {...userDto})).toPromise();
         return user;
     }
 
-    async vkAuthRedirect(userDto: CreateVkUserDto) {
+    async createVKUser(userDto: CreateVkUserDto) {
         const data = await (this.client.send('vkontakte.login', {...userDto})).toPromise().catch((error) => console.log(error));
         return data;
     }
@@ -39,8 +39,17 @@ export class AuthService {
         return data;
     }
 
-    async validateVkToken(dto:ValidateToken) {
+    async validateVkToken(dto: ValidateToken) {
         const data = await (this.client.send('validate.vk.token',{...dto})).toPromise();
         return data;
+    }
+
+    async createAdmin() {
+        const adminRole = await (this.client.send('create.role', {value: 'admin'})).toPromise();
+        const userRole = await (this.client.send('create.role', {value: 'user'})).toPromise();
+        const adminUser = await (this.client.send('create.user', {email: "admin@admin.com", password:"root"})).toPromise();
+        const adminUserRoleUpdated = (await this.client.send('add.role.toUser', {email: "admin@admin.com", roleValue: "admin"})).toPromise();
+        
+        return adminUser;
     }
 }

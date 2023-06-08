@@ -1247,60 +1247,60 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
                                                   
         if((queryParams.queryParams.SortField==='votesKp')&&(queryParams.queryParams.SortType==='1')){
             films.sort((a, b) => b.votesKp - a.votesKp) 
-            return films
+            
         }
         else if ((queryParams.queryParams.SortField==='votesKp')&&(queryParams.queryParams.SortType==='-1')){
             films.sort((a, b) => a.votesKp - b.votesKp) 
-            return films
+            
         
         }
         else if ((queryParams.queryParams.SortField==='ratingKp')&&(queryParams.queryParams.SortType==='1')){
             films.sort((a, b) => a.ratingKp - b.ratingKp) 
-            return films
+            
         }
         else if ((queryParams.queryParams.SortField==='ratingKp')&&(queryParams.queryParams.SortType==='-1')){
             films.sort((a, b) => a.ratingKp - b.ratingKp) 
-            return films
+            
         }
         else if ((queryParams.queryParams.SortField==='name')&&(queryParams.queryParams.SortType==='1')){
             films.sort((a, b) => {
                 const nameA = a.name.toUpperCase(); // ignore upper and lowercase
                 const nameB = b.name.toUpperCase(); // ignore upper and lowercase
                 if (nameA < nameB) {
-                  return -1;
+                  return 1;
                 }
                 if (nameA > nameB) {
-                  return 1;
+                  return -1;
                 }
               
                 // names must be equal
                 return 0;
               });
-              return films
+              
         }
         else if ((queryParams.queryParams.SortField==='name')&&(queryParams.queryParams.SortType==='-1')){
             films.sort((a, b) => {
                 const nameA = a.name.toUpperCase(); // ignore upper and lowercase
                 const nameB = b.name.toUpperCase(); // ignore upper and lowercase
                 if (nameA < nameB) {
-                  return 1;
+                  return -1;
                 }
                 if (nameA > nameB) {
-                  return -1;
+                  return 1;
                 }
               
                 // names must be equal
                 return 0;
               });
-              return films
+              
         }
         else if ((queryParams.queryParams.SortField==='year')&&(queryParams.queryParams.SortType==='1')){
             films.sort((a, b) => a.year - b.year) 
-            return films
+            
         }
         else if ((queryParams.queryParams.SortField==='year')&&(queryParams.queryParams.SortType==='-1')){
             films.sort((a, b) => a.year - b.year) 
-            return films
+            
         }
         
                                                                                                            

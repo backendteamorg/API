@@ -27,15 +27,15 @@ export class CommentsMiddleware implements NestMiddleware {
                 const data = await this.authService.validateGoogleToken({accessToken: accessToken, refreshToken: refreshToken});
                 res.cookie('refreshToken', data.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true});
                 req.headers.authorization = `Bearer ${data.access_token}`;
-                req.user = {id: data.id, displayName: data.displayName, email: data.email};
+                req.user = {id: data.user.id, user: data.user.email, roles: data.user.roles};
             } else if(req.cookies.authenticationType == 'email') {
                 const data = await this.authService.validateEmailToken({refreshToken: refreshToken, accessToken: accessToken});
-                req.user = {id: data.user.id, email: data.user.email};
+                req.user = {id: data.user.id, user: data.user.email};
                 req.headers.authorization = `Bearer ${data.accessToken}`;
                 res.cookie('refreshToken', data.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true});
             } else if(req.cookies.authenticationType == 'vk') {
                 const data = await this.authService.validateVkToken({refreshToken: refreshToken, accessToken: accessToken});
-                req.user =  {email: data.displayName, id: data.id}
+                req.user =  {user: data.user.name, id: data.user.id}
                 req.headers.authorization = `Bearer ${data.refreshToken}`;
                 res.cookie('refreshToken', data.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true});
             }
