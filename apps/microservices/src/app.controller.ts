@@ -47,22 +47,11 @@ export class AppController {
 
   }
 
-@ApiOperation({summary: 'Получить информацию о фильмов данные о которых были получены ранее'})
-@ApiTags('Данные с api kinopoisk')
-@Get('admin/getall/parsing')
-async parsingAll() {
-  return await this.rabbitFilmsService.send({
-    cmd: 'parsing-all-info',
-  },
-  {});
-
-}
 
 
 
 
-
-@ApiOperation({summary: 'Получить сохраненные данные о фильмах используя фильтры. Доступные поля {limit, type, page ,genres, countries, ratingKp, votesKp, director,actor}. Пример ввода :localhost:6125/movies?genres=драма&genres=фантастика'})
+@ApiOperation({summary: 'Получить сохраненные данные о фильмах используя фильтры. Доступные поля {limit, type, page ,genres, countries, ratingKp, votesKp, director,actor, SortField,SortType}. Пример ввода :localhost:6125/movies?genres=драма&genres=фантастика'}) ////// Фильтр сортировка
 @ApiTags('(Фильры) Данные с сайта kinopoisk')
 @Get('movies')
 async getFilmsUseFiltres(
@@ -85,6 +74,16 @@ async getAllFilmsWithInfo() {
   {});
 
 }
+@ApiOperation({summary: 'Получить все сохраненные данные о фильмах c IMAX'}) 
+@ApiTags('(Суммарные данные) с сайта kinopoisk')
+@Get('filmsHasIMAX')
+async getAllFilmsWithInfowUTHiMAX() {
+  return await this.rabbitFilmsService.send({
+    cmd: 'get-all-films-with-info-withImax',
+  },
+  {});
+
+}
 
 @ApiOperation({summary: 'Получить сохраненный фильм по id'})
 @ApiTags('(Суммарные данные) с сайта kinopoisk')
@@ -98,20 +97,22 @@ async getFilm(
         {id:id},
         );
 }
+@ApiOperation({summary: 'Получить список фильмов по id фильмов'})
+  @ApiTags('(Суммарные данные) с сайта kinopoisk')
+  @Post('moveisbyid')
+  async getMoviesByMoviesId(
+    @Body('movies') movies: number[]) {
+      return await this.rabbitFilmsService.send(
+          {
+           cmd: 'get-film-by-movies-id',
+          },
+          {movies:movies},
+          );
+  }
 
 
 
 
-@ApiOperation({summary: 'Получить сохраненные данные о фильмах'})
-  @ApiTags('Данные с сайта kinopoisk')
-  @Get('films')
-  async getAllFilms() {
-    return await this.rabbitFilmsService.send({
-      cmd: 'get-all-films',
-    },
-    {});
-
-}
 
 
 
@@ -125,116 +126,11 @@ async getFilm(
     {});
 
   }
-  @ApiOperation({summary: 'Получить сохраненную информацию о жанрах фильмов данные о которых были получены ранее'})
-  @ApiTags('Данные с сайта kinopoisk')
-  @Get('allgenres')
-  async GetGenres() {
-    return await this.rabbitGenresFilmsService.send({
-      cmd: 'get-all-genres',
-    },
-    {});
-
-  }
-
-  @ApiOperation({summary: 'Получить все сохраненные данные о тех кто учавтсовал в сьемках фильмов данные о которых были получены ранее'})
-  @ApiTags('Данные с сайта kinopoisk')
-  @Get('persons')
-  async GetAllPerson() {
-    return await this.rabbitPersonsFilmsService.send({
-      cmd: 'get-all-persons',
-    },
-    {});
-
-  }
-  @ApiOperation({summary: 'Получить все сохраненные данные о странах фильмов данные о которых были получены ранее'})
-  @ApiTags('Данные с сайта kinopoisk')
-  @Get('countriesOffilm')
-  async getAllCountries() {
-    return await this.rabbitCountriesFilmsService.send({
-      cmd: 'get-all-countries',
-    },
-    {});
-
-  }
-  @ApiOperation({summary: 'Получить сохраненные данные о фактах фильма'})
-  @ApiTags('Данные с сайта kinopoisk')
-  @Get('genres/:id')
-  async getGenreByMovieId(
-    @Param('id') id: number) {
-      return await this.rabbitGenresFilmsService.send(
-          {
-           cmd: 'get-genres-by-moveid',
-          },
-          {id:id},
-          );
-  }
-  @ApiOperation({summary: 'Получить список фильмов по id фильмов'})
-  @ApiTags('Данные с сайта kinopoisk')
-  @Post('moveisbyid')
-  async getMoviesByMoviesId(
-    @Body('movies') movies: number[]) {
-      return await this.rabbitFilmsService.send(
-          {
-           cmd: 'get-film-by-movies-id',
-          },
-          {movies:movies},
-          );
-  }
-  
-
-  @ApiOperation({summary: 'Получить сохраненные данные о сьемочной группе'})
-  @ApiTags('Данные с сайта kinopoisk')
-  @Get('personsfMovie/:id')
-  async getPersonsOfMovieyMovieId(
-    @Param('id') id: number) {
-      return await this.rabbitPersonsFilmsService.send(
-          {
-           cmd: 'get-personsoffilms-by-moveid',
-          },
-          {id:id},
-          );
-  }
-
-
-
-
-
-
-
-  @ApiOperation({summary: 'Получить сохраненные данные о видео, фильмов данные о которых были получены ранее'})
-  @ApiTags('Данные с сайта kinopoisk')
-  @Get('videosByMovieId/:id')
-  async getVideosByMovieId(
-    @Param('id') id: number) {
-      return await this.rabbitVideosService.send(
-          {
-           cmd: 'get-videos-by-moveid',
-          },
-          {id:id},
-          );
-  }
-
-
-
-
-
-  @ApiOperation({summary: 'Получить сохраненные данные о странах фильма'})
-  @ApiTags('Данные с сайта kinopoisk')
-  @Get('countries/:id')
-  async getCountries(
-    @Param('id') id: number) {
-      return await this.rabbitCountriesFilmsService.send(
-          {
-           cmd: 'get-countries-by-movieid',
-          },
-          {id:id},
-          );
-    }
-
+ 
 
   
   
-    @Roles('admin')
+    
     @ApiOperation({summary: 'Добавить (Пример: {"id":301, "name":"Матрица","enName":"Matrix"}) (все поля из базового запроса к фильмам)'})  //////////////////// CRUD фИЛЬМОВ
     @ApiTags('(Редактирвоание данных) Данные с сайта kinopoisk')
     @Post('film')
@@ -309,20 +205,6 @@ async getFilm(
     );
   }
   
-  @ApiOperation({summary: 'Удалить страну'})
-  @ApiTags('(Редактирвоание данных) Данные с сайта kinopoisk')
-  @Delete('namesofcountry/:id')
-  async deleteCountry(
-    @Param('id') id: number) {
-    return await this.rabbitnamesofCountriesService.send(
-      {
-        cmd: 'delete-country-by-id',
-      },
-      {
-        id
-      },
-    );
-  }
   
   @ApiOperation({summary: 'Изменить название фильма (Пример: {"id":301, "name":"Матрица","enName":"Matrix"})'}) 
   @ApiTags('(Редактирвоание данных) Данные с сайта kinopoisk')
@@ -342,7 +224,22 @@ async getFilm(
       },
     );
   }
-  
+  @ApiOperation({summary: 'Добавить название жанра (Пример: {"id":1, "name:"драма","enName":"drame"})'})
+  @ApiTags('(Редактирвоание данных) Данные с сайта kinopoisk')
+  @Post('namesofgenre')
+  async postGenreOfMovie(
+    @Body('name') name: string,
+    @Body('enName') enName: string) {
+    return await this.rabbitnamesofGenresService.send(
+      {
+        cmd: 'post-namesgenres',
+      },
+      {
+        name,
+        enName
+      },
+    );
+  }
   @ApiOperation({summary: 'Изменить название жанра (Пример: {"id":1, "name:"драма","enName":"drame"})'}) //////////////////// CRUD ЖАНРОВ
   @ApiTags('(Редактирвоание данных) Данные с сайта kinopoisk')
   @Patch('namesofgenre')
@@ -362,25 +259,22 @@ async getFilm(
     );
   }
   
-  @ApiOperation({summary: 'Добавить название жанра (Пример: {"id":1, "name:"драма","enName":"drame"})'})
+  
+  @ApiOperation({summary: 'Удалить страну'})          //////////////////// CRUD СТРАН
   @ApiTags('(Редактирвоание данных) Данные с сайта kinopoisk')
-  @Post('namesofgenre')
-  async postGenreOfMovie(
-    @Body('name') name: string,
-    @Body('enName') enName: string) {
-    return await this.rabbitnamesofGenresService.send(
+  @Delete('namesofcountry/:id')
+  async deleteCountry(
+    @Param('id') id: number) {
+    return await this.rabbitnamesofCountriesService.send(
       {
-        cmd: 'post-namesgenres',
+        cmd: 'delete-country-by-id',
       },
       {
-        name,
-        enName
+        id
       },
     );
   }
-  
-  
-  @ApiOperation({summary: 'Добавить название жанра (Пример: {"id":1, "name:"драма","enName":"drame"})'})     //////////////////// CRUD СТРАН
+  @ApiOperation({summary: 'Добавить название жанра (Пример: {"id":1, "name:"драма","enName":"drame"})'})     
   @ApiTags('(Редактирвоание данных) Данные с сайта kinopoisk')
   @Post('namesofcountry')
   async postCountry(
@@ -418,7 +312,7 @@ async getFilm(
 
 
 
-  @ApiOperation({summary: 'Получить все страны'}) /////////////////////////////////////
+  @ApiOperation({summary: 'Получить все страны'}) 
   @ApiTags('Данные с сайта kinopoisk')
   @Get('namesOfCountries')
   async getCountriesNames() {

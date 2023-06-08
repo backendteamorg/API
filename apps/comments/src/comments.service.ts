@@ -5,7 +5,7 @@ import { CreateChildComment } from './dto/childComment.dto';
 import { CreateCommentDto } from './dto/comment.dto';
 import { firstValueFrom } from 'rxjs';
 import { ClientProxy } from '@nestjs/microservices';
-
+import {CustomError} from 'customerror'
 
 @Injectable()
 export class CommentsService {
@@ -48,7 +48,7 @@ export class CommentsService {
             throw new Error('Введите movieid')
         }
         else if((comment.movieid)!=dto.movieid){
-            throw new Error('id фильма Comment отличается от id фильма ChildComment')
+             throw new Error("id фильма Comment отличается от id фильма ChildComment")
         }
         else if(ArrFilmId.includes(dto.movieid)===true){
             const parentComment = await this.commentRepo.findOne({where: {id: dto.parentId}});

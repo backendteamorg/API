@@ -73,15 +73,7 @@ export class FilmsService {
     async getMoviesByMoviesId(movies:number[]){
         return await this.getAllFilmsWithAllInfoByMoviesId(movies)
     }
-    async pasringAll(){
-        await this.parsingNamesOfCountries()
-        await this.parsingCountries()
-        await this.parsingGenresNames()
-        await this.parsingGenresOfMovie()
-        await this.parsingPersons()
-        await this.parsingVideos()
-        return  'Данные получены'
-    }
+    
     async getAllPersonsWithMovies(){
         const ob$ = await this.rabbitPersonsFilmsService.send({
             cmd: 'get-all-persons-with-info',
@@ -274,7 +266,63 @@ export class FilmsService {
     }
 
   
+    async getAllFilmsWithAllInfoWithImax(){
+        const films = await this.filmRepository.findAll({where:{hasIMAX:true}})
+        const genres = await this.getAllGenresOfMovies()
+        const namesofgenres = await this.getAllNamesOfGenres()
+        const countries = await this.getAllCountriesOfMovies()
+        const countriesNames = await this.getAllCountriesNames()
+        let ArrFilms = []
+        
+        for(let q = 0 ; q < films.length;q++){
+            let ArrGenres = []
+            for(let w = 0 ; w<genres.length;w++){
+                if(genres[w].movieid===films[q].id){
+                    for(let e = 0 ; e<namesofgenres.length;e++){
+                        if(namesofgenres[e].id===genres[w].genreid){
+                            ArrGenres.push({id:namesofgenres[e].id,name:namesofgenres[e].name,enName:namesofgenres[e].enName})
+                        }
+                    }
+                }
+            }
 
+            let ArrCountries = []
+            for(let w = 0 ;w<countries.length;w++){
+                if(countries[w].movieid===films[q].id){
+                    for(let e = 0 ; e<countriesNames.length;e++){
+                        if(countriesNames[e].id===countries[w].countryid){
+                            ArrCountries.push({id:countriesNames[e].id, name:countriesNames[e].name,enName:countriesNames[e].enName }) 
+                        }
+                    }
+                }
+                
+            }
+            
+        
+  
+            ArrFilms.push(
+                    {
+                    id:films[q].id,
+                    name:films[q].name,
+                    enName:films[q].enName,
+                    posterPreviewURL:films[q].posterPreviewURL,
+                    premiereRussia:films[q].premiereRussia,
+                    hasIMAX:films[q].hasIMAX,
+                    year:films[q].year,
+                    ageRating:films[q].ageRating,
+                    ratingKp:films[q].ratingKp,
+                    votesKp:films[q].votesKp,
+                    movieLength:films[q].movieLength,
+                    genres:ArrGenres,
+                    countries:ArrCountries
+                    }
+                )
+            
+        }
+
+
+        return ArrFilms
+    }
 
     async getAllFilmsWithAllInfo(){
         const films = await this.filmRepository.findAll()
@@ -441,7 +489,14 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
 
             }
         }
-        return await this.filmRepository.bulkCreate(arrMovies)
+        await this.filmRepository.bulkCreate(arrMovies)
+        await this.parsingNamesOfCountries()
+        await this.parsingCountries()
+        await this.parsingGenresNames()
+        await this.parsingGenresOfMovie()
+        await this.parsingPersons()
+        await this.parsingVideos()
+        return  'Данные получены'
         
       }
       else{
@@ -834,19 +889,20 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
 
    
     async getFilmsUseFiltre(queryParams:any){
-        const {sortField, sortOrder, limit, type, page ,genres, countries, ratingKp, votesKp, director,actor} = queryParams; 
+        const {limit, type, page ,genres, countries, ratingKp, votesKp, director,actor, SortField,SortType} = queryParams; 
        
-        if(queryParams.queryParams.sortField===undefined){
-            queryParams.queryParams.sortField = 'ratingKp'
-        }
-        if(queryParams.queryParams.sortOrder===undefined){
-            queryParams.queryParams.sortOrder = 'DESC'
-        }
+        
         if(queryParams.queryParams.limit===undefined){
             queryParams.queryParams.limit = 10
         }
         if(queryParams.queryParams.page===undefined){
             queryParams.queryParams.page = 1
+        }
+        if(queryParams.queryParams.SortField===undefined){
+            queryParams.queryParams.SortField ="votesKp"
+        }
+        if(queryParams.queryParams.SortType===undefined){
+            queryParams.queryParams.SortType = '1'
         }
      
      
@@ -1176,6 +1232,7 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
             ArrFilmId.push(Films[q].id)
         }
     }
+    
         const genresInfo = await this.getGenresByMoviesId(ArrFilmId)
         const namesofgenres = await this.getAllNamesOfGenres()
         const countriesInfo = await this.getCountriesByMoviesId(ArrFilmId)
@@ -1187,6 +1244,66 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
         }
 
 
+                                                  
+        if((queryParams.queryParams.SortField==='votesKp')&&(queryParams.queryParams.SortType==='1')){
+            films.sort((a, b) => b.votesKp - a.votesKp) 
+            return films
+        }
+        else if ((queryParams.queryParams.SortField==='votesKp')&&(queryParams.queryParams.SortType==='-1')){
+            films.sort((a, b) => a.votesKp - b.votesKp) 
+            return films
+        
+        }
+        else if ((queryParams.queryParams.SortField==='ratingKp')&&(queryParams.queryParams.SortType==='1')){
+            films.sort((a, b) => a.ratingKp - b.ratingKp) 
+            return films
+        }
+        else if ((queryParams.queryParams.SortField==='ratingKp')&&(queryParams.queryParams.SortType==='-1')){
+            films.sort((a, b) => a.ratingKp - b.ratingKp) 
+            return films
+        }
+        else if ((queryParams.queryParams.SortField==='name')&&(queryParams.queryParams.SortType==='1')){
+            films.sort((a, b) => {
+                const nameA = a.name.toUpperCase(); // ignore upper and lowercase
+                const nameB = b.name.toUpperCase(); // ignore upper and lowercase
+                if (nameA < nameB) {
+                  return -1;
+                }
+                if (nameA > nameB) {
+                  return 1;
+                }
+              
+                // names must be equal
+                return 0;
+              });
+              return films
+        }
+        else if ((queryParams.queryParams.SortField==='name')&&(queryParams.queryParams.SortType==='-1')){
+            films.sort((a, b) => {
+                const nameA = a.name.toUpperCase(); // ignore upper and lowercase
+                const nameB = b.name.toUpperCase(); // ignore upper and lowercase
+                if (nameA < nameB) {
+                  return 1;
+                }
+                if (nameA > nameB) {
+                  return -1;
+                }
+              
+                // names must be equal
+                return 0;
+              });
+              return films
+        }
+        else if ((queryParams.queryParams.SortField==='year')&&(queryParams.queryParams.SortType==='1')){
+            films.sort((a, b) => a.year - b.year) 
+            return films
+        }
+        else if ((queryParams.queryParams.SortField==='year')&&(queryParams.queryParams.SortType==='-1')){
+            films.sort((a, b) => a.year - b.year) 
+            return films
+        }
+        
+                                                                                                           
         if(((queryParams.queryParams.countries!=undefined)||(queryParams.queryParams.genres!=undefined))||(queryParams.queryParams.type!=undefined)
         ||(queryParams.queryParams.ratingKp!=undefined)||(queryParams.queryParams.votesKp!=undefined)
         ||(queryParams.queryParams.director!=undefined)||(queryParams.queryParams.actor!=undefined)||(queryParams.queryParams.sortField!=undefined)
@@ -1253,7 +1370,7 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
                 }
                 
             }
-                
+                                                                                                
             return {
                 docs:ArrFilm,
                 limit:queryParams.queryParams.limit,

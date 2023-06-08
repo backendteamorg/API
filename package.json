@@ -38,6 +38,8 @@
     "class-validator": "^0.14.0",
     "cookie-parser": "^1.4.6",
     "cross-env": "^7.0.3",
+    "custom-error-instance": "^2.1.2",
+    "customerror": "^1.0.1",
     "dotenv": "^16.0.3",
     "express-session": "^1.17.3",
     "file-system": "^1.2.2",

@@ -58,6 +58,14 @@ export class FilmsController {
 
     return await this.filmsService.getAllFilmsWithAllInfo()
   }
+  @MessagePattern({ cmd: 'get-all-films-with-info-withImax'})
+  async getAllFilmsWithInfoWuthImax(@Ctx() context: RmqContext){
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return await this.filmsService.getAllFilmsWithAllInfoWithImax()
+  }
 
   @MessagePattern({ cmd: 'get-all-films'})
   async getAllFilms(@Ctx() context: RmqContext){
@@ -184,12 +192,5 @@ export class FilmsController {
 
     return await this.filmsService.deleteFilm(film.id);
   }
-  @MessagePattern({ cmd: 'parsing-all-info'})
-  async parsingAllInfo(@Ctx() context: RmqContext){
-    const channel = context.getChannelRef();
-    const message = context.getMessage();
-    channel.ack(message);
-
-    return await this.filmsService.pasringAll()
-  }
+  
 }
