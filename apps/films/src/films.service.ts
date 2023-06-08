@@ -1258,7 +1258,7 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
         
         }
         else if ((queryParams.queryParams.SortField==='ratingKp')&&(queryParams.queryParams.SortType==='1')){
-            films.sort((a, b) => a.ratingKp - b.ratingKp) 
+            films.sort((a, b) => b.ratingKp - a.ratingKp) 
             
         }
         else if ((queryParams.queryParams.SortField==='ratingKp')&&(queryParams.queryParams.SortType==='-1')){
@@ -1270,10 +1270,10 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
                 const nameA = a.name.toUpperCase(); // ignore upper and lowercase
                 const nameB = b.name.toUpperCase(); // ignore upper and lowercase
                 if (nameA < nameB) {
-                  return 1;
+                  return -1;
                 }
                 if (nameA > nameB) {
-                  return -1;
+                  return 1;
                 }
               
                 // names must be equal
@@ -1286,10 +1286,10 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
                 const nameA = a.name.toUpperCase(); // ignore upper and lowercase
                 const nameB = b.name.toUpperCase(); // ignore upper and lowercase
                 if (nameA < nameB) {
-                  return -1;
+                  return 1;
                 }
                 if (nameA > nameB) {
-                  return 1;
+                  return -1;
                 }
               
                 // names must be equal
