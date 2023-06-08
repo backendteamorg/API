@@ -4,8 +4,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ClientProxyFactory,ClientsModule,Transport } from '@nestjs/microservices';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
-import { GoogleStrategy } from './google.strategy';
-import { VKStrategy } from './vkontakte.strategy';
 import { AuthService } from './auth.service';
 import { CommentsService } from './comments.service';
 import * as cookieParser from 'cookie-parser';
@@ -19,7 +17,7 @@ import { CommentsMiddleware } from './middlewares/middleware';
   })
   ],
   controllers: [AppController],
-  providers: [GoogleStrategy, VKStrategy, AuthService, CommentsService,
+  providers: [ AuthService, CommentsService,
    
     {
       provide: 'FILM_SERVICE',
