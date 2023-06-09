@@ -96,7 +96,7 @@ async getFilm(
         {id:id},
         );
 }
-@ApiOperation({summary: 'Получить список фильмов по id фильмов'})
+@ApiOperation({summary: 'Получить список фильмов по id фильмов. {movies:[301]}'})
   @ApiTags('(Суммарные данные) с сайта kinopoisk')
   @Post('moveisbyid')
   async getMoviesByMoviesId(
@@ -411,12 +411,10 @@ async login(@Body() userDto: CreateUserDto, @Res({ passthrough: true }) res: Res
 async publishCommentToFilm(
   @Body() commentDto: any, 
   @Req() req) {
-    console.log(req.user);
     
     const date = String(new Date());
-    const email = req.user.user;
 
-    const comment = await this.commentService.publishCommentToFilm({date: date, userEmail: email, text: commentDto.text,  movieid:  commentDto.movieid});
+    const comment = await this.commentService.publishCommentToFilm({date: date, userEmail: commentDto.userEmail, text: commentDto.text,  movieid:  commentDto.movieid});
     return comment;
 }
 
@@ -425,10 +423,9 @@ async publishCommentToFilm(
 @Post('/comment/childComment')
 async publishChildComment(@Body() commentInfo: any, @Req() req) {
     const date = String(new Date());
-    console.log(req.user);
-        const email = req.user.user;
-        const comment = await this.commentService.publishChildComment({date: date, userEmail: email, text: commentInfo.text, movieid:commentInfo.movieid,
-                                                                         parentId: commentInfo.parentId});
+        
+        const comment = await this.commentService.publishChildComment({date: date, userEmail: commentInfo.userEmail, text: commentInfo.text,
+                                                                         parentId: commentInfo.parentId, movieid:commentInfo.movieid});
         return comment;
 }
 
@@ -438,18 +435,6 @@ async publishChildComment(@Body() commentInfo: any, @Req() req) {
 async getComment(@Param() data) {
     const comment = await this.commentService.getComment(data.id);
     return comment;
-}
-@ApiOperation({summary: 'Получить всю инфомрацию о персоне по id'})
-@ApiTags('(Суммарные данные) с сайта kinopoisk')
-@Get('getChildComments/:parentId')
-async getChildComments(
-  @Param('parentId') parentId: number) {
-  return await this.client.send(
-    {
-      cmd: 'get-comments-by-parentId'
-    },
-    {parentId:parentId},
-  );
 }
 
 @ApiOperation({summary: 'Создать роль'})
@@ -473,6 +458,7 @@ async getChildComments(
         const user = await this.authService.createAdmin();
         return user;
     }
+
 @ApiOperation({summary: 'Тестовое'})
 @ApiTags('/addRole')
 @Get('/test')
@@ -481,7 +467,18 @@ async getChildComments(
     async test(@Req() req) {
         return 'OK';
     }
-
+@ApiOperation({summary: 'Получить все ChildComments'})
+@ApiTags('getChildComments/:parentId')
+@Get('getChildComments/:parentId')
+async getChildComments(
+  @Param('parentId') parentId: number) {
+  return await this.client.send(
+    {
+      cmd: 'get-comments-by-parentId'
+    },
+    {parentId:parentId},
+  );
+}
 @ApiOperation({summary: 'Email валидация accessToken'})
 @ApiTags('/validate/email')
 @Post('/validate/email')
@@ -495,9 +492,9 @@ async validateEmailToken(@Body('token')  accessToken: string, @Req() req) {
         const userData =  await this.authService.validateVkToken({accessToken: accessToken, refreshToken: refreshToken});
         console.log(userData);
         return {name: userData.user.name, roles: userData.user.roles};
-      } else {
+     } else {
         const userData =  await this.authService.validateEmailToken({accessToken: accessToken, refreshToken: refreshToken});
         return {email: userData.user.email, roles: userData.user.roles};
-      }
+     }
 }
 }
