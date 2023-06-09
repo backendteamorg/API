@@ -13,6 +13,6 @@ export class VKUserRoles extends Model<VKUserRoles>{
     roleId: number;
 
     @ForeignKey(() => VkUser)
-    @Column({type: DataType.INTEGER})
-    userId: number;
+    @Column({type: DataType.STRING})
+    userId: string;
 }
