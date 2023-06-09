@@ -22,4 +22,5 @@ export class CommentsService {
         const comment = await (this.client.send('get.comment.byId', id)).toPromise();
         return comment;
     }
+    
 }

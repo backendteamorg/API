@@ -25,9 +25,6 @@ export class AppController {
           private commentService: CommentsService,
   @Inject('FILM_SERVICE') private rabbitFilmsService: ClientProxy,
   @Inject('PERSONS_SERVICE') private rabbitPersonsFilmsService: ClientProxy,
-  @Inject('GENRES_SERVICE') private rabbitGenresFilmsService: ClientProxy,
-  @Inject('COUNTRIES_SERVICE') private rabbitCountriesFilmsService: ClientProxy,
-  @Inject('VIDEOS_SERVICE') private rabbitVideosService: ClientProxy,
   @Inject('NAMESOFGENRES_SERVICE') private rabbitnamesofGenresService: ClientProxy,
   @Inject('COUNTRIESNAMES_SERVICE') private rabbitnamesofCountriesService: ClientProxy,
   @Inject('AUTH_SERVICE') private rabbitUserService: ClientProxy,
@@ -441,6 +438,18 @@ async publishChildComment(@Body() commentInfo: any, @Req() req) {
 async getComment(@Param() data) {
     const comment = await this.commentService.getComment(data.id);
     return comment;
+}
+@ApiOperation({summary: 'Получить всю инфомрацию о персоне по id'})
+@ApiTags('(Суммарные данные) с сайта kinopoisk')
+@Get('getChildComments/:parentId')
+async getChildComments(
+  @Param('parentId') parentId: number) {
+  return await this.client.send(
+    {
+      cmd: 'get-comments-by-parentId'
+    },
+    {parentId:parentId},
+  );
 }
 
 @ApiOperation({summary: 'Создать роль'})

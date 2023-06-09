@@ -6,7 +6,7 @@ import { ClientProxy, Ctx, MessagePattern, Payload, RmqContext } from '@nestjs/m
 @Controller()
 export class CommentsController {
   constructor(private readonly commentService: CommentsService,
-  @Inject('FILM_SERVICE') private rabbitFilmsService: ClientProxy) {}
+  ) {}
 
   @MessagePattern('publish.comment.film')
   async createComment(@Payload() data: any) {
@@ -34,7 +34,7 @@ export class CommentsController {
 
     return await this.commentService.getCommentsByMovieId(film.idF);
   }
-  @MessagePattern({ cmd: 'get-comments-by-parentId' })
+  @MessagePattern({cmd:'get-comments-by-parentId'})
   async getCommentByParentId(
     @Ctx() context: RmqContext,
     @Payload() comment: { parentId: number },) {
