@@ -18,7 +18,7 @@ export class Comment extends Model<Comment, UserCreationAttr> {
     movieid: number;
 
     @Column({type: DataType.STRING, allowNull: false})
-    userEmail: string;
+    user: string;
 
     @Column({type: DataType.STRING, allowNull: false})
     text: string;
