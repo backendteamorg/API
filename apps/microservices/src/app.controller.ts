@@ -427,7 +427,7 @@ async publishChildComment(@Body() commentInfo: any, @Req() req) {
     const date = String(new Date());
     console.log(req.user);
         const email = req.user.user;
-        const comment = await this.commentService.publishChildComment({date: date, userEmail: email, text: commentInfo.text,
+        const comment = await this.commentService.publishChildComment({date: date, userEmail: email, text: commentInfo.text, movieid:commentInfo.movieid,
                                                                          parentId: commentInfo.parentId});
         return comment;
 }

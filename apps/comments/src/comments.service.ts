@@ -38,11 +38,28 @@ export class CommentsService {
     }
 
     async createChildComment(dto: CreateChildComment) {
-        const parentComment = await this.commentRepo.findOne({where: {id: dto.parentId}});
-        const comment = await this.commentRepo.create({userEmail: dto.userEmail, text: dto.text, date: dto.date});
-        comment.$set('parent', [parentComment.id]);
-        comment.parent = parentComment;
-        return comment;
+        const comment = await this.commentRepo.findByPk(dto.parentId)
+        const film = await this.getAllFilms()
+        let ArrFilmId = []
+        for(let q =0 ;q<film.length;q++){
+            ArrFilmId.push(film[q].id)
+        }
+        if(dto.movieid===undefined){
+            throw new Error('Введите movieid')
+        }
+        else if((comment.movieid)!=dto.movieid){
+             throw new Error("id фильма Comment отличается от id фильма ChildComment")
+        }
+        else if(ArrFilmId.includes(dto.movieid)===true){
+            const parentComment = await this.commentRepo.findOne({where: {id: dto.parentId}});
+            const comment = await this.commentRepo.create({userEmail: dto.userEmail, text: dto.text, date: dto.date,movieid:dto.movieid});
+            comment.$set('parent', [parentComment.id]);
+            comment.parent = parentComment;
+            return comment;
+        }
+        else{
+            throw new Error(`Фильма с id ${dto.movieid} нет в базе`)
+        }
     }
 
     async getComment(id: number) {
