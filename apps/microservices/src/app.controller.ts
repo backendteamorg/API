@@ -414,7 +414,7 @@ async publishCommentToFilm(
     
     const date = String(new Date());
 
-    const comment = await this.commentService.publishCommentToFilm({date: date, userEmail: commentDto.userEmail, text: commentDto.text,  movieid:  commentDto.movieid});
+    const comment = await this.commentService.publishCommentToFilm({date: date, user: commentDto.user, text: commentDto.text,  movieid:  commentDto.movieid});
     return comment;
 }
 
@@ -424,7 +424,7 @@ async publishCommentToFilm(
 async publishChildComment(@Body() commentInfo: any, @Req() req) {
     const date = String(new Date());
         
-        const comment = await this.commentService.publishChildComment({date: date, userEmail: commentInfo.userEmail, text: commentInfo.text,
+        const comment = await this.commentService.publishChildComment({date: date, user: commentInfo.user, text: commentInfo.text,
                                                                          parentId: commentInfo.parentId, movieid:commentInfo.movieid});
         return comment;
 }

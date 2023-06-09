@@ -29,7 +29,7 @@ export class CommentsService {
             throw new Error('Введите movieid')
         }
         else if(ArrFilmId.includes(dto.movieid)===true){
-            const comment = await this.commentRepo.create({userEmail: dto.userEmail, text: dto.text, date: dto.date,movieid:dto.movieid});
+            const comment = await this.commentRepo.create({userEmail: dto.user, text: dto.text, date: dto.date,movieid:dto.movieid});
             return comment;
         }
         else{
@@ -52,7 +52,7 @@ export class CommentsService {
         }
         else if(ArrFilmId.includes(dto.movieid)===true){
             const parentComment = await this.commentRepo.findOne({where: {id: dto.parentId}});
-            const comment = await this.commentRepo.create({userEmail: dto.userEmail, text: dto.text, date: dto.date,movieid:dto.movieid});
+            const comment = await this.commentRepo.create({userEmail: dto.user, text: dto.text, date: dto.date,movieid:dto.movieid});
             comment.$set('parent', [parentComment.id]);
             comment.parent = parentComment;
             return comment;
