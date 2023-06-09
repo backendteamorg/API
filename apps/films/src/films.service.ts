@@ -889,14 +889,11 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
 
    
     async getFilmsUseFiltre(queryParams:any){
-        const {limit, type, sortOrder,page ,genres, countries, ratingKp, votesKp, director,actor, SortField,SortType} = queryParams; 
+        const {limit, type, page ,genres, countries, ratingKp, votesKp, director,actor, SortField,SortType} = queryParams; 
        
         
         if(queryParams.queryParams.limit===undefined){
             queryParams.queryParams.limit = 10
-        }
-        if(queryParams.queryParams.sortOrder===undefined){
-            queryParams.queryParams.sortOrder = 'DESC'
         }
         if(queryParams.queryParams.page===undefined){
             queryParams.queryParams.page = 1
@@ -1270,10 +1267,10 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
                 const nameA = a.name.toUpperCase(); // ignore upper and lowercase
                 const nameB = b.name.toUpperCase(); // ignore upper and lowercase
                 if (nameA < nameB) {
-                  return -1;
+                  return 1;
                 }
                 if (nameA > nameB) {
-                  return 1;
+                  return -1;
                 }
               
                 // names must be equal
@@ -1286,10 +1283,10 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
                 const nameA = a.name.toUpperCase(); // ignore upper and lowercase
                 const nameB = b.name.toUpperCase(); // ignore upper and lowercase
                 if (nameA < nameB) {
-                  return 1;
+                  return -1;
                 }
                 if (nameA > nameB) {
-                  return -1;
+                  return 1;
                 }
               
                 // names must be equal
@@ -1298,7 +1295,7 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
               
         }
         else if ((queryParams.queryParams.SortField==='year')&&(queryParams.queryParams.SortType==='1')){
-            films.sort((a, b) => a.year - b.year) 
+            films.sort((a, b) => b.year - a.year) 
             
         }
         else if ((queryParams.queryParams.SortField==='year')&&(queryParams.queryParams.SortType==='-1')){
@@ -1307,10 +1304,7 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
         }
         
                                                                                                            
-        if(((queryParams.queryParams.countries!=undefined)||(queryParams.queryParams.genres!=undefined))||(queryParams.queryParams.type!=undefined)
-        ||(queryParams.queryParams.ratingKp!=undefined)||(queryParams.queryParams.votesKp!=undefined)
-        ||(queryParams.queryParams.director!=undefined)||(queryParams.queryParams.actor!=undefined)||(queryParams.queryParams.sortField!=undefined)
-        ||(queryParams.queryParams.sortOrder!=undefined)){
+        
             let FilmsLenth = queryParams.queryParams.limit*queryParams.queryParams.page
             let ArrFilm = []
             let ArrFilmPage = []
@@ -1381,12 +1375,12 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
                 lenth:ArrFilm.length
             }
             
-        }
+}
 
     
         
 
-    }
+    
     async updateNameMovie(dto:FilmDto){
         const film =  await this.filmRepository.findOne({where: {id: dto.id}})
         film.name = dto.name;

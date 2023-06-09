@@ -14,7 +14,7 @@ export class Comment extends Model<Comment, UserCreationAttr> {
     @Column({type: DataType.INTEGER, autoIncrement: true, unique: true, allowNull: false, primaryKey: true})
     id: number
 
-    @Column({type: DataType.INTEGER, allowNull: false})
+    @Column({type: DataType.INTEGER, allowNull: true})
     movieid: number;
 
     @Column({type: DataType.STRING, allowNull: false})

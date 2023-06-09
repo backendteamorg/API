@@ -2,11 +2,11 @@ import { Controller, Get, Req,Inject} from '@nestjs/common';
 import { CommentsService } from './comments.service';
 import { Request } from 'express';
 import { ClientProxy, Ctx, MessagePattern, Payload, RmqContext } from '@nestjs/microservices';
-import { CreateChildComment } from './dto/childComment.dto';
 
 @Controller()
 export class CommentsController {
-  constructor(private readonly commentService: CommentsService) {}
+  constructor(private readonly commentService: CommentsService,
+  @Inject('FILM_SERVICE') private rabbitFilmsService: ClientProxy) {}
 
   @MessagePattern('publish.comment.film')
   async createComment(@Payload() data: any) {
@@ -15,7 +15,7 @@ export class CommentsController {
   }
 
   @MessagePattern('publish.comment.child')
-  async createChildComment(@Payload() data: CreateChildComment) {
+  async createChildComment(@Payload() data: any) {
     const comment = await this.commentService.createChildComment(data);
     return comment;
   }

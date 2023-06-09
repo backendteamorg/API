@@ -25,10 +25,13 @@ export class AppController {
           private commentService: CommentsService,
   @Inject('FILM_SERVICE') private rabbitFilmsService: ClientProxy,
   @Inject('PERSONS_SERVICE') private rabbitPersonsFilmsService: ClientProxy,
+  @Inject('GENRES_SERVICE') private rabbitGenresFilmsService: ClientProxy,
+  @Inject('COUNTRIES_SERVICE') private rabbitCountriesFilmsService: ClientProxy,
+  @Inject('VIDEOS_SERVICE') private rabbitVideosService: ClientProxy,
   @Inject('NAMESOFGENRES_SERVICE') private rabbitnamesofGenresService: ClientProxy,
   @Inject('COUNTRIESNAMES_SERVICE') private rabbitnamesofCountriesService: ClientProxy,
   @Inject('AUTH_SERVICE') private rabbitUserService: ClientProxy,
-  ) {}
+  @Inject('COMMENT_SERVICE') private client: ClientProxy) {}
 
 
   
@@ -64,7 +67,7 @@ async getFilmsUseFiltres(
   );
 }
 @ApiOperation({summary: 'Получить все сохраненные данные о фильмах'}) /////////////////////////////////////////////////////////////(Суммарные данные)//////////////////////
-@ApiTags('(Суммарные данные) Данные с сайта kinopoisk')
+@ApiTags('(Суммарные данные) с сайта kinopoisk')
 @Get('filmswithinfo')
 async getAllFilmsWithInfo() {
   return await this.rabbitFilmsService.send({
@@ -72,9 +75,9 @@ async getAllFilmsWithInfo() {
   },
   {});
 
-} 
+}
 @ApiOperation({summary: 'Получить все сохраненные данные о фильмах c IMAX'}) 
-@ApiTags('(Суммарные данные) Данные с сайта kinopoisk')
+@ApiTags('(Суммарные данные) с сайта kinopoisk')
 @Get('filmsHasIMAX')
 async getAllFilmsWithInfowUTHiMAX() {
   return await this.rabbitFilmsService.send({
@@ -85,7 +88,7 @@ async getAllFilmsWithInfowUTHiMAX() {
 }
 
 @ApiOperation({summary: 'Получить сохраненный фильм по id'})
-@ApiTags('(Суммарные данные) Данные с сайта kinopoisk')
+@ApiTags('(Суммарные данные) с сайта kinopoisk')
 @Get('film/:id')
 async getFilm(
   @Param('id') id: number) {
@@ -97,7 +100,7 @@ async getFilm(
         );
 }
 @ApiOperation({summary: 'Получить список фильмов по id фильмов'})
-  @ApiTags('(Суммарные данные) Данные с сайта kinopoisk')
+  @ApiTags('(Суммарные данные) с сайта kinopoisk')
   @Post('moveisbyid')
   async getMoviesByMoviesId(
     @Body('movies') movies: number[]) {
@@ -110,18 +113,7 @@ async getFilm(
   }
 
 
-  @ApiOperation({summary: 'Получить всю инфомрацию о персоне по id'})
-  @ApiTags('(Суммарные данные) Данные с сайта kinopoisk')
-  @Get('personswithinfo/:id')
-  async getPersonWithAllInfo(
-    @Param('id') id: number) {
-    return await this.rabbitFilmsService.send(
-      {
-        cmd: 'get-all-info-personsoffilms-by-personid',
-      },
-      {id:id},
-    );
-  }
+
 
 
 
@@ -333,6 +325,18 @@ async getFilm(
 
   }
   
+  @ApiOperation({summary: 'Получить всю инфомрацию о персоне по id'})
+  @ApiTags('(Суммарные данные) с сайта kinopoisk')
+  @Get('personswithinfo/:id')
+  async getPersonWithAllInfo(
+    @Param('id') id: number) {
+    return await this.rabbitFilmsService.send(
+      {
+        cmd: 'get-all-info-personsoffilms-by-personid',
+      },
+      {id:id},
+    );
+  }
   @ApiOperation({summary: 'Получить всех режисеров'})
   @ApiTags('Данные с сайта kinopoisk')
   @Get('getAllDirectors')
@@ -411,8 +415,10 @@ async publishCommentToFilm(
   @Body() commentDto: any, 
   @Req() req) {
     console.log(req.user);
+    
     const date = String(new Date());
     const email = req.user.user;
+
     const comment = await this.commentService.publishCommentToFilm({date: date, userEmail: email, text: commentDto.text,  movieid:  commentDto.movieid});
     return comment;
 }
@@ -420,14 +426,13 @@ async publishCommentToFilm(
 @ApiOperation({summary: 'Публикация комментария к другому комментарию'})
 @ApiTags('/comment/childComment')
 @Post('/comment/childComment')
-async publishChildComment(
-  @Body() commentInfo: any,
-  @Req() req) {
-    console.log(req.user);
+async publishChildComment(@Body() commentInfo: any, @Req() req) {
     const date = String(new Date());
-    const email = req.user.email;
-    const comment = await this.commentService.publishChildComment({date: date, userEmail: email, text: commentInfo.text, parentId: commentInfo.parentId, movieid:commentInfo.movieid});
-    return comment;
+    console.log(req.user);
+        const email = req.user.user;
+        const comment = await this.commentService.publishChildComment({date: date, userEmail: email, text: commentInfo.text,
+                                                                         parentId: commentInfo.parentId});
+        return comment;
 }
 
 @ApiOperation({summary: 'Получить данные комментария'})
@@ -459,7 +464,14 @@ async getComment(@Param() data) {
         const user = await this.authService.createAdmin();
         return user;
     }
-
+@ApiOperation({summary: 'Email валидация accessToken'})
+@ApiTags('/validate/email')
+@Post('/validate/email')
+    async validateEmailToken(@Body('token')  accessToken: string, @Req() req) {
+        const { refreshToken } = req.cookies;
+        const userData =  await this.authService.validateEmailToken({accessToken: accessToken, refreshToken: refreshToken});
+        return {email: userData.user.email, roles: userData.user.roles};
+    }
 @ApiOperation({summary: 'Тестовое'})
 @ApiTags('/addRole')
 @Get('/test')

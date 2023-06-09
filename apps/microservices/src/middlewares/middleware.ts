@@ -11,7 +11,7 @@ export class CommentsMiddleware implements NestMiddleware {
     constructor(private authService: AuthService) {}
 
     async use(req, res, next) {
-        try { 
+        try {
             const authorizationHeader = req.headers.authorization;
             if (!authorizationHeader) {
                 return next(new UnauthorizedException());

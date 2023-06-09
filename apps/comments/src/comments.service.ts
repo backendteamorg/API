@@ -29,7 +29,7 @@ export class CommentsService {
             throw new Error('Введите movieid')
         }
         else if(ArrFilmId.includes(dto.movieid)===true){
-            const comment = await this.commentRepo.create({...dto});
+            const comment = await this.commentRepo.create({userEmail: dto.userEmail, text: dto.text, date: dto.date,movieid:dto.movieid});
             return comment;
         }
         else{
@@ -38,27 +38,11 @@ export class CommentsService {
     }
 
     async createChildComment(dto: CreateChildComment) {
-        const parentComment = await this.commentRepo.findByPk(dto.parentId)
-        const film = await this.getAllFilms()
-        let ArrFilmId = []
-        for(let q =0 ;q<film.length;q++){
-            ArrFilmId.push(film[q].id)
-        }
-        if(dto.movieid===undefined){
-            throw new Error('Введите movieid')
-        }
-        else if((parentComment.movieid)!=dto.movieid){
-             throw new Error("id фильма Comment отличается от id фильма ChildComment")
-        }
-        else if(ArrFilmId.includes(dto.movieid)===true){
-            const comment = await this.commentRepo.create({...dto});
-            comment.$set('parent', [parentComment.id]);
-            comment.parent = parentComment;
-            return comment;
-        }
-        else{
-            throw new Error(`Фильма с id ${dto.movieid} нет в базе`)
-        }
+        const parentComment = await this.commentRepo.findOne({where: {id: dto.parentId}});
+        const comment = await this.commentRepo.create({userEmail: dto.userEmail, text: dto.text, date: dto.date});
+        comment.$set('parent', [parentComment.id]);
+        comment.parent = parentComment;
+        return comment;
     }
 
     async getComment(id: number) {
