@@ -16,25 +16,26 @@ export class VkontakteAuthService {
         
         console.log(userDto);
         
-        const candidate = await this.userRepo.findOne({where: {id : userDto.id}, include: {all:true}});
+        const candidate = await this.userRepo.findOne({where: {id : userDto.id}});
         if(candidate) {
             console.log("founded");
             
             const tokens = await this.generateTokens({name: candidate.name, roles: candidate.roles, id: candidate.id});
-            candidate.refreshToken = tokens.refreshToken;
-            return {name: candidate.name, roles: candidate.roles, accessToken: tokens.accessToken, refreshToken: tokens.refreshToken};
+            candidate.refreshToken = tokens.refreshToken
+            candidate.accessToken = tokens.accessToken
+            candidate.save()
+            const candidateAfterFind = await this.userRepo.findOne({where: {id : userDto.id}, include: {all:true}});
+            return {name: candidate.name, roles: candidateAfterFind.roles, accessToken: candidate.accessToken, refreshToken: candidate.refreshToken};
         }
         console.log('not founded');
         
         const user = await this.userRepo.create(userDto);
         const role = await this.roleService.getRoleByValue('user');
         await user.$set('roles', [role.id]);
-        console.log(user);
-        
         user.roles = [role];
-        const tokens = await this.generateTokens({name: user.name, roles: user.roles, id: user.id});
+        const tokens = await this.generateTokens({name: user.name, id: candidate.id});
         user.refreshToken = tokens.refreshToken;
-        return {name: user.name, roles: user.roles, accessToken: tokens.accessToken, refreshToken: tokens.refreshToken};
+        return {name: user.name, roles: user.roles, accessToken: tokens.accessToken, refreshToken: tokens.refreshToken}
     }
 
     async generateTokens(payload) {
