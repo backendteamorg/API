@@ -372,7 +372,7 @@ async googleLogin(@Body() googleUserDto: CreateGoogleUserDto, @Res({ passthrough
     const user = await this.authService.createGoogleUser(googleUserDto);
     res.cookie('authenticationType', 'google', {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true});
     res.cookie('refreshToken', user.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true});
-    return {type: 'google', user: user.email, roles: user.roles, accessToken: user.accessToken,retfreshToken:user.retfreshToken};
+    return {type: 'google', user: user.email, roles: user.roles, accessToken: user.accessToken,refreshToken:user.refreshToken};
 }
 
 

@@ -12,19 +12,31 @@ dotenv.config();
 export class GoogleAuthService {
     constructor(@InjectModel(GoogleUser) private userRepo: typeof GoogleUser, private roleService: RoleService) {}
     
-    async createUser(userDto: CreateGoogleUserDto) {
-        const candidate = await this.userRepo.findOne({where: {email : userDto.email}, include: {all:true}});
+    async createUser(userDto: CreateVkUserDto) {
+        console.log("userDTO:");
+        
+        console.log(userDto);
+        
+        const candidate = await this.userRepo.findOne({where: {id : userDto.id}});
         if(candidate) {
-            const tokens = await this.generateTokens({name: candidate.email, id: candidate.id});
+            console.log("founded");
+            
+            const tokens = await this.generateTokens({email: candidate.email, roles: candidate.roles, id: candidate.id});
             candidate.refreshToken = tokens.refreshToken
             candidate.accessToken = tokens.accessToken
             candidate.save()
-            return {email: candidate.email,  accessToken: candidate.accessToken, refreshToken: candidate.refreshToken};
+            const candidateAfterFind = await this.userRepo.findOne({where: {id : userDto.id}, include: {all:true}});
+            return {email: candidate.email, roles: candidateAfterFind.roles, accessToken: candidate.accessToken, refreshToken: candidate.refreshToken};
         }
-
+        console.log('not founded');
+        
         const user = await this.userRepo.create(userDto);
-        const tokens = await this.generateTokens({name: user.email, id: candidate.id});
-        return {email: user.email, accessToken: tokens.accessToken, refreshToken: tokens.refreshToken}
+        const role = await this.roleService.getRoleByValue('user');
+        await user.$set('roles', [role.id]);
+        user.roles = [role];
+        const tokens = await this.generateTokens({email: user.email, id: candidate.id});
+        user.refreshToken = tokens.refreshToken;
+        return {email: user.email, roles: user.roles, accessToken: tokens.accessToken, refreshToken: tokens.refreshToken}
     }
 
     async generateTokens(payload) {
