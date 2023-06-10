@@ -12,31 +12,30 @@ dotenv.config();
 export class GoogleAuthService {
     constructor(@InjectModel(GoogleUser) private userRepo: typeof GoogleUser, private roleService: RoleService) {}
     
-    async createUser(userDto: CreateVkUserDto) {
+    async createUser(userDto: CreateGoogleUserDto) {
         console.log("userDTO:");
         
         console.log(userDto);
         
-        const candidate = await this.userRepo.findOne({where: {id : userDto.id}});
+        const candidate = await this.userRepo.findOne({where: {id : userDto.id}, include: {all:true}});
         if(candidate) {
             console.log("founded");
             
             const tokens = await this.generateTokens({email: candidate.email, roles: candidate.roles, id: candidate.id});
-            candidate.refreshToken = tokens.refreshToken
-            candidate.accessToken = tokens.accessToken
-            candidate.save()
-            const candidateAfterFind = await this.userRepo.findOne({where: {id : userDto.id}, include: {all:true}});
-            return {email: candidate.email, roles: candidateAfterFind.roles, accessToken: candidate.accessToken, refreshToken: candidate.refreshToken};
+            candidate.refreshToken = tokens.refreshToken;
+            return {email: candidate.email, roles: candidate.roles, accessToken: tokens.accessToken, refreshToken: tokens.refreshToken};
         }
         console.log('not founded');
         
         const user = await this.userRepo.create(userDto);
         const role = await this.roleService.getRoleByValue('user');
         await user.$set('roles', [role.id]);
+        console.log(user);
+        
         user.roles = [role];
-        const tokens = await this.generateTokens({email: user.email, id: candidate.id});
+        const tokens = await this.generateTokens({email: user.email, roles: user.roles, id: user.id});
         user.refreshToken = tokens.refreshToken;
-        return {email: user.email, roles: user.roles, accessToken: tokens.accessToken, refreshToken: tokens.refreshToken}
+        return {email: user.email, roles: user.roles, accessToken: tokens.accessToken, refreshToken: tokens.refreshToken};
     }
 
     async generateTokens(payload) {
