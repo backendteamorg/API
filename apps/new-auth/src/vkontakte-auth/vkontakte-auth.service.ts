@@ -31,10 +31,9 @@ export class VkontakteAuthService {
         
         const user = await this.userRepo.create(userDto);
         const role = await this.roleService.getRoleByValue('user');
-        user.roles = [role];
-        const tokens = await this.generateTokens({name: user.name, roles: user.roles, id: candidate.id});
-        await user.$set('refreshToken', tokens.refreshToken);
         await user.$set('roles', [role.id]);
+        user.roles = [role];
+        const tokens = await this.generateTokens({name: user.name, id: candidate.id});
         user.refreshToken = tokens.refreshToken;
         return {name: user.name, roles: user.roles, accessToken: tokens.accessToken, refreshToken: tokens.refreshToken}
     }

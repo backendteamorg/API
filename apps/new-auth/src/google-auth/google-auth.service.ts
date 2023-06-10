@@ -15,21 +15,16 @@ export class GoogleAuthService {
     async createUser(userDto: CreateGoogleUserDto) {
         const candidate = await this.userRepo.findOne({where: {email : userDto.email}, include: {all:true}});
         if(candidate) {
-            const tokens = await this.generateTokens({name: candidate.email, roles: candidate.roles, id: candidate.id});
+            const tokens = await this.generateTokens({name: candidate.email, id: candidate.id});
             candidate.refreshToken = tokens.refreshToken
             candidate.accessToken = tokens.accessToken
             candidate.save()
-            const candidateAfterFind = await this.userRepo.findOne({where: {id : userDto.id}, include: {all:true}});
-            return {email: candidate.email, roles: candidateAfterFind.roles, accessToken: candidate.accessToken, refreshToken: candidate.refreshToken};
+            return {email: candidate.email,  accessToken: candidate.accessToken, refreshToken: candidate.refreshToken};
         }
 
         const user = await this.userRepo.create(userDto);
-        const role = await this.roleService.getRoleByValue('user');
-        user.roles = [role];
-        const tokens = await this.generateTokens({name: user.email, roles: user.roles, id: candidate.id});
-        await user.$set('roles', [role.id]);
-        user.refreshToken = tokens.refreshToken;
-        return {email: user.email, roles: user.roles, accessToken: tokens.accessToken, refreshToken: tokens.refreshToken}
+        const tokens = await this.generateTokens({name: user.email, id: candidate.id});
+        return {email: user.email, accessToken: tokens.accessToken, refreshToken: tokens.refreshToken}
     }
 
     async generateTokens(payload) {
@@ -70,7 +65,7 @@ export class GoogleAuthService {
         if(!userData || !user) {
             throw new UnauthorizedException();
         }        
-        const tokens = await this.generateTokens({email: user.email, roles: user.roles});
+        const tokens = await this.generateTokens({email: user.email});
         user.refreshToken = tokens.refreshToken;
 
         return {...tokens};
