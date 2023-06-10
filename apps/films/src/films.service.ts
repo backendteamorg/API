@@ -646,7 +646,7 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
                             ArrCildeComments.push(
                                 {
                                     id:comments[w].id,
-                                    user:comments[w].userEmail,
+                                    user:comments[w].user,
                                     date:comments[w].date,
                                     text:comments[w].text
                                 }
@@ -656,7 +656,7 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
                     ArrComments.push(
                         {
                             id:comments[q].id,
-                            user:comments[q].userEmail,
+                            user:comments[q].user,
                             date:comments[q].date,
                             text:comments[q].text,
                             childComment:ArrCildeComments,

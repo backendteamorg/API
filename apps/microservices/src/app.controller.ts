@@ -482,19 +482,25 @@ async getChildComments(
 @ApiOperation({summary: 'Email валидация accessToken'})
 @ApiTags('/validate/email')
 @Post('/validate/email')
-async validateEmailToken(@Body('token')  accessToken: string, @Req() req) {
-    const { refreshToken } = req.cookies;
-    if(req.cookies.authenticationType == 'google') {
-        const userData =  await this.authService.validateGoogleToken({accessToken: accessToken, refreshToken: refreshToken});
-        console.log(userData);
-        return {email: userData.user.email, roles: userData.user.roles};
-    } else if(req.cookies.authenticationType == 'vk') {
-        const userData =  await this.authService.validateVkToken({accessToken: accessToken, refreshToken: refreshToken});
-        console.log(userData);
-        return {name: userData.user.name, roles: userData.user.roles};
-     } else {
+async validateEmailToken(@Body('accessToken')  accessToken: string,@Body('refreshToken')  refreshToken: string) {
         const userData =  await this.authService.validateEmailToken({accessToken: accessToken, refreshToken: refreshToken});
         return {email: userData.user.email, roles: userData.user.roles};
-     }
+     
+}
+@ApiOperation({summary: 'vk валидация accessToken'})
+@ApiTags('/validate/vk')
+@Post('/validate/vk')
+async validateVkToken(@Body('accessToken')  accessToken: string,@Body('refreshToken')  refreshToken: string) {
+        const userData =  await this.authService.validateVkToken({accessToken: accessToken, refreshToken: refreshToken});
+        return {name: userData.user.name, roles: userData.user.roles};
+     
+}
+@ApiOperation({summary: 'google валидация accessToken'})
+@ApiTags('/validate/google')
+@Post('/validate/google')
+async validateGoogleToken(@Body('accessToken')  accessToken: string,@Body('refreshToken')  refreshToken: string) {
+        const userData =  await this.authService.validateGoogleToken({accessToken: accessToken, refreshToken: refreshToken});
+        return {email: userData.user.email, roles: userData.user.roles};
+     
 }
 }
