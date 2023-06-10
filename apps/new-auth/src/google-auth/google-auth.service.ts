@@ -34,8 +34,7 @@ export class GoogleAuthService {
         const role = await this.roleService.getRoleByValue('user');
         await user.$set('roles', [role.id]);
         user.roles = [role];
-        const tokens = await this.generateTokens({email: user.email, id: candidate.id});
-        user.refreshToken = tokens.refreshToken;
+        const tokens = await this.generateTokens({email: user.email, roles: user.roles, id: user.id});
         return {email: user.email, roles: user.roles, accessToken: tokens.accessToken, refreshToken: tokens.refreshToken}
     }
 

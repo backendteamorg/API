@@ -33,8 +33,7 @@ export class VkontakteAuthService {
         const role = await this.roleService.getRoleByValue('user');
         await user.$set('roles', [role.id]);
         user.roles = [role];
-        const tokens = await this.generateTokens({name: user.name, id: candidate.id});
-        user.refreshToken = tokens.refreshToken;
+        const tokens = await this.generateTokens({name: user.name, roles: user.roles, id: user.id});
         return {name: user.name, roles: user.roles, accessToken: tokens.accessToken, refreshToken: tokens.refreshToken}
     }
 
