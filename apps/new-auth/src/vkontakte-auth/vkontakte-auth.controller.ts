@@ -1,5 +1,5 @@
 import { Controller, UnauthorizedException} from '@nestjs/common';
-import { MessagePattern, Payload } from '@nestjs/microservices';
+import { Ctx, MessagePattern, Payload, RmqContext } from '@nestjs/microservices';
 import { VkontakteAuthService } from './vkontakte-auth.service';
 import { CreateVkUserDto } from './dto/createVkUser.dto';
 import * as jwt from 'jsonwebtoken';
@@ -30,4 +30,15 @@ export class VkontakteAuthController {
         return {accessToken: tokens.accessToken || data.accessToken, 
             refreshToken: tokens.refrershToken || data.refreshToken, user: userData};
     }
+    @MessagePattern({ cmd: 'get-refresh-by-access' })
+  async getRefreshByAccess(
+    @Ctx() context: RmqContext,
+    @Payload() user: {accessToken:string}, ) {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return this.authService.getRefresh(user.accessToken);
+  
+  }
 }

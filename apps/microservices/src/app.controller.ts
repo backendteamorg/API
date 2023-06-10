@@ -28,10 +28,11 @@ export class AppController {
   @Inject('NAMESOFGENRES_SERVICE') private rabbitnamesofGenresService: ClientProxy,
   @Inject('COUNTRIESNAMES_SERVICE') private rabbitnamesofCountriesService: ClientProxy,
   @Inject('AUTH_SERVICE') private rabbitUserService: ClientProxy,
-  @Inject('COMMENT_SERVICE') private client: ClientProxy) {}
+  @Inject('COMMENT_SERVICE') private client: ClientProxy,
+  @Inject('AUTH_SERVICE') private authServiceRabbit: ClientProxy) {}
 
 
-  
+
     
   
   
@@ -361,7 +362,7 @@ async VKlogin(@Body() vkUserDto: CreateVkUserDto, @Res({ passthrough: true }) re
     const user = await this.authService.createVKUser(vkUserDto);
     res.cookie('authenticationType', 'vk', {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true});
     res.cookie('refreshToken', user.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true});
-    return {type: 'vk', user: user.name, roles: user.roles, accessToken: user.accessToken};
+    return {type: 'vk', user: user.name, roles: user.roles, accessToken: user.accessToken, refreshToken:user.refreshToken};
 }
 
 @ApiOperation({summary: 'Авторизация через google'})
@@ -498,9 +499,23 @@ async validateVkToken(@Body('accessToken')  accessToken: string,@Body('refreshTo
 @ApiOperation({summary: 'google валидация accessToken'})
 @ApiTags('/validate/google')
 @Post('/validate/google')
-async validateGoogleToken(@Body('accessToken')  accessToken: string,@Body('refreshToken')  refreshToken: string) {
+async validateGoogleToken(@Body('accessToken')  accessToken: string,@Body('refreshToken') refreshToken: string) {
         const userData =  await this.authService.validateGoogleToken({accessToken: accessToken, refreshToken: refreshToken});
         return {email: userData.user.email, roles: userData.user.roles};
      
 }
+@ApiOperation({summary: 'getAccesByRefresh'})
+  @ApiTags('getAccesByRefresh')
+  @Post('getAccesByRefresh')
+  async getAccessByRefresh(
+    @Body('accessToken') accessToken: string) {
+    return await this.authServiceRabbit.send(
+      {
+        cmd: 'get-refresh-by-access',
+      },
+      {
+        accessToken
+      },
+    );
+  }
 }

@@ -19,6 +19,9 @@ export class VkUser extends Model<VkUser, UserCreationAttr> {
     @Column({type: DataType.STRING})
     refreshToken: string;
 
+    @Column({type: DataType.STRING})
+    accessToken: string;
+
     @BelongsToMany(() => Role, () => VKUserRoles)
     roles: Role[]
 }
