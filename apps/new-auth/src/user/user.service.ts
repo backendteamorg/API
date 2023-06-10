@@ -31,24 +31,24 @@ export class UserService {
 
         const userPayloadDto = new UserPayloadDto(user);
         const tokens = await this.generateTokens({...userPayloadDto});
-        await this.saveToken(userPayloadDto.userId, tokens.refreshToken);
+        await this.saveToken(userPayloadDto.userId, tokens.refreshToken,tokens.accessToken);
         
         const userWithRoles = await this.userRepo.findOne({where: {email : user.email}, include: {all:true}});
         return {user: userWithRoles, accessToken: tokens.accessToken, refreshToken: tokens.refreshToken};
      }
  
      async login(createUserDto: CreateUserDto) {
-         const user = await this.userRepo.findOne({where: {email: createUserDto.email}, include: {all:true}});
-         if(!user) {
+        const user = await this.userRepo.findOne({where: {email: createUserDto.email}, include: {all:true}});
+        if(!user) {
              throw new Error('Пользователь с такой почтой не найден');
-         }     
-         const passwordEquals = await bcrypt.compare(createUserDto.password, user.password);
-         if(!passwordEquals) {
+        }     
+        const passwordEquals = await bcrypt.compare(createUserDto.password, user.password);
+        if(!passwordEquals) {
              throw new Error('Неверный пороль');
-         }
-         const userPayloadDto = new UserPayloadDto(user);
-         const tokens = await this.generateTokens({...userPayloadDto});
-         await this.saveToken(userPayloadDto.userId, tokens.refreshToken);
+        }
+        const userPayloadDto = new UserPayloadDto(user);
+        const tokens = await this.generateTokens({...userPayloadDto});
+        await this.saveToken(userPayloadDto.userId, tokens.refreshToken,tokens.accessToken);
         
         return {user: user, accessToken: tokens.accessToken, refreshToken: tokens.refreshToken};
      }
@@ -58,7 +58,10 @@ export class UserService {
          await token.destroy();
          return token;
      }
- 
+     async getRefreshByAccess(token){
+        const user = await this.tokenRepo.findOne({where:{accessToken:token}})
+        return {refreshToken:user.refreshToken}
+    }
      async refresh(refrershToken: string) {
          if (!refrershToken) {
              throw new UnauthorizedException();
@@ -73,7 +76,7 @@ export class UserService {
          const userPayloadDto = new UserPayloadDto(user);
  
          const tokens = await this.generateTokens({...userPayloadDto});
-         await this.saveToken(userPayloadDto.userId, tokens.refreshToken);
+         await this.saveToken(userPayloadDto.userId, tokens.refreshToken,tokens.accessToken);
  
          return {...tokens};
      }
@@ -108,14 +111,15 @@ export class UserService {
          }
      }
  
-     async saveToken(userId: number, refreshToken: string) {
+     async saveToken(userId: number, refreshToken: string,accessToken:string) {
          const tokenData = await this.tokenRepo.findOne({where: {userId: userId}});
          if(tokenData) {
              tokenData.refreshToken = refreshToken;
+             tokenData.accessToken = accessToken;
              return tokenData.save();
          }
  
-         const token = await this.tokenRepo.create({refreshToken: refreshToken, userId: userId}); 
+         const token = await this.tokenRepo.create({refreshToken: refreshToken, userId: userId,accessToken:accessToken}); 
          return token;
      }
 

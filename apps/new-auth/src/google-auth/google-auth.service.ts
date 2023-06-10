@@ -11,28 +11,31 @@ dotenv.config();
 @Injectable()
 export class GoogleAuthService {
     constructor(@InjectModel(GoogleUser) private userRepo: typeof GoogleUser, private roleService: RoleService) {}
-
+    
     async createUser(userDto: CreateGoogleUserDto) {
         const candidate = await this.userRepo.findOne({where: {email : userDto.email}, include: {all:true}});
         if(candidate) {
-            const tokens = await this.generateTokens({email: candidate.email, roles: candidate.roles});
-            candidate.refreshToken = tokens.refreshToken;
-            return {email: candidate.email, roles: candidate.roles, accessToken: tokens.accessToken, refreshToken: tokens.refreshToken};
+            const tokens = await this.generateTokens({name: candidate.email, roles: candidate.roles, id: candidate.id});
+            candidate.refreshToken = tokens.refreshToken
+            candidate.accessToken = tokens.accessToken
+            candidate.save()
+            const candidateAfterFind = await this.userRepo.findOne({where: {id : userDto.id}, include: {all:true}});
+            return {email: candidate.email, roles: candidateAfterFind.roles, accessToken: candidate.accessToken, refreshToken: candidate.refreshToken};
         }
 
         const user = await this.userRepo.create(userDto);
         const role = await this.roleService.getRoleByValue('user');
-        await user.$set('roles', [role.id]);
         user.roles = [role];
-        const tokens = await this.generateTokens({email: user.email, roles: user.roles});
+        const tokens = await this.generateTokens({name: user.email, roles: user.roles, id: candidate.id});
+        await user.$set('roles', [role.id]);
         user.refreshToken = tokens.refreshToken;
-        return {email: user.email, roles: user.roles, accessToken: tokens.accessToken, refreshToken: tokens.refreshToken};
+        return {email: user.email, roles: user.roles, accessToken: tokens.accessToken, refreshToken: tokens.refreshToken}
     }
 
     async generateTokens(payload) {
         const accessToken = jwt.sign(payload, process.env.JWT_ACCESS_SECRET, {expiresIn: '30m'});
         const refreshToken = jwt.sign(payload, process.env.JWT_REFRESH_SECRET, {expiresIn: '30d'});
-        return {
+        return { 
             accessToken,
             refreshToken
         }
@@ -53,7 +56,10 @@ export class GoogleAuthService {
             return e;
         }
     }
-
+    async getRefreshByAccess(token){
+        const user = await this.userRepo.findOne({where:{accessToken:token}})
+        return {refreshToken:user.refreshToken}
+    }
     async refresh(refrershToken: string) {
         if (!refrershToken) {
             throw new UnauthorizedException();

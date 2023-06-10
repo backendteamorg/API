@@ -372,7 +372,7 @@ async googleLogin(@Body() googleUserDto: CreateGoogleUserDto, @Res({ passthrough
     const user = await this.authService.createGoogleUser(googleUserDto);
     res.cookie('authenticationType', 'google', {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true});
     res.cookie('refreshToken', user.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true});
-    return {type: 'google', user: user.email, roles: user.roles, accessToken: user.accessToken};
+    return {type: 'google', user: user.email, roles: user.roles, accessToken: user.accessToken,retfreshToken:user.retfreshToken};
 }
 
 
@@ -504,14 +504,42 @@ async validateGoogleToken(@Body('accessToken')  accessToken: string,@Body('refre
         return {email: userData.user.email, roles: userData.user.roles};
      
 }
-@ApiOperation({summary: 'getAccesByRefresh'})
-  @ApiTags('getAccesByRefresh')
-  @Post('getAccesByRefresh')
-  async getAccessByRefresh(
+@ApiOperation({summary: 'getAccesByRefreshVK'})
+  @ApiTags('getAccesByRefreshVK')
+  @Post('getAccesByRefreshVK')
+  async getAccessByRefreshEmail(
     @Body('accessToken') accessToken: string) {
     return await this.authServiceRabbit.send(
       {
-        cmd: 'get-refresh-by-access',
+        cmd: 'get-refresh-by-access-vk',
+      },
+      {
+        accessToken
+      },
+    );
+  }
+  @ApiOperation({summary: 'getAccesByRefreshVK'})
+  @ApiTags('getAccesByRefreshEmail')
+  @Post('getAccesByRefreshEmail')
+  async getAccessByRefreshVk(
+    @Body('accessToken') accessToken: string) {
+    return await this.authServiceRabbit.send(
+      {
+        cmd: 'get-refresh-by-access-email',
+      },
+      {
+        accessToken
+      },
+    );
+  }
+  @ApiOperation({summary: 'getAccesByRefreshGoogle'})
+  @ApiTags('getAccesByRefreshGoogle')
+  @Post('getAccesByRefreshGoogle')
+  async getAccessByRefreshGoogle(
+    @Body('accessToken') accessToken: string) {
+    return await this.authServiceRabbit.send(
+      {
+        cmd: 'get-refresh-by-access-google',
       },
       {
         accessToken

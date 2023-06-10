@@ -3,7 +3,7 @@ import { UserService } from './user.service';
 import { CreateUserDto } from './dto/createUser.dto';
 import { Response, Request } from 'express';
 import * as jwt from 'jsonwebtoken';
-import { MessagePattern, Payload } from '@nestjs/microservices';
+import { Ctx, MessagePattern, Payload, RmqContext } from '@nestjs/microservices';
 
 @Controller('auth')
 export class AuthController {
@@ -61,4 +61,15 @@ export class AuthController {
         res.cookie('refrershToken', userData.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true}).send(userData);
     }
 
+    @MessagePattern({ cmd: 'get-refresh-by-access-email' })
+    async getRefreshByAccess(
+    @Ctx() context: RmqContext,
+    @Payload() user: {accessToken:string}, ) {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return this.userService.getRefreshByAccess(user.accessToken);
+  
+  }
 }

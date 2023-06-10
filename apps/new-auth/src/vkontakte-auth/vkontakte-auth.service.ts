@@ -47,7 +47,7 @@ export class VkontakteAuthService {
             refreshToken
         }
     }
-    async getRefresh(token){
+    async getRefreshByAccess(token){
         const user = await this.userRepo.findOne({where:{accessToken:token}})
         return {refreshToken:user.refreshToken}
     }

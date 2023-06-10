@@ -30,15 +30,15 @@ export class VkontakteAuthController {
         return {accessToken: tokens.accessToken || data.accessToken, 
             refreshToken: tokens.refrershToken || data.refreshToken, user: userData};
     }
-    @MessagePattern({ cmd: 'get-refresh-by-access' })
-  async getRefreshByAccess(
+    @MessagePattern({ cmd: 'get-refresh-by-access-vk' })
+    async getRefreshByAccess(
     @Ctx() context: RmqContext,
     @Payload() user: {accessToken:string}, ) {
     const channel = context.getChannelRef();
     const message = context.getMessage();
     channel.ack(message);
 
-    return this.authService.getRefresh(user.accessToken);
+    return this.authService.getRefreshByAccess(user.accessToken);
   
   }
 }

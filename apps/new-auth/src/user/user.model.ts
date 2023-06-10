@@ -23,7 +23,7 @@ export class User extends Model<User, UserCreationAttr> {
     password: string;
 
     @HasOne(() => Token)
-    refreshToken: Token;
+    Tokens: Token;
 
     @BelongsToMany(() => Role, () => UserRoles)
     roles: Role[];

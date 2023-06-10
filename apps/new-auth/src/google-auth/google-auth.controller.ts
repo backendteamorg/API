@@ -1,6 +1,6 @@
 import { Controller, Get, Param, Req, Res, UseGuards, UnauthorizedException } from '@nestjs/common';
 import { GoogleAuthService } from './google-auth.service';
-import { MessagePattern, Payload } from '@nestjs/microservices';
+import { Ctx, MessagePattern, Payload, RmqContext } from '@nestjs/microservices';
 import { CreateGoogleUserDto } from './dto/createGoogleUser.dto';
 import { ValidateGoogleToken } from './dto/validateGoogleToken.dto';
 import * as jwt from 'jsonwebtoken';
@@ -32,4 +32,15 @@ export class GoogleAuthController {
         return {accessToken: tokens.accessToken || data.accessToken, 
             refreshToken: tokens.refrershToken || data.refreshToken, user: userData};
     }
+    @MessagePattern({ cmd: 'get-refresh-by-access-google' })
+    async getRefreshByAccess(
+    @Ctx() context: RmqContext,
+    @Payload() user: {accessToken:string}, ) {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return this.googleService.getRefreshByAccess(user.accessToken);
+  
+  }
 }
