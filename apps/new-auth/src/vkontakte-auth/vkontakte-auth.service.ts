@@ -34,6 +34,9 @@ export class VkontakteAuthService {
         await user.$set('roles', [role.id]);
         user.roles = [role];
         const tokens = await this.generateTokens({name: user.name, roles: user.roles, id: user.id});
+        user.refreshToken = tokens.refreshToken
+        user.accessToken = tokens.accessToken
+        await user.save()
         return {name: user.name, roles: user.roles, accessToken: tokens.accessToken, refreshToken: tokens.refreshToken}
     }
 

@@ -505,9 +505,9 @@ async validateGoogleToken(@Body('accessToken')  accessToken: string,@Body('refre
      
 }
 @ApiOperation({summary: 'getAccesByRefreshVK'})
-  @ApiTags('getAccesByRefreshVK')
-  @Post('getAccesByRefreshVK')
-  async getAccessByRefreshEmail(
+  @ApiTags('getRefreshByAccessVK')
+  @Post('geRefreshByAccessVK')
+  async getRefreshByAccessEmail(
     @Body('accessToken') accessToken: string) {
     return await this.authServiceRabbit.send(
       {
@@ -518,10 +518,10 @@ async validateGoogleToken(@Body('accessToken')  accessToken: string,@Body('refre
       },
     );
   }
-  @ApiOperation({summary: 'getAccesByRefreshVK'})
-  @ApiTags('getAccesByRefreshEmail')
-  @Post('getAccesByRefreshEmail')
-  async getAccessByRefreshVk(
+  @ApiOperation({summary: 'getRefreshByAccessVK'})
+  @ApiTags('getRefreshByAccessEmail')
+  @Post('getRefreshByAccessEmail')
+  async getRefreshByAccessVk(
     @Body('accessToken') accessToken: string) {
     return await this.authServiceRabbit.send(
       {
@@ -532,10 +532,10 @@ async validateGoogleToken(@Body('accessToken')  accessToken: string,@Body('refre
       },
     );
   }
-  @ApiOperation({summary: 'getAccesByRefreshGoogle'})
-  @ApiTags('getAccesByRefreshGoogle')
-  @Post('getAccesByRefreshGoogle')
-  async getAccessByRefreshGoogle(
+  @ApiOperation({summary: 'getRefreshByAccessGoogle'})
+  @ApiTags('getRefreshByAccessGoogle')
+  @Post('getRefreshByAccessGoogle')
+  async getRefreshByAccessGoogle(
     @Body('accessToken') accessToken: string) {
     return await this.authServiceRabbit.send(
       {
