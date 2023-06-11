@@ -1095,8 +1095,7 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
             }
     
            
-                const Flilms = await this.filmRepository.findAll({where:filtreWithActorOrDirecor,
-                order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]
+                const Flilms = await this.filmRepository.findAll({where:filtreWithActorOrDirecor
                 })
                 for(let q = 0 ; q <Flilms.length;q++){
                     films.push(Flilms[q])
@@ -1115,8 +1114,7 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
             }
         }
        
-                const Flilms = await this.filmRepository.findAll({where:filtreWithActorOrDirecor,
-                order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]
+                const Flilms = await this.filmRepository.findAll({where:filtreWithActorOrDirecor
                 })
                 for(let q = 0 ; q <Flilms.length;q++){
                     films.push(Flilms[q])
@@ -1133,8 +1131,7 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
         }
         
            
-                const Flilms = await this.filmRepository.findAll({where:filtre,
-                order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]
+                const Flilms = await this.filmRepository.findAll({where:filtre
                 })
                 for(let q = 0 ; q <Flilms.length;q++){
                     films.push(Flilms[q])
@@ -1150,8 +1147,7 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
             ArrFilmId.push(persons[q].movieid)
         }
         
-                const Flilms = await this.filmRepository.findAll({where:filtre,
-                order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]
+                const Flilms = await this.filmRepository.findAll({where:filtre
                 })
                 for(let q = 0 ; q <Flilms.length;q++){
                     films.push(Flilms[q])
@@ -1173,8 +1169,7 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
             }
         }
         
-            const Flilms = await this.filmRepository.findAll({where:filtreWithActorOrDirecor,
-                order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]
+            const Flilms = await this.filmRepository.findAll({where:filtreWithActorOrDirecor
             })
             for(let q = 0 ; q <Flilms.length;q++){
                 films.push(Flilms[q])
@@ -1193,8 +1188,7 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
         }
        
         
-                const Flilms = await this.filmRepository.findAll({where:filtre,
-                 order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]
+                const Flilms = await this.filmRepository.findAll({where:filtre
                 })
                 for(let q = 0 ; q <Flilms.length;q++){
                     films.push(Flilms[q])
@@ -1205,8 +1199,7 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
     }
     else if ((queryParams.queryParams.director===undefined)&&(queryParams.queryParams.actor===undefined)&& //// тип, рейтинг КП, голоса КП
     (queryParams.queryParams.countries===undefined)&&(queryParams.queryParams.genres===undefined)&&(queryParams.queryParams.type!=undefined)&&((queryParams.queryParams.ratingKp!=undefined)||queryParams.queryParams.votesKp!=undefined)){
-       const Films= await this.filmRepository.findAll({where:FiltreType,
-            order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]})
+       const Films= await this.filmRepository.findAll({where:FiltreType})
         for(let q = 0 ; q <Films.length;q++){
             films.push(Films[q])
             ArrFilmId.push(Films[q].id)
@@ -1214,8 +1207,7 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
     }
     else if ((queryParams.queryParams.director===undefined)&&(queryParams.queryParams.actor===undefined)&& //// рейтинг КП, голоса КП
     (queryParams.queryParams.countries===undefined)&&(queryParams.queryParams.genres===undefined)&&(queryParams.queryParams.type===undefined)&&((queryParams.queryParams.ratingKp!=undefined)||queryParams.queryParams.votesKp!=undefined)){
-       const Films= await this.filmRepository.findAll({where:FiltreRatingKPvotesKP,
-            order:[[queryParams.queryParams.sortField ,queryParams.queryParams.sortOrder]]})
+       const Films= await this.filmRepository.findAll({where:FiltreRatingKPvotesKP})
         for(let q = 0 ; q <Films.length;q++){
             films.push(Films[q])
             ArrFilmId.push(Films[q].id)
