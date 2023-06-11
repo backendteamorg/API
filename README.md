@@ -37,7 +37,8 @@ $ npm install
 
 ```bash
 
-# start with docker in watch mode 
+# start with docker in watch mode
+$ docker-compose bild
 $ docker-compose up
 ```
 ```bash
