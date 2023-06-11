@@ -33,48 +33,24 @@
 $ npm install
 ```
 
-## Running the app
+## Running the app with Docker
 
 ```bash
-
-# start with docker in watch mode
 docker-compose build
 docker-compose up
 ```
+## Running the app on Localhost
 ```bash
-# start microservices in watch mode 
-$ npm run start:dev microservices
-
-# start service films in watch mode 
-$ npm run start:dev films
-
-# start service genresnames in watch mode 
-$ npm run start:dev genresnames
-
-# start service genres in watch mode 
-$ npm run start:dev genres
-
-# start service countriesnames in watch mode 
-$ npm run start:dev countriesnames
-
-# start service countries in watch mode 
-$ npm run start:dev countries
-
-# start service persons in watch mode 
-$ npm run start:dev persons
-
-# start service videos in watch mode 
-$ npm run start:dev videos
-
-# start service new-auth in watch mode 
-$ npm run start:dev new-auth
-
-# start service comments in watch mode 
-$ npm run start:dev comments
-
-
-
-
+npm run start:dev microservices
+npm run start:dev films
+npm run start:dev genresnames
+npm run start:dev genres
+npm run start:dev countriesnames
+npm run start:dev countries 
+npm run start:dev persons 
+npm run start:dev videos 
+npm run start:dev new-auth
+npm run start:dev comments
 ```
 
 ## Test
