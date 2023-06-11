@@ -38,8 +38,8 @@ $ npm install
 ```bash
 
 # start with docker in watch mode
-$ docker-compose build
-$ docker-compose up
+docker-compose build
+docker-compose up
 ```
 ```bash
 # start microservices in watch mode 
