@@ -1,4 +1,4 @@
-export class CreateGoogleUserDto {
+export class CreateVkUserDto {
     readonly id: string;
-    readonly email: string;
+    readonly name: string;
 }

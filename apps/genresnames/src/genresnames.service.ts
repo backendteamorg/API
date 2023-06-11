@@ -5,6 +5,7 @@ import { firstValueFrom } from 'rxjs';
 import { ClientProxy } from '@nestjs/microservices';
 import { GenresNamesDto } from './dto/genresnames.dto';
 import { Op } from 'sequelize';
+import { CreateGenresNamesDto } from './dto/create-genres.dto';
 
 
 @Injectable()
@@ -213,7 +214,7 @@ export class GenresnamesService {
       await this.namesofgenresmoviesRepository.destroy({where:{id:idG}})
       return `Жанр c id ${genre.id} удален`
     }
-    async postGenre(dto:GenresNamesDto){
+    async postGenre(dto:CreateGenresNamesDto){
       const genres = await this.namesofgenresmoviesRepository.findAll()
       for(let q = 0 ; q <genres.length;q++){
         if(genres[q].name===dto.name||genres[q].enName===dto.enName){

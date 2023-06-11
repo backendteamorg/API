@@ -59,7 +59,7 @@ services:
     environment:
       PG_DATA: /var/lib/postgresql/data
     ports:
-      - 5432:5432
+      - 5494:5432
     volumes:
       - pgdatafilm:/var/lib/postgresql/data
     restart: always

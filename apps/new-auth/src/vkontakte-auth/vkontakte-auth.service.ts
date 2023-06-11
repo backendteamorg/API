@@ -23,7 +23,7 @@ export class VkontakteAuthService {
             const tokens = await this.generateTokens({name: candidate.name, roles: candidate.roles, id: candidate.id});
             candidate.refreshToken = tokens.refreshToken
             candidate.accessToken = tokens.accessToken
-            candidate.save()
+            await candidate.save()
             const candidateAfterFind = await this.userRepo.findOne({where: {id : userDto.id}, include: {all:true}});
             return {name: candidate.name, roles: candidateAfterFind.roles, accessToken: candidate.accessToken, refreshToken: candidate.refreshToken};
         }

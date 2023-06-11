@@ -5,8 +5,6 @@ import { FilmDto } from './dto/film.dto';
 import { Op } from 'sequelize';
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
-import e from 'express';
-import { FilteDto } from './dto/filtre.dto';
 import { CreateFilmDto } from './dto/create-film.dto';
 
 
@@ -1384,7 +1382,6 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
     async updateNameMovie(dto:FilmDto){
         const film =  await this.filmRepository.findOne({where: {id: dto.id}})
         film.name = dto.name;
-        film.enName = dto.enName;
         film.save();
         return film
 
@@ -1394,16 +1391,16 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
             cmd: 'clear-countries',
         },
         {});
-        const persons = await firstValueFrom(ob$).catch((err) => console.error(err));
-        return persons;
+        const countries = await firstValueFrom(ob$).catch((err) => console.error(err));
+        return countries;
     }
     async clearGenres(){
         const ob$ =await this.rabbitGenresFilmsService.send({
             cmd: 'clear-genres',
         },
         {});
-        const persons = await firstValueFrom(ob$).catch((err) => console.error(err));
-        return persons;
+        const genres = await firstValueFrom(ob$).catch((err) => console.error(err));
+        return genres;
           
     }
     async clearPersons(){
@@ -1420,8 +1417,17 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
             cmd: 'clear-videos',
           },
           {});
-        const persons = await firstValueFrom(ob$).catch((err) => console.error(err));
-        return persons;
+        const videos = await firstValueFrom(ob$).catch((err) => console.error(err));
+        return videos;
+          
+    }
+    async clearComments(){
+        const ob$ =await this.rabbitCommentService.send({
+            cmd: 'clear-comments',
+          },
+          {});
+        const comments = await firstValueFrom(ob$).catch((err) => console.error(err));
+        return comments;
           
     }
     async deleteFilm(idF:number){
@@ -1431,7 +1437,8 @@ shortDescription%20technology%20imagesInfo&sortField=votes.kp&sortType=-1&page=1
         const genres = await this.clearGenres()
         const persons= await this.clearPersons()
         const videos = await this.clearVideos()
-        return `Фильм с id ${idF} удален`+'; '+countries+'; '+genres+'; '+persons+'; '+videos+';'
+        const comments = await this.clearComments()
+        return `Фильм с id ${idF} удален`+'; '+countries+'; '+genres+'; '+persons+'; '+videos+'; '+comments+';'
     }
   async postFilm(dto:CreateFilmDto){
     const films = await this.filmRepository.findAll()

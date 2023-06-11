@@ -16,10 +16,10 @@ export class VkUser extends Model<VkUser, UserCreationAttr> {
     @Column({type: DataType.STRING, allowNull: false})
     name: string;
 
-    @Column({type: DataType.STRING})
+    @Column({type: DataType.TEXT})
     refreshToken: string;
 
-    @Column({type: DataType.STRING})
+    @Column({type: DataType.TEXT})
     accessToken: string; 
 
     @BelongsToMany(() => Role, () => VKUserRoles)

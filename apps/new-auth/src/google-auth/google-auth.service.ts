@@ -24,7 +24,7 @@ export class GoogleAuthService {
             const tokens = await this.generateTokens({email: candidate.email, roles: candidate.roles, id: candidate.id});
             candidate.refreshToken = tokens.refreshToken
             candidate.accessToken = tokens.accessToken
-            candidate.save()
+            await candidate.save()
             const candidateAfterFind = await this.userRepo.findOne({where: {id : userDto.id}, include: {all:true}});
             return {email: candidate.email, roles: candidateAfterFind.roles, accessToken: candidate.accessToken, refreshToken: candidate.refreshToken};
         }
@@ -35,6 +35,9 @@ export class GoogleAuthService {
         await user.$set('roles', [role.id]);
         user.roles = [role];
         const tokens = await this.generateTokens({email: user.email, roles: user.roles, id: user.id});
+        user.refreshToken = tokens.refreshToken
+        user.accessToken = tokens.accessToken
+        await user.save()
         return {email: user.email, roles: user.roles, accessToken: tokens.accessToken, refreshToken: tokens.refreshToken}
     }
 

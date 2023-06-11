@@ -44,4 +44,12 @@ export class CommentsController {
 
     return await this.commentService.getAllChildCommentByParentId(comment.parentId);
   }
+  @MessagePattern({ cmd: 'clear-comments'}) ////////////////////// Очищение данных после удаления фильма
+  async clearCountries(@Ctx() context: RmqContext){
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return this.commentService.clearCommetns()
+  } 
 }

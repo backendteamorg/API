@@ -71,4 +71,20 @@ export class CommentsService {
     async getAllChildCommentByParentId(parentId:number){
         return await this.commentRepo.findAll({where:{parentId:parentId}})
     }
+    async clearCommetns(){
+        const film = await this.getAllFilms()
+        const comments = await this.commentRepo.findAll()
+        let ArrFilmdId = []
+        for(let q = 0 ; q <film.length;q++ ){
+          ArrFilmdId.push(film[q].id)
+        }
+        let count = 0 
+        for(let q = 0 ; q <comments.length;q++){
+          if(ArrFilmdId.includes(comments[q].movieid)===false){
+            await this.commentRepo.destroy({where:{id:comments[q].id}})
+            count+=1
+          }
+        }
+        return `Удалено записей в севрисе comments: ${count}`
+      }
 }

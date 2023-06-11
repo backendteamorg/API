@@ -5,6 +5,7 @@ import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
 import { Op } from 'sequelize';
 import { CountriesDto } from './dto/counrtiesnames.dto';
+import { CreateCountriesDto } from './dto/create-country.dto';
 
 @Injectable()
 export class CountriesnamesService {
@@ -195,7 +196,7 @@ export class CountriesnamesService {
       [Op.or]:[{name:{[Op.in]:ArrCountries}},{enName:{[Op.in]:ArrCountries}}]
       }})
   }
-  async postCountryName(dto:CountriesDto){
+  async postCountryName(dto:CreateCountriesDto){
     const countries = await this.countriesNamesRepository.findAll()
     for(let q = 0 ; q <countries.length;q++){
       if(countries[q].name===dto.name||countries[q].enName===dto.enName){

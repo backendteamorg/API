@@ -16,11 +16,11 @@ export class GoogleUser extends Model<GoogleUser, UserCreationAttr> {
     @Column({type: DataType.STRING, unique: true, allowNull: false})
     email: string;
 
-    @Column({type: DataType.STRING})
+    @Column({type: DataType.TEXT})
     accessToken: string;
 
-    @Column({type: DataType.STRING})
-    refreshToken: string;
+    @Column({type: DataType.TEXT})
+    refreshToken: string; 
 
     @BelongsToMany(() => Role, () => GoogleUserRoles)
     roles: Role[]
